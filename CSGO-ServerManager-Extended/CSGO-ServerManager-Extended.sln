@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSGO-ServerManager-Extended", "CSGO-ServerManager-Extended\CSGO-ServerManager-Extended.csproj", "{1E6766D9-467F-417C-B5DA-FD3B6EC8E238}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSGO-ServerManager-Extended", "CSGO-ServerManager-Extended\CSGO-ServerManager-Extended.csproj", "{FC010FC7-28B7-4AF0-8782-3D8D54639A3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,12 +10,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1E6766D9-467F-417C-B5DA-FD3B6EC8E238}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1E6766D9-467F-417C-B5DA-FD3B6EC8E238}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1E6766D9-467F-417C-B5DA-FD3B6EC8E238}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{1E6766D9-467F-417C-B5DA-FD3B6EC8E238}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1E6766D9-467F-417C-B5DA-FD3B6EC8E238}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1E6766D9-467F-417C-B5DA-FD3B6EC8E238}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{FC010FC7-28B7-4AF0-8782-3D8D54639A3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC010FC7-28B7-4AF0-8782-3D8D54639A3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC010FC7-28B7-4AF0-8782-3D8D54639A3C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FC010FC7-28B7-4AF0-8782-3D8D54639A3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC010FC7-28B7-4AF0-8782-3D8D54639A3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC010FC7-28B7-4AF0-8782-3D8D54639A3C}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

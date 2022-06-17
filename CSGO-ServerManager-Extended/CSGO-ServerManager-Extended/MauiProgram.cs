@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.WebView.Maui;
-using CSGO_ServerManager_Extended.Data;
+using MudBlazor.Services;
 
 namespace CSGO_ServerManager_Extended;
 
@@ -16,11 +16,12 @@ public static class MauiProgram
 			});
 
 		builder.Services.AddMauiBlazorWebView();
+
 		#if DEBUG
-		builder.Services.AddBlazorWebViewDeveloperTools();
-#endif
-		
-		builder.Services.AddSingleton<WeatherForecastService>();
+			builder.Services.AddBlazorWebViewDeveloperTools();
+		#endif
+
+        builder.Services.AddMudServices();
 
 		return builder.Build();
 	}

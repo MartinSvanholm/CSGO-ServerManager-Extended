@@ -1,0 +1,23 @@
+﻿@page "/servers"
+
+<MudText Typo="Typo.h3">Your servers</MudText>
+
+<MudTable Items="@csgoServers" Hover="true" Loading="@_loading" LoadingProgressColor="Color.Info" Breakpoint="Breakpoint.None">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private MudTable<Element> mudTable;
+    private List<ICsgoServer> csgoServers = new();
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //Load CSGO servers
+    }
+}
