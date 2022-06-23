@@ -1,23 +1,43 @@
 ﻿@page "/servers"
+@inject ICsgoServerService CsgoServerService
+@inject ISnackbar Snackbar
+@inject NavigationManager navigation
 
-<MudText Typo="Typo.h3">Your servers</MudText>
-
-<MudTable Items="@csgoServers" Hover="true" Loading="@_loading" LoadingProgressColor="Color.Info" Breakpoint="Breakpoint.None">
+<MudTable Items="@csgoServers" Hover="true" Loading="@_loading" OnRowClick="RowClickEvent" T="DatHostServer" RowStyle="cursor: pointer;" LoadingProgressColor="Color.Info" Striped="true" Elevation="4">
     <HeaderContent>
         <MudTh>Name</MudTh>
+        <MudTh>Connection Ip</MudTh>
+        <MudTh>Status</MudTh>
+        <MudTh>Players online</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Connection Ip" HideSmall="true">@context.GetConnectionIp()</MudTd>
+        <MudTd DataLabel="Status">@context.GetStatus()</MudTd>
+        <MudTd DataLabel="Players online">@context.PlayersOnline</MudTd>
     </RowTemplate>
 </MudTable>
 
 @code {
-    private MudTable<Element> mudTable;
-    private List<ICsgoServer> csgoServers = new();
+    private List<DatHostServer> csgoServers = new();
     private bool _loading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        //Load CSGO servers
+        try
+        {
+            csgoServers = await CsgoServerService.GetDatHostServers();
+            _loading = false;
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add(e.Message, Severity.Warning);
+        }
+    }
+
+    private void RowClickEvent(TableRowClickEventArgs<DatHostServer> args)
+    {
+        CsgoServerService.SelectedServerforNavigation = args.Item;
+        navigation.NavigateTo("/server", true);
     }
 }

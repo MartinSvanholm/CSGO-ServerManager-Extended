@@ -50,7 +50,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CsgoServerInterface" Version="1.0.0" />
+	  <PackageReference Include="CsgoServerInterface" Version="1.2.0" />
 	  <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
 	  <PackageReference Include="MudBlazor" Version="6.0.10" />
 	</ItemGroup>
