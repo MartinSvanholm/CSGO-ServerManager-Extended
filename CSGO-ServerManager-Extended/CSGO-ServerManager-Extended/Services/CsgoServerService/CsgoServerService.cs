@@ -1,5 +1,7 @@
-﻿using CsgoServerInterface.CsgoServer;
+﻿using CSGO_ServerManager_Extended.Pages;
+using CsgoServerInterface.CsgoServer;
 using CsgoServerInterface.Exceptions;
+using MudBlazor;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,6 +40,22 @@ public class CsgoServerService : ICsgoServerService
 			}
 
 			return datHosts;
+		}
+		else
+		{
+			throw new HttpRequestException(responseMessage.ReasonPhrase, null, responseMessage.StatusCode);
+		}
+	}
+
+	public async Task<DatHostServer> GetDatHostServer(string id)
+	{
+		string uri = _httpClient.BaseAddress.ToString() + $"/api/0.1/game-servers/{id}";
+
+		using HttpResponseMessage responseMessage = await _httpClient.GetAsync(uri);
+
+		if (responseMessage.IsSuccessStatusCode)
+		{
+			return await responseMessage.Content.ReadAsAsync<DatHostServer>();
 		}
 		else
 		{

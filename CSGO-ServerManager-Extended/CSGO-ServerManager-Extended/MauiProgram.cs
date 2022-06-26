@@ -1,5 +1,6 @@
 ﻿using CSGO_ServerManager_Extended.Services.CsgoServerService;
 using Microsoft.AspNetCore.Components.WebView.Maui;
+using MudBlazor;
 using MudBlazor.Services;
 using System.Net.Http.Headers;
 using System.Text;
@@ -25,8 +26,19 @@ public static class MauiProgram
 		#endif
 
 		builder.Services.AddScoped(sp => InitializeClient());
-        builder.Services.AddMudServices();
-		builder.Services.AddSingleton<ICsgoServerService, CsgoServerService>();
+        builder.Services.AddMudServices(config =>
+        {
+            config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+            config.SnackbarConfiguration.PreventDuplicates = false;
+            config.SnackbarConfiguration.NewestOnTop = false;
+            config.SnackbarConfiguration.ShowCloseIcon = true;
+            config.SnackbarConfiguration.VisibleStateDuration = 5000;
+            config.SnackbarConfiguration.HideTransitionDuration = 500;
+            config.SnackbarConfiguration.ShowTransitionDuration = 500;
+            config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+        });
+        builder.Services.AddSingleton<ICsgoServerService, CsgoServerService>();
 
 		return builder.Build();
 	}

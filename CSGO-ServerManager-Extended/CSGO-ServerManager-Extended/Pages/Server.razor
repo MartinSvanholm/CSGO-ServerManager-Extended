@@ -1,21 +1,24 @@
 ﻿@page "/server"
 @using MudBlazor.Services
+@using System.Timers
 @inject ICsgoServerService CsgoServerService
+@inject HttpClient _client
+@inject ISnackbar _snackBar
 @implements IAsyncDisposable
+@implements IDisposable
 
 <MudBreakpointProvider>
-    <MudGrid Justify="Justify.FlexStart">
+    <MudGrid Justify="Justify.FlexEnd">
 
         <MudItem xs="9">
             <MudText Typo="Typo.h6">@server.Name</MudText>
         </MudItem>
 
         <MudItem xs="3" Class="d-flex justify-end">
-            <MudStack Row="true" Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
-                <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert=true>
-                    <MudText Typo="Typo.subtitle1">Server: </MudText>
-                </MudHidden>
-                <MudSwitch @bind-Checked="@server.On" Color="Color.Primary" />
+            <MudStack Row="true" Spacing="0" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                <MudText>Server is @server.GetStatus()</MudText>
+                <MudToggleIconButton @bind-Toggled="server.On" Icon="@Icons.Filled.NotStarted" Color="Color.Success" Size="Size.Large" ToggledIcon="@Icons.Filled.Stop" ToggledColor="Color.Error" ToggledSize="Size.Large"
+                                     @onclick="@(async () => await StartStopServer())"/>
             </MudStack>
         </MudItem>
 
@@ -40,16 +43,16 @@
 
         <MudItem xs="12" sm="3">
             <MudCard>
-                <MudList Clickable="true" @bind-SelectedItem="selectedItem">
+                <MudList Disabled="@(!server.On)" Clickable="true" @bind-SelectedItem="selectedItem">
                     <MudListItem @bind-Expanded="expandList" Text="Change map">
                         <NestedList>
-                            <MudListItem Text="Inferno" @onclick="() => ChangeMap()"/>
-                            <MudListItem Text="Overpass" />
-                            <MudListItem Text="Nuke" />
-                            <MudListItem Text="Ancient" />
-                            <MudListItem Text="Dust2" />
-                            <MudListItem Text="Vertigo" />
-                            <MudListItem Text="Mirage" />
+                            <MudListItem Text="Inferno" @onclick="@(async () => await ChangeMap("inferno"))" />
+                            <MudListItem Text="Overpass" @onclick="@(async () => await ChangeMap("overpass"))" />
+                            <MudListItem Text="Nuke" @onclick="@(async () => await ChangeMap("nuke"))" />
+                            <MudListItem Text="Ancient" @onclick="@(async () => await ChangeMap("ancient"))" />
+                            <MudListItem Text="Dust2" @onclick="@(async () => await ChangeMap("dust2"))"/>
+                            <MudListItem Text="Vertigo" @onclick="@(async () => await ChangeMap("vertigo"))"/>
+                            <MudListItem Text="Mirage" @onclick="@(async () => await ChangeMap("mirage"))"/>
                         </NestedList>
                     </MudListItem>
                 </MudList>
@@ -63,15 +66,23 @@
             </MudStack>
         </MudItem>
 
-        <MudItem xs="12" sm="6">
-            <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                <MudButton>Start match</MudButton>
-                <MudButton>Start match with overtime</MudButton>
+        <MudItem xs="12" sm="4">
+            <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+                <MudButton Disabled="@(!server.On)" @onclick="@(async () => await StartMatch(false))">Start match</MudButton>
+                <MudButton Disabled="@(!server.On)" @onclick="@(async () => await StartMatch(true))">Start match with overtime</MudButton>
             </MudButtonGroup>
         </MudItem>
 
-        <MudItem xs="12" sm="6">
-            <MudButton FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled">Pause match</MudButton>
+        <MudItem xs="12" sm="4" Class="d-flex justify-center">
+            <MudButton Disabled="@(!server.On)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await PauseUnpauseMatch())">Pause match</MudButton>
+        </MudItem>
+
+        <MudItem xs="12" sm="4"Class="d-flex justify-end">
+            <MudButton Disabled="@(!server.On)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartKnife())">Start knife</MudButton>
+        </MudItem>
+
+        <MudItem xs="12" sm="4" Class="d-flex justify-end">
+            <MudButton Disabled="@(!server.On)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SwitchSides())">Switch sides</MudButton>
         </MudItem>
 
     </MudGrid>
@@ -82,14 +93,21 @@
     IBreakpointService BreakpointListener { get; set; }
     private AbstractCsgoServer server { get; set; }
 
-    private Guid _subscriptionId;
+    Timer serverUpdateTimer = new(10000);
+    Guid _subscriptionId;
     MudListItem selectedItem;
     bool useFullSize = false;
     bool expandList = false;
+    bool matchpaused = false;
+    string pausedBtnText = "Pause match";
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         server = CsgoServerService.SelectedServerforNavigation;
+
+        serverUpdateTimer.Elapsed += async ( sender, e ) => await UpdateServer();
+        serverUpdateTimer.AutoReset = true;
+        serverUpdateTimer.Enabled = true;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -122,10 +140,138 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    public async ValueTask DisposeAsync() => await BreakpointListener.Unsubscribe(_subscriptionId);
+    public async ValueTask DisposeAsync() 
+    {
+        await BreakpointListener.DisposeAsync();
+    }
 
-    private void ChangeMap()
+    public void Dispose()
+    {
+        serverUpdateTimer.Stop();
+        serverUpdateTimer.Dispose();
+    }
+
+    private async Task UpdateServer()
+    {
+        server = await CsgoServerService.GetDatHostServer(server.Id);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task StartStopServer()
+    {
+        if (!server.On)
+        {
+            try
+            {
+                _snackBar.Add("Starting server", Severity.Info);
+                server = await server.StartServer(_client);
+                server.Booting = true;
+                server.On = true;
+            }
+            catch (Exception e)
+            {
+                _snackBar.Add(e.Message, Severity.Error);
+            }
+        }
+        else
+        {
+            try
+            {
+                _snackBar.Add("Stopping server", Severity.Info);
+                server = await server.StopServer(_client);
+                server.On = false;
+                server.Booting = false;
+            }
+            catch (Exception e)
+            {
+                _snackBar.Add(e.Message, Severity.Error);
+            }
+        }
+        StateHasChanged();
+    }
+
+    private async Task ChangeMap(string map)
     {
         expandList = false;
+        try
+        {
+            server = await server.RunCommand(_client, $"map de_{map}");
+            _snackBar.Add($"Changing map to {map}", Severity.Info);
+        }
+        catch (Exception e)
+        {
+            _snackBar.Add(e.Message, Severity.Error);
+        }
+    }
+
+    private async Task StartMatch(bool withOvertime)
+    {
+        try
+        {
+            server = await server.StartQuickmatch(_client, withOvertime);
+            _snackBar.Add("Starting match", Severity.Info);
+        }
+        catch (Exception e)
+        {
+            _snackBar.Add(e.Message, Severity.Error);
+        }
+    }
+
+    private async Task PauseUnpauseMatch()
+    {
+        if (!matchpaused)
+        {
+            try
+            {
+                server = await server.RunCommand(_client, "mp_pause_match");
+                pausedBtnText = "Unpause match";
+                matchpaused = true;
+                _snackBar.Add("Match will be paused at the next freezetime");
+            }
+            catch (Exception e)
+            {
+                _snackBar.Add(e.Message, Severity.Error);
+            }
+        }
+        else
+        {
+            try
+            {
+                server = await server.RunCommand(_client, "mp_unpause_match");
+                pausedBtnText = "Pause match";
+                matchpaused = false;
+                _snackBar.Add("Match unpaused");
+            }
+            catch (Exception e)
+            {
+                _snackBar.Add(e.Message, Severity.Error);
+            }
+        }
+    }
+
+    private async Task StartKnife()
+    {
+        try
+        {
+            server = await server.RunCommand(_client, "exec knife");
+            _snackBar.Add("Starting knife round", Severity.Info);
+        }
+        catch (Exception e)
+        {
+            _snackBar.Add(e.Message, Severity.Error);
+        }
+    }
+
+    private async Task SwitchSides()
+    {
+        try
+        {
+            server = await server.RunCommand(_client, "mp_swapteams");
+            _snackBar.Add("Switching sides", Severity.Info);
+        }
+        catch (Exception e)
+        {
+            _snackBar.Add(e.Message, Severity.Error);
+        }
     }
 }
