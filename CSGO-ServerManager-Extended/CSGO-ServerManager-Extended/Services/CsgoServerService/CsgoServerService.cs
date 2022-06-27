@@ -17,11 +17,12 @@ public class CsgoServerService : ICsgoServerService
 	public CsgoServerService(HttpClient httpClient)
 	{
 		_httpClient = httpClient;
+		string cfg = GetCfg("pracc.txt");
 	}
 
 	private HttpClient _httpClient;
 
-	public AbstractCsgoServer SelectedServerforNavigation { get; set; }
+	public ICsgoServer SelectedServerforNavigation { get; set; }
 
 	public async Task<List<DatHostServer>> GetDatHostServers()
 	{
@@ -61,5 +62,13 @@ public class CsgoServerService : ICsgoServerService
 		{
 			throw new HttpRequestException(responseMessage.ReasonPhrase, null, responseMessage.StatusCode);
 		}
+	}
+
+	public string GetCfg(string fileName)
+	{
+		string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources\Cfg\", fileName);
+
+		string[] commands = File.ReadAllLines(path);
+		return string.Join("; ", commands);
 	}
 }

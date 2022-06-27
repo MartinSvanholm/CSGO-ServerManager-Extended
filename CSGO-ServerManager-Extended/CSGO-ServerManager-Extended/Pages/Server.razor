@@ -68,21 +68,32 @@
 
         <MudItem xs="12" sm="4">
             <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-                <MudButton Disabled="@(!server.On)" @onclick="@(async () => await StartMatch(false))">Start match</MudButton>
-                <MudButton Disabled="@(!server.On)" @onclick="@(async () => await StartMatch(true))">Start match with overtime</MudButton>
+                <MudButton Disabled="@(!server.On)" @onclick="@(async () => await StartMatch("esportliga_start.txt"))">Start match</MudButton>
+                <MudButton Disabled="@(!server.On)" @onclick="@(async () => await StartMatch("esportliga_start_med_overtime.txt"))">Start match with overtime</MudButton>
             </MudButtonGroup>
         </MudItem>
 
         <MudItem xs="12" sm="4" Class="d-flex justify-center">
-            <MudButton Disabled="@(!server.On)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await PauseUnpauseMatch())">Pause match</MudButton>
+            <MudButton Disabled="@(!server.On)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await PauseUnpauseMatch())">@pausedBtnText</MudButton>
         </MudItem>
 
         <MudItem xs="12" sm="4"Class="d-flex justify-end">
             <MudButton Disabled="@(!server.On)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartKnife())">Start knife</MudButton>
         </MudItem>
 
-        <MudItem xs="12" sm="4" Class="d-flex justify-end">
+        <MudItem xs="12" Class="d-flex justify-end">
             <MudButton Disabled="@(!server.On)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SwitchSides())">Switch sides</MudButton>
+        </MudItem>
+
+        <MudItem xs="12">
+            <MudStack>
+                <MudText Typo="Typo.subtitle1" Style="font-weight: bold">Other commands</MudText>
+                <MudDivider />
+            </MudStack>
+        </MudItem>
+
+        <MudItem xs="12" Class="d-flex justify-start">
+            <MudButton Disabled="@(!server.On)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartNadePractice())">Switch sides</MudButton>
         </MudItem>
 
     </MudGrid>
@@ -91,7 +102,7 @@
 @code {
     [Inject] 
     IBreakpointService BreakpointListener { get; set; }
-    private AbstractCsgoServer server { get; set; }
+    private ICsgoServer server { get; set; }
 
     Timer serverUpdateTimer = new(10000);
     Guid _subscriptionId;
@@ -204,11 +215,11 @@
         }
     }
 
-    private async Task StartMatch(bool withOvertime)
+    private async Task StartMatch(string cfg)
     {
         try
         {
-            server = await server.StartQuickmatch(_client, withOvertime);
+            server = await server.RunCommand(_client, CsgoServerService.GetCfg($"{cfg}.txt"));
             _snackBar.Add("Starting match", Severity.Info);
         }
         catch (Exception e)
@@ -268,6 +279,19 @@
         {
             server = await server.RunCommand(_client, "mp_swapteams");
             _snackBar.Add("Switching sides", Severity.Info);
+        }
+        catch (Exception e)
+        {
+            _snackBar.Add(e.Message, Severity.Error);
+        }
+    }
+
+    private async Task StartNadePractice()
+    {
+        try
+        {
+            server = await server.StartNadePractice(_client, CsgoServerService.GetCfg("pracc.txt"));
+            _snackBar.Add("Starting nade practice", Severity.Info);
         }
         catch (Exception e)
         {
