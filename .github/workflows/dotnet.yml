@@ -20,6 +20,6 @@ jobs:
     - name: Install .NET MAUI
       run: dotnet workload install maui
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore CSGO-ServerManager-Extended/CSGO-ServerManager-Extended/CSGO-ServerManager-Extended.csproj
     - name: Build
       run: dotnet build CSGO-ServerManager-Extended/CSGO-ServerManager-Extended/CSGO-ServerManager-Extended.csproj -c Release -f net6.0-android --no-restore
