@@ -68,8 +68,8 @@
 
         <MudItem xs="12" sm="4">
             <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-                <MudButton Disabled="@(!server.On)" @onclick="@(async () => await StartMatch("esportliga_start.txt"))">Start match</MudButton>
-                <MudButton Disabled="@(!server.On)" @onclick="@(async () => await StartMatch("esportliga_start_med_overtime.txt"))">Start match with overtime</MudButton>
+                <MudButton Disabled="@(!server.On)" @onclick="@(async () => await StartMatch(false))">Start match</MudButton>
+                <MudButton Disabled="@(!server.On)" @onclick="@(async () => await StartMatch(true))">Start match with overtime</MudButton>
             </MudButtonGroup>
         </MudItem>
 
@@ -215,11 +215,11 @@
         }
     }
 
-    private async Task StartMatch(string cfg)
+    private async Task StartMatch(bool overtime)
     {
         try
         {
-            server = await server.RunCommand(_client, CsgoServerService.GetCfg($"{cfg}.txt"));
+            server = await server.StartQuickmatch(_client, null, overtime);
             _snackBar.Add("Starting match", Severity.Info);
         }
         catch (Exception e)
@@ -264,7 +264,7 @@
     {
         try
         {
-            server = await server.RunCommand(_client, "exec knife");
+            server = await server.StartKnife(_client, null);
             _snackBar.Add("Starting knife round", Severity.Info);
         }
         catch (Exception e)
@@ -290,7 +290,7 @@
     {
         try
         {
-            server = await server.StartNadePractice(_client, CsgoServerService.GetCfg("pracc.txt"));
+            server = await server.StartNadePractice(_client, null);
             _snackBar.Add("Starting nade practice", Severity.Info);
         }
         catch (Exception e)
