@@ -17,7 +17,6 @@ public class CsgoServerService : ICsgoServerService
 	public CsgoServerService(HttpClient httpClient)
 	{
 		_httpClient = httpClient;
-		string cfg = GetCfg("pracc.txt");
 	}
 
 	private HttpClient _httpClient;
