@@ -30,7 +30,7 @@
             <MudStack>
                 <MudText>Connection Ip:</MudText>
                 <MudDivider />
-                <MudText>connect rodrik.dathost.net:28145; password hvk1212</MudText>
+                <MudText>@server.GetConnectionIp()</MudText>
             </MudStack>
         </MudItem>
 
@@ -114,7 +114,7 @@
 
     protected override void OnInitialized()
     {
-        server = CsgoServerService.SelectedServerforNavigation;
+        server = CsgoServerService.Server;
 
         serverUpdateTimer.Elapsed += async ( sender, e ) => await UpdateServer();
         serverUpdateTimer.AutoReset = true;
@@ -170,34 +170,16 @@
 
     private async Task StartStopServer()
     {
-        if (!server.On)
+        try
         {
-            try
-            {
-                _snackBar.Add("Starting server", Severity.Info);
-                server = await server.StartServer(_client);
-                server.Booting = true;
-                server.On = true;
-            }
-            catch (Exception e)
-            {
-                _snackBar.Add(e.Message, Severity.Error);
-            }
+            server = await CsgoServerService.StartStopServer();
+            _snackBar.Add("Starting server", Severity.Info);
         }
-        else
+        catch (Exception e)
         {
-            try
-            {
-                _snackBar.Add("Stopping server", Severity.Info);
-                server = await server.StopServer(_client);
-                server.On = false;
-                server.Booting = false;
-            }
-            catch (Exception e)
-            {
-                _snackBar.Add(e.Message, Severity.Error);
-            }
+            _snackBar.Add(e.Message, Severity.Error);
         }
+
         StateHasChanged();
     }
 
@@ -206,8 +188,8 @@
         expandList = false;
         try
         {
-            server = await server.RunCommand(_client, $"map de_{map}");
-            _snackBar.Add($"Changing map to {map}", Severity.Info);
+            server = await CsgoServerService.ChangeMap(map);
+            _snackBar.Add($"Switching to {map}");
         }
         catch (Exception e)
         {
@@ -219,7 +201,7 @@
     {
         try
         {
-            server = await server.StartQuickmatch(_client, null, overtime);
+            server = await CsgoServerService.StartMatch(overtime, null);
             _snackBar.Add("Starting match", Severity.Info);
         }
         catch (Exception e)
@@ -230,33 +212,25 @@
 
     private async Task PauseUnpauseMatch()
     {
-        if (!matchpaused)
+        try
         {
-            try
+            server = await CsgoServerService.PauseUnpauseMatch(matchpaused);
+            matchpaused = !matchpaused;
+
+            if (matchpaused)
             {
-                server = await server.RunCommand(_client, "mp_pause_match");
                 pausedBtnText = "Unpause match";
-                matchpaused = true;
-                _snackBar.Add("Match will be paused at the next freezetime");
+                _snackBar.Add("Match will be paused during next freezetime", Severity.Info);
             }
-            catch (Exception e)
+            else
             {
-                _snackBar.Add(e.Message, Severity.Error);
+                pausedBtnText = "Pause match";
+                _snackBar.Add("Match will be unpaused", Severity.Info);
             }
         }
-        else
+        catch (Exception e)
         {
-            try
-            {
-                server = await server.RunCommand(_client, "mp_unpause_match");
-                pausedBtnText = "Pause match";
-                matchpaused = false;
-                _snackBar.Add("Match unpaused");
-            }
-            catch (Exception e)
-            {
-                _snackBar.Add(e.Message, Severity.Error);
-            }
+            _snackBar.Add(e.Message);
         }
     }
 
