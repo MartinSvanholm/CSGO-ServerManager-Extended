@@ -12,7 +12,6 @@ public class CsgoServerService : ICsgoServerService
     private HttpClient _httpClient;
 
     public ICsgoServer Server { get; set; }
-    private bool _isMatchPaused { get; set; }
 
     public async Task<List<DatHostServer>> GetDatHostServers()
     {

@@ -201,7 +201,7 @@
     {
         try
         {
-            server = await CsgoServerService.StartMatch(overtime, null);
+            server = await CsgoServerService.StartMatch(overtime);
             _snackBar.Add("Starting match", Severity.Info);
         }
         catch (Exception e)
@@ -238,7 +238,7 @@
     {
         try
         {
-            server = await server.StartKnife(_client, null);
+            server = await CsgoServerService.StartKnife();
             _snackBar.Add("Starting knife round", Severity.Info);
         }
         catch (Exception e)
@@ -251,7 +251,7 @@
     {
         try
         {
-            server = await server.RunCommand(_client, "mp_swapteams");
+            server = await CsgoServerService.RunCommand("mp_swapteams");
             _snackBar.Add("Switching sides", Severity.Info);
         }
         catch (Exception e)
@@ -264,7 +264,7 @@
     {
         try
         {
-            server = await server.StartNadePractice(_client, null);
+            server = await CsgoServerService.StartNadePractice();
             _snackBar.Add("Starting nade practice", Severity.Info);
         }
         catch (Exception e)
