@@ -7,6 +7,8 @@ public class CsgoServerService : ICsgoServerService
     public CsgoServerService(HttpClient httpClient)
     {
         _httpClient = httpClient;
+        string cfg = GetCfg("pracc.txt");
+        Console.WriteLine("");
     }
 
     private HttpClient _httpClient;
@@ -173,16 +175,25 @@ public class CsgoServerService : ICsgoServerService
 
     public string GetCfg(string fileName)
     {
-        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Resources\Cfg\", fileName);
+        Task<string> task = LoadMauiAsset(fileName);
+        task.Wait();
 
-        string[] commands = File.ReadAllLines(path);
+        string[] commands = task.Result.Split("\n");
 
-        for (int i = 0; i < commands.Length; i++)
+        for(int i = 0; i < commands.Length; i++)
         {
-            commands[i] = commands[i].Trim();
-            commands[i].StartsWith("//");
+            commands[i] = commands[i].Replace("\r", "");
         }
 
-        return string.Join("; ", commands);
+        string result = String.Join("; ", commands);
+        return result += ";";
+    }
+
+    async Task<string> LoadMauiAsset(string fileName)
+    {
+        using Stream fileStream = FileSystem.OpenAppPackageFileAsync(fileName).Result;
+        using StreamReader reader = new StreamReader(fileStream);
+
+        return await reader.ReadToEndAsync();
     }
 }

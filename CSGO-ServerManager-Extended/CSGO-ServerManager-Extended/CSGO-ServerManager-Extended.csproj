@@ -56,16 +56,25 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Resources\Cfg\esportliga_start.txt">
+	  <MauiAsset Update="Resources\Raw\AboutAssets.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </MauiAsset>
+	  <MauiAsset Update="Resources\Raw\pracc.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </MauiAsset>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Resources\Raw\Cfg\esportliga_start.txt">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="Resources\Cfg\esportliga_start_med_overtime.txt">
+	  <None Update="Resources\Raw\Cfg\esportliga_start_med_overtime.txt">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="Resources\Cfg\knife.txt">
+	  <None Update="Resources\Raw\Cfg\knife.txt">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="Resources\Cfg\pracc.txt">
+	  <None Update="Resources\Raw\pracc.txt">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
