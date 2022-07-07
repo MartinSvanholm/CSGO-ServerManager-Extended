@@ -1,4 +1,5 @@
-﻿using CsgoServerInterface.CsgoServer;
+﻿using CSGO_ServerManager_Extended.Helper;
+using CsgoServerInterface.CsgoServer;
 
 namespace CSGO_ServerManager_Extended.Services.CsgoServerService;
 
@@ -7,8 +8,6 @@ public class CsgoServerService : ICsgoServerService
     public CsgoServerService(HttpClient httpClient)
     {
         _httpClient = httpClient;
-        string cfg = GetCfg("pracc.txt");
-        Console.WriteLine("");
     }
 
     private HttpClient _httpClient;
@@ -111,9 +110,9 @@ public class CsgoServerService : ICsgoServerService
             if (cfg == null)
             {
                 if (!withOvertime)
-                    return await Server.RunCommand(_httpClient, GetCfg("esportliga_start.txt"));
+                    return await Server.RunCommand(_httpClient, CsgoServerHelper.GetCfg("Cfg/esportliga_start.cfg"));
                 else
-                    return await Server.RunCommand(_httpClient, GetCfg("esportliga_start_med_overtime.txt"));
+                    return await Server.RunCommand(_httpClient, CsgoServerHelper.GetCfg("Cfg/esportliga_start_med_overtime.cfg"));
             }
             else
             {
@@ -148,7 +147,7 @@ public class CsgoServerService : ICsgoServerService
         try
         {
             if (cfg == null)
-                return await Server.RunCommand(_httpClient, GetCfg("knife.txt"));
+                return await Server.RunCommand(_httpClient, CsgoServerHelper.GetCfg("Cfg/knife.cfg"));
             else
                 return await Server.RunCommand(_httpClient, cfg);
         }
@@ -163,7 +162,7 @@ public class CsgoServerService : ICsgoServerService
         try
         {
             if (cfg == null)
-                return await Server.RunCommand(_httpClient, GetCfg("pracc.txt"));
+                return await Server.RunCommand(_httpClient, CsgoServerHelper.GetCfg("Cfg/train.cfg"));
             else
                 return await Server.RunCommand(_httpClient, cfg);
         }
@@ -171,29 +170,5 @@ public class CsgoServerService : ICsgoServerService
         {
             throw;
         }
-    }
-
-    public string GetCfg(string fileName)
-    {
-        Task<string> task = LoadMauiAsset(fileName);
-        task.Wait();
-
-        string[] commands = task.Result.Split("\n");
-
-        for(int i = 0; i < commands.Length; i++)
-        {
-            commands[i] = commands[i].Replace("\r", "");
-        }
-
-        string result = String.Join("; ", commands);
-        return result += ";";
-    }
-
-    async Task<string> LoadMauiAsset(string fileName)
-    {
-        using Stream fileStream = FileSystem.OpenAppPackageFileAsync(fileName).Result;
-        using StreamReader reader = new StreamReader(fileStream);
-
-        return await reader.ReadToEndAsync();
     }
 }

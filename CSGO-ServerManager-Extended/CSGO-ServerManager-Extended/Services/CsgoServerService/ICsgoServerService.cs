@@ -7,7 +7,6 @@ namespace CSGO_ServerManager_Extended.Services.CsgoServerService
         ICsgoServer Server { get; set; }
 
         Task<ICsgoServer> ChangeMap(string map);
-        string GetCfg(string fileName);
         Task<DatHostServer> GetDatHostServer(string id);
         Task<List<DatHostServer>> GetDatHostServers();
         Task<ICsgoServer> PauseUnpauseMatch(bool isMatchPaused);
