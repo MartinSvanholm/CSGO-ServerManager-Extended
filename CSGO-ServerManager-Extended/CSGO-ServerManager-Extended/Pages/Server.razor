@@ -8,7 +8,7 @@
 @implements IDisposable
 
 <MudBreakpointProvider>
-    <MudGrid Justify="Justify.FlexEnd">
+    <MudGrid Justify="Justify.SpaceBetween">
 
         <MudItem xs="9">
             <MudText Typo="Typo.h6">@server.Name</MudText>
@@ -17,20 +17,22 @@
         <MudItem xs="3" Class="d-flex justify-end">
             <MudStack Row="true" Spacing="0" Justify="Justify.Center" AlignItems="AlignItems.Center">
                 <MudText>Server is @server.GetStatus()</MudText>
-                <MudToggleIconButton @bind-Toggled="server.On" Icon="@Icons.Filled.NotStarted" Color="Color.Success" Size="Size.Large" ToggledIcon="@Icons.Filled.Stop" ToggledColor="Color.Error" ToggledSize="Size.Large"
-                                     @onclick="@(async () => await StartStopServer())"/>
+                @if (server is DatHostServer) {
+                    <MudToggleIconButton @bind-Toggled="server.On" Icon="@Icons.Filled.NotStarted" Color="Color.Success" Size="Size.Large" ToggledIcon="@Icons.Filled.Stop" ToggledColor="Color.Error" ToggledSize="Size.Large"
+                        @onclick="@(async () => await StartStopServer())"/>
+                }
             </MudStack>
         </MudItem>
 
-        <MudItem xs="12" sm="9">
+        <MudItem xs="12" sm="7">
             <MudText>This is your own description of the server</MudText>
         </MudItem>
 
-        <MudItem xs="12" sm="3">
+        <MudItem xs="12" sm="5">
             <MudStack>
                 <MudText>Connection Ip:</MudText>
                 <MudDivider />
-                <MudText>connect rodrik.dathost.net:28145; password hvk1212</MudText>
+                <MudText>@server.GetConnectionIp()</MudText>
             </MudStack>
         </MudItem>
 
@@ -41,7 +43,7 @@
             </MudStack>
         </MudItem>
 
-        <MudItem xs="12" sm="3">
+        <MudItem xs="12" sm="5" md="3">
             <MudCard>
                 <MudList Disabled="@(!server.On)" Clickable="true" @bind-SelectedItem="selectedItem">
                     <MudListItem @bind-Expanded="expandList" Text="Change map">
@@ -57,6 +59,13 @@
                     </MudListItem>
                 </MudList>
             </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" sm="7" md="6">
+            <MudStack Row="true" Spacing="10" AlignItems="AlignItems.Center">
+                <MudTextField Disabled="@(!server.On)" @bind-Value="@customCommand" Immediate="true" Label="Send custom command" />
+                <MudButton Disabled="@(!server.On)" Size="Size.Medium" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SendCustomCommand())">Send command</MudButton>
+            </MudStack>
         </MudItem>
 
         <MudItem xs="12">
@@ -111,10 +120,11 @@
     bool expandList = false;
     bool matchpaused = false;
     string pausedBtnText = "Pause match";
+    string customCommand = "";
 
     protected override void OnInitialized()
     {
-        server = CsgoServerService.SelectedServerforNavigation;
+        server = CsgoServerService.Server;
 
         serverUpdateTimer.Elapsed += async ( sender, e ) => await UpdateServer();
         serverUpdateTimer.AutoReset = true;
@@ -170,34 +180,19 @@
 
     private async Task StartStopServer()
     {
-        if (!server.On)
+        try
         {
-            try
-            {
+            server = await CsgoServerService.StartStopServer(server);
+            if(server.Booting)
                 _snackBar.Add("Starting server", Severity.Info);
-                server = await server.StartServer(_client);
-                server.Booting = true;
-                server.On = true;
-            }
-            catch (Exception e)
-            {
-                _snackBar.Add(e.Message, Severity.Error);
-            }
-        }
-        else
-        {
-            try
-            {
+            else
                 _snackBar.Add("Stopping server", Severity.Info);
-                server = await server.StopServer(_client);
-                server.On = false;
-                server.Booting = false;
-            }
-            catch (Exception e)
-            {
-                _snackBar.Add(e.Message, Severity.Error);
-            }
         }
+        catch (Exception e)
+        {
+            _snackBar.Add(e.Message, Severity.Error);
+        }
+
         StateHasChanged();
     }
 
@@ -206,8 +201,8 @@
         expandList = false;
         try
         {
-            server = await server.RunCommand(_client, $"map de_{map}");
-            _snackBar.Add($"Changing map to {map}", Severity.Info);
+            server = await CsgoServerService.ChangeMap(map);
+            _snackBar.Add($"Switching to {map}");
         }
         catch (Exception e)
         {
@@ -219,7 +214,7 @@
     {
         try
         {
-            server = await server.StartQuickmatch(_client, null, overtime);
+            server = await CsgoServerService.StartMatch(overtime);
             _snackBar.Add("Starting match", Severity.Info);
         }
         catch (Exception e)
@@ -230,33 +225,25 @@
 
     private async Task PauseUnpauseMatch()
     {
-        if (!matchpaused)
+        try
         {
-            try
+            server = await CsgoServerService.PauseUnpauseMatch(matchpaused);
+            matchpaused = !matchpaused;
+
+            if (matchpaused)
             {
-                server = await server.RunCommand(_client, "mp_pause_match");
                 pausedBtnText = "Unpause match";
-                matchpaused = true;
-                _snackBar.Add("Match will be paused at the next freezetime");
+                _snackBar.Add("Match will be paused during next freezetime", Severity.Info);
             }
-            catch (Exception e)
+            else
             {
-                _snackBar.Add(e.Message, Severity.Error);
+                pausedBtnText = "Pause match";
+                _snackBar.Add("Match will be unpaused", Severity.Info);
             }
         }
-        else
+        catch (Exception e)
         {
-            try
-            {
-                server = await server.RunCommand(_client, "mp_unpause_match");
-                pausedBtnText = "Pause match";
-                matchpaused = false;
-                _snackBar.Add("Match unpaused");
-            }
-            catch (Exception e)
-            {
-                _snackBar.Add(e.Message, Severity.Error);
-            }
+            _snackBar.Add(e.Message);
         }
     }
 
@@ -264,7 +251,7 @@
     {
         try
         {
-            server = await server.StartKnife(_client, null);
+            server = await CsgoServerService.StartKnife();
             _snackBar.Add("Starting knife round", Severity.Info);
         }
         catch (Exception e)
@@ -277,7 +264,7 @@
     {
         try
         {
-            server = await server.RunCommand(_client, "mp_swapteams");
+            server = await CsgoServerService.RunCommand("mp_swapteams");
             _snackBar.Add("Switching sides", Severity.Info);
         }
         catch (Exception e)
@@ -290,8 +277,21 @@
     {
         try
         {
-            server = await server.StartNadePractice(_client, null);
+            server = await CsgoServerService.StartNadePractice();
             _snackBar.Add("Starting nade practice", Severity.Info);
+        }
+        catch (Exception e)
+        {
+            _snackBar.Add(e.Message, Severity.Error);
+        }
+    }
+
+    private async Task SendCustomCommand()
+    {
+        try
+        {
+            server = await CsgoServerService.RunCommand(customCommand);
+            _snackBar.Add("Running command", Severity.Info);
         }
         catch (Exception e)
         {

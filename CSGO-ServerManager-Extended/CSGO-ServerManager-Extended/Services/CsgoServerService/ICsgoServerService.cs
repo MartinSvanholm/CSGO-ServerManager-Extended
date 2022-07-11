@@ -4,10 +4,16 @@ namespace CSGO_ServerManager_Extended.Services.CsgoServerService
 {
     public interface ICsgoServerService
     {
-        ICsgoServer SelectedServerforNavigation { get; set; }
+        ICsgoServer Server { get; set; }
 
-        string GetCfg(string fileName);
+        Task<ICsgoServer> ChangeMap(string map);
         Task<DatHostServer> GetDatHostServer(string id);
         Task<List<DatHostServer>> GetDatHostServers();
+        Task<ICsgoServer> PauseUnpauseMatch(bool isMatchPaused);
+        Task<ICsgoServer> RunCommand(string command);
+        Task<ICsgoServer> StartKnife(string cfg = null);
+        Task<ICsgoServer> StartMatch(bool withOvertime, string cfg = null);
+        Task<ICsgoServer> StartNadePractice(string cfg = null);
+        Task<ICsgoServer> StartStopServer(ICsgoServer server);
     }
 }

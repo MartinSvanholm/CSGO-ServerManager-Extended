@@ -37,7 +37,7 @@
 
     private void RowClickEvent(TableRowClickEventArgs<ICsgoServer> args)
     {
-        CsgoServerService.SelectedServerforNavigation = args.Item;
+        CsgoServerService.Server = args.Item;
         navigation.NavigateTo("/server", true);
     }
 }

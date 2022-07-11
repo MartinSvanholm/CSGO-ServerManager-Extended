@@ -50,24 +50,34 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CsgoServerInterface" Version="1.3.0" />
 	  <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
 	  <PackageReference Include="MudBlazor" Version="6.0.10" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Resources\Cfg\esportliga_start.txt">
+	  <MauiAsset Update="Resources\Raw\AboutAssets.txt">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Resources\Cfg\esportliga_start_med_overtime.txt">
+	  </MauiAsset>
+	  <MauiAsset Update="Resources\Raw\Cfg\esportliga_start.cfg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Resources\Cfg\knife.txt">
+	  </MauiAsset>
+	  <MauiAsset Update="Resources\Raw\Cfg\esportliga_start_med_overtime.cfg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Resources\Cfg\pracc.txt">
+	  </MauiAsset>
+	  <MauiAsset Update="Resources\Raw\Cfg\knife.cfg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+	  </MauiAsset>
+	  <MauiAsset Update="Resources\Raw\Cfg\train.cfg">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </MauiAsset>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Resources\Raw\Cfg\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\CSGOServerPackage\CsgoServerInterfacePackage\CsgoServerInterface\CsgoServerInterface.csproj" />
 	</ItemGroup>
 
 </Project>
