@@ -1,5 +1,6 @@
 ﻿using CSGO_ServerManager_Extended.Helper;
 using CsgoServerInterface.CsgoServer;
+using System.Net;
 
 namespace CSGO_ServerManager_Extended.Services.CsgoServerService;
 
@@ -54,22 +55,22 @@ public class CsgoServerService : ICsgoServerService
         }
     }
 
-    public async Task<ICsgoServer> StartStopServer()
+    public async Task<ICsgoServer> StartStopServer(ICsgoServer server)
     {
         try
         {
-            if (!Server.On)
+            if (!server.On)
             {
-                Server = await Server.StartServer(_httpClient);
-                Server.Booting = true;
-                return Server;
+                server = await Server.StartServer(_httpClient);
+                server.Booting = true;
+                return server;
             }
             else
             {
-                Server = await Server.StopServer(_httpClient);
-                Server.On = false;
-                Server.Booting = false;
-                return Server;
+                server = await Server.StopServer(_httpClient);
+                server.On = false;
+                server.Booting = false;
+                return server;
             }
         }
         catch (Exception)
@@ -110,9 +111,9 @@ public class CsgoServerService : ICsgoServerService
             if (cfg == null)
             {
                 if (!withOvertime)
-                    return await Server.RunCommand(_httpClient, CsgoServerHelper.GetCfg("Cfg/esportliga_start.cfg"));
+                    return await Server.RunCommand(_httpClient, "exec esportliga_start.cfg");
                 else
-                    return await Server.RunCommand(_httpClient, CsgoServerHelper.GetCfg("Cfg/esportliga_start_med_overtime.cfg"));
+                    return await Server.RunCommand(_httpClient, "exec esportliga_start_med_overtime.cfg");
             }
             else
             {
@@ -147,7 +148,7 @@ public class CsgoServerService : ICsgoServerService
         try
         {
             if (cfg == null)
-                return await Server.RunCommand(_httpClient, CsgoServerHelper.GetCfg("Cfg/knife.cfg"));
+                return await Server.RunCommand(_httpClient, "exec knife.cfg");
             else
                 return await Server.RunCommand(_httpClient, cfg);
         }
@@ -162,7 +163,7 @@ public class CsgoServerService : ICsgoServerService
         try
         {
             if (cfg == null)
-                return await Server.RunCommand(_httpClient, CsgoServerHelper.GetCfg("Cfg/train.cfg"));
+                return await Server.RunCommand(_httpClient, "exec train.cfg");
             else
                 return await Server.RunCommand(_httpClient, cfg);
         }

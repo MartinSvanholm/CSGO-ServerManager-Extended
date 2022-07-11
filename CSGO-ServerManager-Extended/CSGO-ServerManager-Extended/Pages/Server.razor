@@ -182,8 +182,11 @@
     {
         try
         {
-            server = await CsgoServerService.StartStopServer();
-            _snackBar.Add("Starting server", Severity.Info);
+            server = await CsgoServerService.StartStopServer(server);
+            if(server.Booting)
+                _snackBar.Add("Starting server", Severity.Info);
+            else
+                _snackBar.Add("Stopping server", Severity.Info);
         }
         catch (Exception e)
         {

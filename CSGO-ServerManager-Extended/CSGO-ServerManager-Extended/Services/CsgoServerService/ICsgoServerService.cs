@@ -14,6 +14,6 @@ namespace CSGO_ServerManager_Extended.Services.CsgoServerService
         Task<ICsgoServer> StartKnife(string cfg = null);
         Task<ICsgoServer> StartMatch(bool withOvertime, string cfg = null);
         Task<ICsgoServer> StartNadePractice(string cfg = null);
-        Task<ICsgoServer> StartStopServer();
+        Task<ICsgoServer> StartStopServer(ICsgoServer server);
     }
 }
