@@ -77,7 +77,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\CSGOServerPackage\CsgoServerInterfacePackage\CsgoServerInterface\CsgoServerInterface.csproj" />
+	  <ProjectReference Include="..\CsgoServerInterface\CsgoServerInterface.csproj" />
 	</ItemGroup>
 
 </Project>
