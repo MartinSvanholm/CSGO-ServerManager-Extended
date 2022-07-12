@@ -39,7 +39,9 @@ steps:
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(agent.builddirectory)'
-    Contents: '**/*.aab'
+    Contents: | 
+        '**/*.aab'
+        '**/*.apk'
     TargetFolder: '$(build.artifactstagingdirectory)'
     flattenFolders: true
 
