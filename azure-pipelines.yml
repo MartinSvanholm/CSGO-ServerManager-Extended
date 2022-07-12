@@ -26,7 +26,7 @@ steps:
   inputs:
     apkFiles: '**/*.aab'
     jarsign: true
-    jarsignerKeystoreFile: 'yourkeystore.jks'
+    jarsignerKeystoreFile: 'ServerManager.keystore'
     jarsignerKeystorePassword: '$(keystore-password)'
     jarsignerKeystoreAlias: 'ServerManager'
     jarsignerKeyPassword: '$(key-password)'
