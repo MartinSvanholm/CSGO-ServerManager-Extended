@@ -21,7 +21,7 @@ steps:
     command: 'build'
     projects: 'CSGO-ServerManager-Extended/CSGO-ServerManager-Extended/CSGO-ServerManager-Extended.csproj'
     arguments: '-c Release -f net6.0-android'
-    
+
 - task: AndroidSigning@3
   inputs:
     apkFiles: '**/*.aab'
@@ -29,7 +29,6 @@ steps:
     apksignerKeystorePassword: '$(keystore-password)'
     apksignerKeystoreAlias: '$(key-alias)'
     apksignerKeyPassword: '$(key-password)'
-    apksignerArguments: '--verbose -sigalg SHA256withRSA -digestalg SHA-256'
 
 - task: CopyFiles@2
   inputs:
