@@ -7,6 +7,9 @@
 trigger:
 - main
 
+variables:
+- group: ServerManager
+
 pool:
   vmImage: windows-2022
 
@@ -27,9 +30,9 @@ steps:
     apkFiles: '**/*.aab'
     jarsign: true
     jarsignerKeystoreFile: 'ServerManager.keystore'
-    jarsignerKeystorePassword: 'mart373er'
+    jarsignerKeystorePassword: '$(keystore-password)'
     jarsignerKeystoreAlias: 'ServerManager'
-    jarsignerKeyPassword: 'mart373er'
+    jarsignerKeyPassword: '$(key-password)'
     jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
     zipalign: true
 
