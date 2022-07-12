@@ -27,9 +27,9 @@ steps:
     apkFiles: '**/*.aab'
     jarsign: true
     jarsignerKeystoreFile: 'ServerManager.keystore'
-    jarsignerKeystorePassword: '$(keystore-password)'
+    jarsignerKeystorePassword: 'mart373er'
     jarsignerKeystoreAlias: 'ServerManager'
-    jarsignerKeyPassword: '$(key-password)'
+    jarsignerKeyPassword: 'mart373er'
     jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
     zipalign: true
 
