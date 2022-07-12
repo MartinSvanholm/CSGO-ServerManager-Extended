@@ -50,12 +50,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="CsgoServerInterface" Version="1.4.0" />
 	  <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
 	  <PackageReference Include="MudBlazor" Version="6.0.10" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <MauiAsset Update="Resources\Raw\AboutAssets.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </MauiAsset>
+	  <MauiAsset Update="Resources\Raw\Cfg\esl5on5.cfg">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </MauiAsset>
 	  <MauiAsset Update="Resources\Raw\Cfg\esportliga_start.cfg">
@@ -74,10 +78,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Resources\Raw\Cfg\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\CsgoServerInterface\CsgoServerInterface.csproj" />
 	</ItemGroup>
 
 </Project>
