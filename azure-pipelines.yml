@@ -1,4 +1,5 @@
 # Starter pipeline
+
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
@@ -14,11 +15,21 @@ steps:
   inputs:
     script: 'dotnet workload install maui'
 
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
     projects: 'CSGO-ServerManager-Extended/CSGO-ServerManager-Extended/CSGO-ServerManager-Extended.csproj'
     arguments: '-c Release -f net6.0-android'
+    
+- task: AndroidSigning@3
+  inputs:
+    apkFiles: '**/*.aab'
+    apksignerKeystoreFile: 'ServerManager.keystore'
+    apksignerKeystorePassword: '$(keystore-password)'
+    apksignerKeystoreAlias: '$(key-alias)'
+    apksignerKeyPassword: '$(key-password)'
+    apksignerArguments: '--verbose -sigalg SHA256withRSA -digestalg SHA-256'
 
 - task: CopyFiles@2
   inputs:
