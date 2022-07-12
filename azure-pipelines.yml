@@ -22,13 +22,16 @@ steps:
     projects: 'CSGO-ServerManager-Extended/CSGO-ServerManager-Extended/CSGO-ServerManager-Extended.csproj'
     arguments: '-c Release -f net6.0-android'
 
-- task: AndroidSigning@3
+- task: AndroidSigning@2
   inputs:
     apkFiles: '**/*.aab'
-    apksignerKeystoreFile: 'ServerManager.keystore'
-    apksignerKeystorePassword: '$(keystore-password)'
-    apksignerKeystoreAlias: '$(key-alias)'
-    apksignerKeyPassword: '$(key-password)'
+    jarsign: true
+    jarsignerKeystoreFile: 'yourkeystore.jks'
+    jarsignerKeystorePassword: '$(keystore-password)'
+    jarsignerKeystoreAlias: 'ServerManager'
+    jarsignerKeyPassword: '$(key-password)'
+    jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
+    zipalign: true
 
 - task: CopyFiles@2
   inputs:
