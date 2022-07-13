@@ -10,32 +10,25 @@ using System.Threading.Tasks;
 
 namespace CsgoServerInterface.CsgoServer;
 
+/// <summary>
+/// Standard cs:go server, which contains a RCON connection that needs to be created using the InitConnection method.
+/// </summary>
 public class CsgoServer : ICsgoServer
 {
-    public CsgoServer(CsgoSettings csgoSettings, string id, string ip, string name, Ports ports, string rawIp)
+    public CsgoServer(CsgoSettings csgoSettings, string ip, string name, Ports ports, string rawIp)
     {
         CsgoSettings = csgoSettings;
-        Id = id ?? throw new ArgumentNullException(nameof(id));
-        Ip = ip ?? throw new ArgumentNullException(nameof(ip));
         Name = name ?? throw new ArgumentNullException(nameof(name));
+        Id = name ?? throw new ArgumentNullException(nameof(name)); //The id of a normal cs:go server will be the same as the name
+        Ip = ip ?? throw new ArgumentNullException(nameof(ip));
         Ports = ports ?? throw new ArgumentNullException(nameof(ports));
-        RawIp = rawIp ?? throw new ArgumentNullException(nameof(rawIp)); RCON rcon = new RCON(IPAddress.Parse(RawIp), (ushort)Ports.Game, CsgoSettings.Rcon);
+        RawIp = rawIp ?? throw new ArgumentNullException(nameof(rawIp));
         Rcon = new RCON(IPAddress.Parse(RawIp), (ushort)Ports.Game, CsgoSettings.Rcon);
-
-        try
-        {
-            Init().Wait();
-        }
-        catch (Exception e)
-        {
-            if(e.InnerException != null)
-                throw e.InnerException;
-            else
-                throw;
-        }
-
     }
 
+    /// <summary>
+    /// Remote Console connection
+    /// </summary>
     public RCON Rcon { get; set; }
 
     [JsonProperty("booting")]
@@ -97,7 +90,7 @@ public class CsgoServer : ICsgoServer
             return "Off";
     }
 
-    public async Task Init()
+    public async Task InitConnection()
     {
         await Rcon.ConnectAsync();
     }
