@@ -1,0 +1,26 @@
+﻿@page "/settings"
+<MudPaper Elevation="0" Class="d-flex justify-center mb-6">
+    <MudText Typo="Typo.h6">Application settings</MudText>
+</MudPaper>
+
+<MudGrid Justify="Justify.FlexStart" Spacing="5">
+    <MudItem xs="12" sm="12" md="6">
+        <MudPaper Class="pa-6">
+            <MudStack>
+                <MudText Typo="Typo.h6">Dathost account</MudText>
+                <MudStack Justify="Justify.SpaceBetween" Row="true">
+                    <MudPaper Elevation="0">
+                        <MudTextField @bind-Value="settingsService.DathostAccount.Email" Immediate=true T="string" Label="Email Address" />
+                        <MudTextField @bind-Value="settingsService.DathostAccount.Password" Immediate=true T="string" Label="Password" InputType="InputType.Password" />
+                    </MudPaper>
+                    <MudPaper Class="d-flex align-stretch" Elevation="0">
+                        <MudStack AlignItems="AlignItems.Stretch" Justify="Justify.Center">
+                            <MudButton OnClick="(async () => await Submit())" Color="Color.Success" Variant="Variant.Filled" Size="Size.Medium">Connect</MudButton>
+                            <MudButton OnClick="Reset" Color="Color.Error" Variant="Variant.Filled" Size="Size.Medium">Reset</MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
