@@ -1,5 +1,8 @@
-﻿using CSGO_ServerManager_Extended.Services.CsgoServerService;
+﻿using CSGO_ServerManager_Extended.Models;
+using CSGO_ServerManager_Extended.Services.CsgoServerService;
+using CSGO_ServerManager_Extended.Services.SettingsService;
 using Microsoft.AspNetCore.Components.WebView.Maui;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
 using MudBlazor.Services;
 using System.Net.Http.Headers;
@@ -9,7 +12,9 @@ namespace CSGO_ServerManager_Extended;
 
 public static class MauiProgram
 {
-	public static MauiApp CreateMauiApp()
+	static bool DathostAccountIsConnected = false;
+	static DathostAccount dathostAccount;
+    public static MauiApp CreateMauiApp()
 	{
 		var builder = MauiApp.CreateBuilder();
 		builder
@@ -39,6 +44,7 @@ public static class MauiProgram
             config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
         });
         builder.Services.AddSingleton<ICsgoServerService, CsgoServerService>();
+		builder.Services.AddSingleton<ISettingsService>(x => new SettingsService(x.GetRequiredService<HttpClient>(), dathostAccount, DathostAccountIsConnected));
 
 		return builder.Build();
 	}
@@ -51,9 +57,34 @@ public static class MauiProgram
 		client.BaseAddress = new Uri("https://dathost.net");
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-			"Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"ms@hobrovikings.dk:hobrovikings1212")));
+		try
+		{
+            dathostAccount = Task.Run(async () => await GetDathostAccount()).Result;
+            DathostAccountIsConnected = true;
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+				"Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{dathostAccount.Email}:{dathostAccount.Password}")));
+        }
+        catch (Exception)
+		{
+			dathostAccount = new("", "");
+            DathostAccountIsConnected = false;
+		}
 
 		return client;
     }
+
+	private static async Task<DathostAccount> GetDathostAccount()
+	{
+		try
+		{
+			return new DathostAccount(
+				await SecureStorage.Default.GetAsync("Dathost_Email"),
+				await SecureStorage.Default.GetAsync("Dathost_Password"));
+		}
+		catch (Exception)
+		{
+			throw;
+		}
+	}
 }
