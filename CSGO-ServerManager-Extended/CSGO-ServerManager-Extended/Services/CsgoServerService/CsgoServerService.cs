@@ -1,4 +1,6 @@
 ﻿using CSGO_ServerManager_Extended.Helper;
+using CSGO_ServerManager_Extended.Services.Data.CsgoServerData;
+using CSGO_ServerManager_Extended.Services.DataAccess;
 using CsgoServerInterface.CsgoServer;
 using System.Net;
 
@@ -6,17 +8,21 @@ namespace CSGO_ServerManager_Extended.Services.CsgoServerService;
 
 public class CsgoServerService : ICsgoServerService
 {
-    public CsgoServerService(HttpClient httpClient)
+    public CsgoServerService(HttpClient httpClient, ICsgoServerData csgoServerData)
     {
         _httpClient = httpClient;
+        _csgoServerData = csgoServerData;
     }
 
     private HttpClient _httpClient;
+    private readonly ICsgoServerData _csgoServerData;
 
     public ICsgoServer Server { get; set; }
 
     public async Task<List<DatHostServer>> GetDatHostServers()
     {
+        //Check for internet connection
+
         string uri = _httpClient.BaseAddress.ToString() + "/api/0.1/game-servers";
 
         using HttpResponseMessage responseMessage = await _httpClient.GetAsync(uri);

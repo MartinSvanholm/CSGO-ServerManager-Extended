@@ -1,6 +1,4 @@
-﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
-
-html, body {
+﻿html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -81,4 +79,16 @@ a, .btn-link {
 	.flex-column, .navbar-brand {
 		padding-left: env(safe-area-inset-left);
 	}
+}
+
+.content-container {
+    margin: 15px;
+}
+
+.help-divider {
+    margin: 15px 0px;
+}
+
+.t-bold {
+    font-weight: bold;
 }

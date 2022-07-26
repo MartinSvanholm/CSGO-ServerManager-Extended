@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0-android</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -12,12 +12,11 @@
     <PackageProjectUrl>https://github.com/MartinSvanholm/CSGOServerPackage</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MartinSvanholm/CSGOServerPackage</RepositoryUrl>
     <PackageId>CsgoServerInterface</PackageId>
-    <Version>1.4.1</Version>
+    <Version>1.4.2</Version>
     <Company>Martin Svanholm</Company>
     <Product>CsgoServerInterface</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>

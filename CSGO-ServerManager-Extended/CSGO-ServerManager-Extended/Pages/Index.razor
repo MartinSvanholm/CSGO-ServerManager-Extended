@@ -1,7 +1,13 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+<MudPaper Class="content-container" Elevation="0">
+    <MudPaper Class="pa-5">
+        <MudText Typo="Typo.h4" GutterBottom="true">CS:GO ServerManager</MudText>
+        <MudText Typo="Typo.body1">Click <MudLink Href="/servers">here</MudLink> to add your first server, or check out the <MudLink Href="/help">getting started guide.</MudLink> for a complete guide</MudText>
+    </MudPaper>
+    <MudPaper>
+        <MudDropContainer>
 
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+        </MudDropContainer>
+    </MudPaper>
+</MudPaper>

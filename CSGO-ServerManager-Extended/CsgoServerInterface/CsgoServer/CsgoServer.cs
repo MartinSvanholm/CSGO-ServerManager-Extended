@@ -15,14 +15,14 @@ namespace CsgoServerInterface.CsgoServer;
 /// </summary>
 public class CsgoServer : ICsgoServer
 {
-    public CsgoServer(CsgoSettings csgoSettings, string ip, string name, Ports ports, string rawIp)
+    public CsgoServer(CsgoSettings csgoSettings, string ip, string name, Ports ports)
     {
         CsgoSettings = csgoSettings;
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Id = name ?? throw new ArgumentNullException(nameof(name)); //The id of a normal cs:go server will be the same as the name
         Ip = ip ?? throw new ArgumentNullException(nameof(ip));
         Ports = ports ?? throw new ArgumentNullException(nameof(ports));
-        RawIp = rawIp ?? throw new ArgumentNullException(nameof(rawIp));
+        RawIp = ip ?? throw new ArgumentNullException(nameof(ip));
         Rcon = new RCON(IPAddress.Parse(RawIp), (ushort)Ports.Game, CsgoSettings.Rcon);
     }
 
