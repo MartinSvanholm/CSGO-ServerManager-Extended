@@ -9,12 +9,5 @@ namespace CSGO_ServerManager_Extended.Pages
 {
     partial class Index
     {
-        public Servers Servers { get; set; }
-        public List<ComponentBase> RenderFragments = new();
-
-        void test()
-        {
-            RenderFragments.Add(Servers);
-        }
     }
 }
