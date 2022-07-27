@@ -1,10 +1,5 @@
 ﻿using CSGO_ServerManager_Extended.Models.DTOs;
 using CsgoServerInterface.CsgoServer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSGO_ServerManager_Extended.Models.Mappers
 {
@@ -16,8 +11,7 @@ namespace CSGO_ServerManager_Extended.Models.Mappers
                 new CsgoSettings(csgoServerDTO.Password, csgoServerDTO.RconPassord),
                 csgoServerDTO.Ip,
                 csgoServerDTO.Name,
-                new Ports(csgoServerDTO.GamePort),
-                csgoServerDTO.Ip);
+                new Ports(csgoServerDTO.GamePort));
         }
 
         public static CsgoServerDTO MapToCsgoServerDTO(CsgoServer csgoServer)
