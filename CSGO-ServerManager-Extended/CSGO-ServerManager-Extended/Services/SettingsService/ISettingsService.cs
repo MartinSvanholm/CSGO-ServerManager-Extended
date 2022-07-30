@@ -9,5 +9,6 @@ namespace CSGO_ServerManager_Extended.Services.SettingsService
         bool DathostAccountIsConnected { get; set; }
 
         Task<DathostAccount> AddDathostAccount(DathostAccount dathostAccount);
+        void RemoveDathostAccount();
     }
 }

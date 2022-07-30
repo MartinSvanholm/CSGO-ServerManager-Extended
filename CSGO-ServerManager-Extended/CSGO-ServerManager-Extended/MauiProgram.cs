@@ -1,5 +1,7 @@
 ﻿using CSGO_ServerManager_Extended.Models;
 using CSGO_ServerManager_Extended.Services.CsgoServerService;
+using CSGO_ServerManager_Extended.Services.Data.CsgoServerData;
+using CSGO_ServerManager_Extended.Services.DataAccess;
 using CSGO_ServerManager_Extended.Services.SettingsService;
 using Microsoft.AspNetCore.Components.WebView.Maui;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,6 +47,8 @@ public static class MauiProgram
         });
         builder.Services.AddSingleton<ICsgoServerService, CsgoServerService>();
 		builder.Services.AddSingleton<ISettingsService>(x => new SettingsService(x.GetRequiredService<HttpClient>(), dathostAccount, DathostAccountIsConnected));
+		builder.Services.AddSingleton<IDataAccess, DataAccess>(x => new DataAccess(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ServerManagerDb.db")));
+		builder.Services.AddSingleton<ICsgoServerData, CsgoServerData>(x => new CsgoServerData(x.GetRequiredService<IDataAccess>()));
 
 		return builder.Build();
 	}

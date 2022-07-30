@@ -25,6 +25,8 @@ namespace CSGO_ServerManager_Extended.Services.SettingsService
 
                 await SecureStorage.Default.SetAsync("Dathost_Email", dathostAccount.Email);
                 await SecureStorage.Default.SetAsync("Dathost_Password", dathostAccount.Password);
+
+                DathostAccountIsConnected = true;
             }
             catch (Exception)
             {
@@ -32,6 +34,15 @@ namespace CSGO_ServerManager_Extended.Services.SettingsService
             }
 
             return dathostAccount;
+        }
+
+        public void RemoveDathostAccount()
+        {
+            SecureStorage.Default.Remove("Dathost_Email");
+            SecureStorage.Default.Remove("Dathost_Password");
+            DathostAccount = new("", "");
+            DathostAccountIsConnected = false;
+            _httpClient.DefaultRequestHeaders.Clear();
         }
 
         private async Task CheckDathostAccount(DathostAccount dathostAccount)

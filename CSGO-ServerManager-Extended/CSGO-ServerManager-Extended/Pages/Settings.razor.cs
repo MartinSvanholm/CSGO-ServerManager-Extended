@@ -34,11 +34,7 @@ namespace CSGO_ServerManager_Extended.Pages
 
         private void Reset()
         {
-            SecureStorage.Default.Remove("Dathost_Email");
-            SecureStorage.Default.Remove("Dathost_Password");
-            settingsService.DathostAccount = new("", "");
-
-            settingsService._httpClient.DefaultRequestHeaders.Clear();
+            settingsService.RemoveDathostAccount();
 
             snackbar.Add("Deleted Dathost account", Severity.Success);
         }

@@ -1,14 +1,9 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
-namespace CsgoServerInterface.CsgoServer;
+namespace CSGOServerInterface.Server.DTO;
 
 public class Ports
 {
-    public Ports(int game)
-    {
-        Game = game;
-    }
-
     [JsonProperty("game")]
     public int Game { get; set; }
 
@@ -17,7 +12,4 @@ public class Ports
 
     [JsonProperty("gotv_secondary")]
     public int? GotvSecondary { get; set; }
-
-    [JsonProperty("query")]
-    public int? Query { get; set; }
 }
