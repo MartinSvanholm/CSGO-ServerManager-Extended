@@ -1,4 +1,5 @@
 ﻿using CsgoServerInterface.CsgoServer;
+using CSGOServerInterface.Server.DathostServer;
 
 namespace CSGO_ServerManager_Extended.Services.CsgoServerService
 {
@@ -6,14 +7,14 @@ namespace CSGO_ServerManager_Extended.Services.CsgoServerService
     {
         ICsgoServer Server { get; set; }
 
-        Task<ICsgoServer> ChangeMap(string map);
-        Task<DatHostServer> GetDatHostServer(string id);
-        Task<List<DatHostServer>> GetDatHostServers();
-        Task<ICsgoServer> PauseUnpauseMatch(bool isMatchPaused);
-        Task<ICsgoServer> RunCommand(string command);
-        Task<ICsgoServer> StartKnife(string cfg = null);
-        Task<ICsgoServer> StartMatch(bool withOvertime, string cfg = null);
-        Task<ICsgoServer> StartNadePractice(string cfg = null);
-        Task<ICsgoServer> StartStopServer(ICsgoServer server);
+        Task ChangeMap(string map);
+        Task<DatHostCsgoServer> GetDatHostServer(string id);
+        Task<List<DatHostCsgoServer>> GetDatHostServers();
+        Task PauseUnpauseMatch(bool isMatchPaused);
+        Task RunCommand(string command);
+        Task StartKnife(string cfg = null);
+        Task StartMatch(bool withOvertime, string cfg = null);
+        Task StartNadePractice(string cfg = null);
+        Task StartStopServer(ICsgoServer server);
     }
 }

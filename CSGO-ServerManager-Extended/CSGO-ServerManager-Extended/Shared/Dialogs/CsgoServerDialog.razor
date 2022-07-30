@@ -11,7 +11,7 @@
             <MudTextField @bind-Value="TempServer.Name" Label="Name" Required=true RequiredError="Server name is required" Immediate=true></MudTextField>
             <MudTextField @bind-Value="TempServer.Ip" Label="Ip" Required=true RequiredError="Server ip is required" Immediate=true></MudTextField>
             <MudTextField @bind-Value="TempServer.Password" Label="Password" Required=true RequiredError="Server password is required" Immediate=true></MudTextField>
-            <MudTextField @bind-Value="TempServer.RconPassord" Label="Rcon password" Required=true RequiredError="Rcon password name is required" Immediate=true></MudTextField>
+            <MudTextField @bind-Value="TempServer.RconPassword" Label="Rcon password" Required=true RequiredError="Rcon password name is required" Immediate=true></MudTextField>
             <MudTextField T="int" @bind-Value="TempServer.GamePort" Label="Port" Required=true RequiredError="Server port is required" Immediate=true></MudTextField>
         </MudForm>
     </DialogContent>
@@ -30,7 +30,7 @@
     public EventCallback<bool> ChangeVisibility { get; set; }
 
     [Parameter, EditorRequired]
-    public CsgoServerDTO TempServer { get; set; }
+    public CsgoServer TempServer { get; set; }
 
     [Parameter, EditorRequired]
     public EditType EditType { get; set; }
@@ -44,7 +44,7 @@
         {
             try
             {
-                await csgoServerData.CsgoServers_Update(CsgoServerMapper.MapToCsgoServer(TempServer));
+                await csgoServerData.CsgoServers_Update(TempServer);
                 Snackbar.Add($"Updated server \"{TempServer.Name}\"", Severity.Info);
             }
             catch (Exception e)
@@ -55,7 +55,7 @@
         {
             try
             {
-                await csgoServerData.CsgoServers_Create(CsgoServerMapper.MapToCsgoServer(TempServer));
+                await csgoServerData.CsgoServers_Create(TempServer);
                 Snackbar.Add($"Added server \"{TempServer.Name}\"", Severity.Info);
             }
             catch (Exception e)

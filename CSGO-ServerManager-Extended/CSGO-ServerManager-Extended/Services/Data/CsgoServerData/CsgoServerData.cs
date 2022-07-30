@@ -1,6 +1,4 @@
-﻿using CSGO_ServerManager_Extended.Models.DTOs;
-using CSGO_ServerManager_Extended.Models.Mappers;
-using CSGO_ServerManager_Extended.Services.DataAccess;
+﻿using CSGO_ServerManager_Extended.Services.DataAccess;
 using CsgoServerInterface.CsgoServer;
 
 namespace CSGO_ServerManager_Extended.Services.Data.CsgoServerData
@@ -16,47 +14,37 @@ namespace CSGO_ServerManager_Extended.Services.Data.CsgoServerData
 
         public async Task<List<ICsgoServer>> CsgoServers_GetAll()
         {
-            var result = await _dataAccess.GetListAsync<CsgoServerDTO>();
+            List<CsgoServer> data = await _dataAccess.GetListAsync<CsgoServer>();
 
-            List<ICsgoServer> servers = new();
-            foreach (CsgoServerDTO dto in result)
-            {
-                servers.Add(CsgoServerMapper.MapToCsgoServer(dto));
-            }
+            List<ICsgoServer> result = new();
+            result.AddRange(data);
 
-            return servers;
+            return result;
         }
 
         public async Task<ICsgoServer> CsgoServers_GetByName(string name)
         {
-            var result = await _dataAccess.GetByConditionAsync<CsgoServerDTO>(s => s.Name == name);
+            var result = await _dataAccess.GetByConditionAsync<CsgoServer>(s => s.Name == name);
 
             if (result == null)
                 throw new ArgumentNullException(nameof(name), $"Cannot find a server with the name of {name}");
             else
-                return CsgoServerMapper.MapToCsgoServer(result);
+                return result;
         }
 
         public async Task CsgoServers_Create(CsgoServer csgoServer)
         {
-
-            CsgoServerDTO dto = CsgoServerMapper.MapToCsgoServerDTO(csgoServer);
-
-            await _dataAccess.InsertDataAsync(dto);
+            await _dataAccess.InsertDataAsync(csgoServer);
         }
 
         public async Task CsgoServers_Update(CsgoServer csgoServer)
         {
-            CsgoServerDTO dto = CsgoServerMapper.MapToCsgoServerDTO(csgoServer);
-
-            await _dataAccess.UpdateDataAsync(dto);
+            await _dataAccess.UpdateDataAsync(csgoServer);
         }
 
         public async Task CsgoServer_Delete(CsgoServer csgoServer)
         {
-            CsgoServerDTO dto = CsgoServerMapper.MapToCsgoServerDTO(csgoServer);
-
-            await _dataAccess.DeleteDataAsync(dto);
+            await _dataAccess.DeleteDataAsync(csgoServer);
         }
     }
 }

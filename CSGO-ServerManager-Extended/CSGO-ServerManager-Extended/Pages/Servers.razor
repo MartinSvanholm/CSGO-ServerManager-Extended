@@ -25,9 +25,9 @@
     </HeaderContent>
     <RowTemplate >
         <MudTd DataLabel="Name">@context.Name</MudTd>
-        <MudTd DataLabel="Connection Ip" HideSmall="true">@context.GetConnectionIp()</MudTd>
-        <MudTd Style="text-align: center;" DataLabel="Status">@context.GetStatus()</MudTd>
-        <MudTd Style="text-align: center;" DataLabel="Players online">@context.PlayersOnline</MudTd>
+        <MudTd DataLabel="Connection Ip" HideSmall="true">@context.ConnectionIp</MudTd>
+        <MudTd Style="text-align: center;" DataLabel="Status">@context.Status</MudTd>
+        <MudTd Style="text-align: center;" DataLabel="Players online">0</MudTd>
         <MudTd Style="text-align: center;" HideSmall="true">
             <MudIconButton Class="pa-0" Icon="@Icons.Filled.Edit" OnClick="(() => OpenEditDialog(EditType.Edit, context))"></MudIconButton>
         </MudTd>
@@ -54,7 +54,7 @@
 @code {
     private bool isVisible = false;
     private List<ICsgoServer> csgoServers = new();
-    private CsgoServerDTO tempServer = new();
+    private CsgoServer tempServer = new();
     private EditType _editType;
     private bool _loading = true;
     private MudMessageBox confirmMessageBox { get; set; }
@@ -96,13 +96,13 @@
         }
         else
         {
-            if(csgoServer is DatHostServer)
+            if(csgoServer is DatHostCsgoServer)
             {
                 Snackbar.Add("You cannot remove servers from dathost", Severity.Warning);
                 return;
             }
 
-            tempServer = CsgoServerMapper.MapToCsgoServerDTO((CsgoServer)csgoServer);
+            tempServer = (CsgoServer)csgoServer;
             isVisible = true;
         }
     }

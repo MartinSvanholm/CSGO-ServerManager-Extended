@@ -1,11 +1,7 @@
-﻿using CSGO_ServerManager_Extended.Models.DTOs;
+﻿using CsgoServerInterface.CsgoServer;
+using CSGOServerInterface.Server.CsgoServer;
 using SQLite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSGO_ServerManager_Extended.Services.DataAccess
 {
@@ -28,7 +24,7 @@ namespace CSGO_ServerManager_Extended.Services.DataAccess
 
             Db = new SQLiteAsyncConnection(_dbPath);
 
-            await CreateTableAsync<CsgoServerDTO>();
+            await CreateTableAsync<CsgoServer>();
         }
 
         public async Task CreateTableAsync<T>() where T : new()

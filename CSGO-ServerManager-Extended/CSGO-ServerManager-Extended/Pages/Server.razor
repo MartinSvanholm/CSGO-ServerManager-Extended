@@ -1,5 +1,4 @@
 ﻿@page "/server"
-@using MudBlazor.Services
 @using System.Timers
 @inject ICsgoServerService CsgoServerService
 @inject HttpClient _client
@@ -17,10 +16,10 @@
 
             <MudItem xs="3" Class="d-flex justify-end">
                 <MudStack Row="true" Spacing="0" Justify="Justify.Center" AlignItems="AlignItems.Center">
-                    <MudText>Server is @server.GetStatus()</MudText>
-                    @if (server is DatHostServer)
+                    <MudText>Server is @server.Status</MudText>
+                    @if (server is DatHostCsgoServer)
                     {
-                        <MudToggleIconButton @bind-Toggled="server.On" Icon="@Icons.Filled.NotStarted" Color="Color.Success" Size="Size.Large" ToggledIcon="@Icons.Filled.Stop" ToggledColor="Color.Error" ToggledSize="Size.Large"
+                        <MudToggleIconButton @bind-Toggled="server.IsOn" Icon="@Icons.Filled.NotStarted" Color="Color.Success" Size="Size.Large" ToggledIcon="@Icons.Filled.Stop" ToggledColor="Color.Error" ToggledSize="Size.Large"
                                          @onclick="@(async () => await StartStopServer())" />
                     }
                 </MudStack>
@@ -34,7 +33,7 @@
                 <MudStack>
                     <MudText>Connection Ip:</MudText>
                     <MudDivider />
-                    <MudText>@server.GetConnectionIp()</MudText>
+                    <MudText>@server.ConnectionIp</MudText>
                 </MudStack>
             </MudItem>
 
@@ -47,7 +46,7 @@
 
             <MudItem xs="12" sm="5" md="3">
                 <MudCard>
-                    <MudList Disabled="@(!server.On)" Clickable="true" @bind-SelectedItem="selectedItem">
+                    <MudList Disabled="@(!server.IsOn)" Clickable="true" @bind-SelectedItem="selectedItem">
                         <MudListItem @bind-Expanded="expandList" Text="Change map">
                             <NestedList>
                                 <MudListItem Text="Inferno" @onclick="@(async () => await ChangeMap("inferno"))" />
@@ -65,8 +64,8 @@
 
             <MudItem xs="12" sm="7" md="6">
                 <MudStack Row="true" Spacing="10" AlignItems="AlignItems.Center">
-                    <MudTextField Disabled="@(!server.On)" @bind-Value="@customCommand" Immediate="true" Label="Send custom command" />
-                    <MudButton Disabled="@(!server.On)" Size="Size.Medium" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SendCustomCommand())">Send command</MudButton>
+                    <MudTextField Disabled="@(!server.IsOn)" @bind-Value="@customCommand" Immediate="true" Label="Send custom command" />
+                    <MudButton Disabled="@(!server.IsOn)" Size="Size.Medium" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SendCustomCommand())">Send command</MudButton>
                 </MudStack>
             </MudItem>
 
@@ -79,21 +78,21 @@
 
             <MudItem xs="12" sm="4">
                 <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-                    <MudButton Disabled="@(!server.On)" @onclick="@(async () => await StartMatch(false))">Start match</MudButton>
-                    <MudButton Disabled="@(!server.On)" @onclick="@(async () => await StartMatch(true))">Start match with overtime</MudButton>
+                    <MudButton Disabled="@(!server.IsOn)" @onclick="@(async () => await StartMatch(false))">Start match</MudButton>
+                    <MudButton Disabled="@(!server.IsOn)" @onclick="@(async () => await StartMatch(true))">Start match with overtime</MudButton>
                 </MudButtonGroup>
             </MudItem>
 
             <MudItem xs="12" sm="4" Class="d-flex justify-center">
-                <MudButton Disabled="@(!server.On)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await PauseUnpauseMatch())">@pausedBtnText</MudButton>
+                <MudButton Disabled="@(!server.IsOn)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await PauseUnpauseMatch())">@pausedBtnText</MudButton>
             </MudItem>
 
             <MudItem xs="12" sm="4" Class="d-flex justify-end">
-                <MudButton Disabled="@(!server.On)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartKnife())">Start knife</MudButton>
+                <MudButton Disabled="@(!server.IsOn)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartKnife())">Start knife</MudButton>
             </MudItem>
 
             <MudItem xs="12" Class="d-flex justify-end">
-                <MudButton Disabled="@(!server.On)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SwitchSides())">Switch sides</MudButton>
+                <MudButton Disabled="@(!server.IsOn)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SwitchSides())">Switch sides</MudButton>
             </MudItem>
 
             <MudItem xs="12">
@@ -104,7 +103,7 @@
             </MudItem>
 
             <MudItem xs="12" Class="d-flex justify-start">
-                <MudButton Disabled="@(!server.On)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartNadePractice())">Switch sides</MudButton>
+                <MudButton Disabled="@(!server.IsOn)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartNadePractice())">Switch sides</MudButton>
             </MudItem>
 
         </MudGrid>
@@ -129,7 +128,7 @@
     {
         server = CsgoServerService.Server;
 
-        if(server is DatHostServer)
+        if(server is DatHostCsgoServer)
         {
             serverUpdateTimer.Elapsed += async ( sender, e ) => await UpdateServer();
             serverUpdateTimer.AutoReset = true;
@@ -180,7 +179,7 @@
 
     private async Task UpdateServer()
     {
-        server = await CsgoServerService.GetDatHostServer(server.Id);
+        server = await CsgoServerService.GetDatHostServer(server.DatHostID);
         await InvokeAsync(StateHasChanged);
     }
 
@@ -188,7 +187,7 @@
     {
         try
         {
-            server = await CsgoServerService.StartStopServer(server);
+            await CsgoServerService.StartStopServer(server);
             if(server.Booting)
                 _snackBar.Add("Starting server", Severity.Info);
             else
@@ -207,7 +206,7 @@
         expandList = false;
         try
         {
-            server = await CsgoServerService.ChangeMap(map);
+            await CsgoServerService.ChangeMap(map);
             _snackBar.Add($"Switching to {map}");
         }
         catch (Exception e)
@@ -220,7 +219,7 @@
     {
         try
         {
-            server = await CsgoServerService.StartMatch(overtime);
+            await CsgoServerService.StartMatch(overtime);
             _snackBar.Add("Starting match", Severity.Info);
         }
         catch (Exception e)
@@ -233,7 +232,7 @@
     {
         try
         {
-            server = await CsgoServerService.PauseUnpauseMatch(matchpaused);
+            await CsgoServerService.PauseUnpauseMatch(matchpaused);
             matchpaused = !matchpaused;
 
             if (matchpaused)
@@ -257,7 +256,7 @@
     {
         try
         {
-            server = await CsgoServerService.StartKnife();
+            await CsgoServerService.StartKnife();
             _snackBar.Add("Starting knife round", Severity.Info);
         }
         catch (Exception e)
@@ -270,7 +269,7 @@
     {
         try
         {
-            server = await CsgoServerService.RunCommand("mp_swapteams");
+            await CsgoServerService.RunCommand("mp_swapteams");
             _snackBar.Add("Switching sides", Severity.Info);
         }
         catch (Exception e)
@@ -283,7 +282,7 @@
     {
         try
         {
-            server = await CsgoServerService.StartNadePractice();
+            await CsgoServerService.StartNadePractice();
             _snackBar.Add("Starting nade practice", Severity.Info);
         }
         catch (Exception e)
@@ -296,7 +295,7 @@
     {
         try
         {
-            server = await CsgoServerService.RunCommand(customCommand);
+            await CsgoServerService.RunCommand(customCommand);
             _snackBar.Add("Running command", Severity.Info);
         }
         catch (Exception e)
