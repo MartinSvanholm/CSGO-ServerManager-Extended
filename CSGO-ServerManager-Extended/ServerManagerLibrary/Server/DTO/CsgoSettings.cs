@@ -1,17 +1,12 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
-namespace CsgoServerInterface.CsgoServer;
+namespace CSGOServerInterface.Server.DTO;
 
 public class CsgoSettings
 {
-    public CsgoSettings(string password, string rcon)
-    {
-        Password = password ?? throw new ArgumentNullException(nameof(password));
-        Rcon = rcon ?? throw new ArgumentNullException(nameof(rcon));
-    }
-
     [JsonProperty("autoload_configs")]
-    public List<string>? AutoloadConfigs { get; set; }
+    public List<string> AutoloadConfigs { get; set; }
 
     [JsonProperty("disable_1v1_warmup_arenas")]
     public bool Disable1v1WarmupArenas { get; set; }
@@ -32,41 +27,53 @@ public class CsgoSettings
     public bool EnableSourcemod { get; set; }
 
     [JsonProperty("game_mode")]
-    public string? GameMode { get; set; }
+    public string GameMode { get; set; }
+
+    [JsonProperty("insecure")]
+    public bool Insecure { get; set; }
 
     [JsonProperty("mapgroup")]
-    public string? Mapgroup { get; set; }
+    public string Mapgroup { get; set; }
 
     [JsonProperty("mapgroup_start_map")]
-    public string? MapgroupStartMap { get; set; }
+    public string MapgroupStartMap { get; set; }
 
     [JsonProperty("maps_source")]
-    public string? MapsSource { get; set; }
+    public string MapsSource { get; set; }
 
     [JsonProperty("password")]
     public string Password { get; set; }
 
+    [JsonProperty("private_server")]
+    public bool PrivateServer { get; set; }
+
+    [JsonProperty("pure_server")]
+    public bool PureServer { get; set; }
+
     [JsonProperty("rcon")]
     public string Rcon { get; set; }
 
+    [JsonProperty("slots")]
+    public int Slots { get; set; }
+
     [JsonProperty("sourcemod_admins")]
-    public string? SourcemodAdmins { get; set; }
+    public string SourcemodAdmins { get; set; }
 
     [JsonProperty("sourcemod_plugins")]
-    public List<string>? SourcemodPlugins { get; set; }
+    public List<string> SourcemodPlugins { get; set; }
 
     [JsonProperty("steam_game_server_login_token")]
-    public string? SteamGameServerLoginToken { get; set; }
+    public string SteamGameServerLoginToken { get; set; }
 
     [JsonProperty("tickrate")]
-    public double Tickrate { get; set; }
+    public string Tickrate { get; set; }
 
     [JsonProperty("workshop_authkey")]
-    public string? WorkshopAuthkey { get; set; }
+    public string WorkshopAuthkey { get; set; }
 
     [JsonProperty("workshop_id")]
-    public string? WorkshopId { get; set; }
+    public string WorkshopId { get; set; }
 
     [JsonProperty("workshop_start_map_id")]
-    public string? WorkshopStartMapId { get; set; }
+    public string WorkshopStartMapId { get; set; }
 }

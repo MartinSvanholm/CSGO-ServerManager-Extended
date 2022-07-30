@@ -4,9 +4,7 @@ VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSGO-ServerManager-Extended", "CSGO-ServerManager-Extended\CSGO-ServerManager-Extended.csproj", "{FC010FC7-28B7-4AF0-8782-3D8D54639A3C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerManagerTests", "ServerManagerTests\ServerManagerTests.csproj", "{CBCA356F-CB84-4487-9ECC-FDE183E972F4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsgoServerInterface", "CsgoServerInterface\CsgoServerInterface.csproj", "{BD47FDB4-D626-4C91-B135-3D847AD0C2A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSGOServerInterface", "ServerManagerLibrary\CSGOServerInterface.csproj", "{EAAA80E1-454B-4A0B-BBC1-F1976B9B43E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,14 +18,10 @@ Global
 		{FC010FC7-28B7-4AF0-8782-3D8D54639A3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC010FC7-28B7-4AF0-8782-3D8D54639A3C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FC010FC7-28B7-4AF0-8782-3D8D54639A3C}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{CBCA356F-CB84-4487-9ECC-FDE183E972F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CBCA356F-CB84-4487-9ECC-FDE183E972F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CBCA356F-CB84-4487-9ECC-FDE183E972F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CBCA356F-CB84-4487-9ECC-FDE183E972F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BD47FDB4-D626-4C91-B135-3D847AD0C2A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD47FDB4-D626-4C91-B135-3D847AD0C2A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BD47FDB4-D626-4C91-B135-3D847AD0C2A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BD47FDB4-D626-4C91-B135-3D847AD0C2A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAAA80E1-454B-4A0B-BBC1-F1976B9B43E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAAA80E1-454B-4A0B-BBC1-F1976B9B43E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAAA80E1-454B-4A0B-BBC1-F1976B9B43E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAAA80E1-454B-4A0B-BBC1-F1976B9B43E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

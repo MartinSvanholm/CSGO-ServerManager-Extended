@@ -21,6 +21,11 @@ public class CsgoServerException : Exception
         CsgoServer = csgoServer;
     }
 
+    public CsgoServerException(string message, HttpStatusCode httpStatusCode) : base(message)
+    {
+        StatusCode = httpStatusCode;
+    }
+
     public ICsgoServer CsgoServer { get; set; }
     public HttpStatusCode StatusCode { get; set; }
 }

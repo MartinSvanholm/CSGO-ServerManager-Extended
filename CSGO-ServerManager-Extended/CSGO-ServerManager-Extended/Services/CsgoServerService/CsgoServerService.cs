@@ -1,175 +1,209 @@
-﻿using CSGO_ServerManager_Extended.Helper;
+﻿using CSGO_ServerManager_Extended.Services.Data.CsgoServerData;
 using CsgoServerInterface.CsgoServer;
-using System.Net;
+using CsgoServerInterface.Exceptions;
+using CSGOServerInterface.Mappers;
+using CSGOServerInterface.Server.DathostServer;
+using CSGOServerInterface.Server.DTO;
 
 namespace CSGO_ServerManager_Extended.Services.CsgoServerService;
 
 public class CsgoServerService : ICsgoServerService
 {
-    public CsgoServerService(HttpClient httpClient)
+    public CsgoServerService(HttpClient httpClient, ICsgoServerData csgoServerData)
     {
         _httpClient = httpClient;
+        _csgoServerData = csgoServerData;
     }
 
     private HttpClient _httpClient;
+    private readonly ICsgoServerData _csgoServerData;
 
     public ICsgoServer Server { get; set; }
 
-    public async Task<List<DatHostServer>> GetDatHostServers()
+    public async Task<List<DatHostCsgoServer>> GetDatHostServers()
     {
+        //Check for internet connection
+
         string uri = _httpClient.BaseAddress.ToString() + "/api/0.1/game-servers";
 
         using HttpResponseMessage responseMessage = await _httpClient.GetAsync(uri);
 
         if (responseMessage.IsSuccessStatusCode)
         {
-            List<DatHostServer> datHosts = await responseMessage.Content.ReadAsAsync<List<DatHostServer>>();
+            List<DatHostServerDTO> datHostDTOs = await responseMessage.Content.ReadAsAsync<List<DatHostServerDTO>>();
 
-            for (int i = 0; i < datHosts.Count; i++)
+            for (int i = 0; i < datHostDTOs.Count; i++)
             {
-                if (datHosts[i].CsgoSettings == null)
-                    datHosts.RemoveAt(i);
+                if (datHostDTOs[i].CsgoSettings == null)
+                    datHostDTOs.RemoveAt(i);
             }
 
-            return datHosts;
+            return DatHostCsgoServerMapper.MapList(datHostDTOs);
         }
         else
         {
-            throw new HttpRequestException(responseMessage.ReasonPhrase, null, responseMessage.StatusCode);
+            throw new CsgoServerException(responseMessage.ReasonPhrase, responseMessage.StatusCode);
         }
     }
 
-    public async Task<DatHostServer> GetDatHostServer(string id)
+    public async Task<DatHostCsgoServer> GetDatHostServer(string id)
     {
+        //Check for internet connection
+
         string uri = _httpClient.BaseAddress.ToString() + $"/api/0.1/game-servers/{id}";
 
         using HttpResponseMessage responseMessage = await _httpClient.GetAsync(uri);
 
         if (responseMessage.IsSuccessStatusCode)
         {
-            return await responseMessage.Content.ReadAsAsync<DatHostServer>();
+            var result = await responseMessage.Content.ReadAsAsync<DatHostServerDTO>();
+            return DatHostCsgoServerMapper.Map(result);
         }
         else
         {
-            throw new HttpRequestException(responseMessage.ReasonPhrase, null, responseMessage.StatusCode);
+            throw new CsgoServerException(responseMessage.ReasonPhrase, responseMessage.StatusCode);
         }
     }
 
-    public async Task<ICsgoServer> StartStopServer(ICsgoServer server)
+    public async Task StartStopServer(ICsgoServer server)
     {
         try
         {
-            if (!server.On)
+            if (!server.IsOn)
             {
-                server = await Server.StartServer(_httpClient);
+                await Server.StartServer(_httpClient);
                 server.Booting = true;
-                return server;
             }
             else
             {
-                server = await Server.StopServer(_httpClient);
-                server.On = false;
+                await Server.StopServer(_httpClient);
                 server.Booting = false;
-                return server;
+                server.IsOn = false;
             }
         }
-        catch (Exception)
+        catch (CsgoServerException serverExeption)
         {
-            throw;
+            throw new Exception(server.IsOn ? $"Could not stop server: {serverExeption.Message}" : $"Could not start server: {serverExeption.Message}");
         }
-
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
+        }
     }
 
-    public async Task<ICsgoServer> ChangeMap(string map)
+    public async Task ChangeMap(string map)
     {
         try
         {
-            return await Server.RunCommand(_httpClient, $"map de_{map.ToLower()}");
+            await Server.RunCommand($"map de_{map.ToLower()}", _httpClient);
         }
-        catch (Exception)
+        catch (CsgoServerException serverExeption)
         {
-            throw;
+            throw new Exception($"Could not change map: {serverExeption.Message}");
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
         }
     }
 
-    public async Task<ICsgoServer> RunCommand(string command)
+    public async Task RunCommand(string command)
     {
         try
         {
-            return await Server.RunCommand(_httpClient, command);
+            await Server.RunCommand(command, _httpClient);
         }
-        catch (Exception)
+        catch (CsgoServerException serverExeption)
         {
-            throw;
+            throw new Exception($"Could not run command: {serverExeption.Message}");
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
         }
     }
 
-    public async Task<ICsgoServer> StartMatch(bool withOvertime, string cfg = null)
+    public async Task StartMatch(bool withOvertime, string cfg = null)
     {
         try
         {
             if (cfg == null)
             {
                 if (!withOvertime)
-                    return await Server.RunCommand(_httpClient, "exec esportliga_start.cfg");
+                    await Server.RunCommand("exec esportliga_start.cfg", _httpClient);
                 else
-                    return await Server.RunCommand(_httpClient, "exec esportliga_start_med_overtime.cfg");
+                    await Server.RunCommand("exec esportliga_start_med_overtime.cfg", _httpClient);
             }
             else
             {
-                return await Server.RunCommand(_httpClient, cfg);
+                await Server.RunCommand(cfg, _httpClient);
             }
         }
-        catch (Exception)
+        catch (CsgoServerException serverExeption)
         {
-            throw;
+            throw new Exception($"Could not start match: {serverExeption.Message}");
         }
-
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
+        }
     }
 
-    public async Task<ICsgoServer> PauseUnpauseMatch(bool isMatchPaused)
+    public async Task PauseUnpauseMatch(bool isMatchPaused)
     {
         try
         {
             if (!isMatchPaused)
-                return await Server.RunCommand(_httpClient, "mp_pause_match");
+                await Server.RunCommand("mp_pause_match", _httpClient);
             else
-                return await Server.RunCommand(_httpClient, "mp_unpause_match");
+                await Server.RunCommand("mp_unpause_match", _httpClient);
 
         }
-        catch (Exception)
+        catch (CsgoServerException serverExeption)
         {
-            throw;
+            throw new Exception($"Could not pause/unpause match: {serverExeption.Message}");
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
         }
     }
 
-    public async Task<ICsgoServer> StartKnife(string cfg = null)
+    public async Task StartKnife(string cfg = null)
     {
         try
         {
             if (cfg == null)
-                return await Server.RunCommand(_httpClient, "exec knife.cfg");
+                await Server.RunCommand("exec knife.cfg", _httpClient);
             else
-                return await Server.RunCommand(_httpClient, cfg);
+                await Server.RunCommand(cfg, _httpClient);
         }
-        catch (Exception)
+        catch (CsgoServerException serverExeption)
         {
-            throw;
+            throw new Exception($"Could not start knife round: {serverExeption.Message}");
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
         }
     }
 
-    public async Task<ICsgoServer> StartNadePractice(string cfg = null)
+    public async Task StartNadePractice(string cfg = null)
     {
         try
         {
             if (cfg == null)
-                return await Server.RunCommand(_httpClient, "exec train.cfg");
+                await Server.RunCommand("exec train.cfg", _httpClient);
             else
-                return await Server.RunCommand(_httpClient, cfg);
+                await Server.RunCommand(cfg, _httpClient);
         }
-        catch (Exception)
+        catch (CsgoServerException serverExeption)
         {
-            throw;
+            throw new Exception($"Could not start nade practice: {serverExeption.Message}");
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
         }
     }
 }

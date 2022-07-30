@@ -1,0 +1,73 @@
+﻿@page "/help"
+
+<MudPaper Class="content-container">
+    <MudExpansionPanels MultiExpansion=true>
+        <MudExpansionPanel >
+            <TitleContent>
+                <MudText Typo="Typo.h6" Class="">Getting started</MudText>
+            </TitleContent>
+            <ChildContent>
+                <MudText>This guide will teach you about some basic functions in CS:GO ServerManager. This includes adding servers and running basic commands.</MudText>
+                <MudDivider Class="help-divider"/>
+                <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Before you start</MudText>
+                <MudText>
+                    Before you start you will need to add the config files from the following link --- Insert link --- to your cfg folder on your servers. 
+                    These are the config files that will be executed as default by the app (The configs being called from the app can be changed at any point).
+                </MudText>
+                <MudDivider Class="help-divider" />
+                <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Adding servers</MudText>
+                <MudText>
+                    The first thing you want to do is to add the servers you want to control through the app. 
+                    To do this go to the "servers" tap, here you can add the servers using the "Add server" button.
+                </MudText>
+                <MudImage Class="my-6 rounded-lg" Elevation="4" Src="Images/SM-AddServerHelp.png" Fluid=true/>
+                <MudText>
+                    When adding servers you have to provide a name (that you choose), the ip address of the server, the password of the server (if it has one), the rcon password of the server (if it has one)
+                    and the port of the server.
+                </MudText>
+                <MudPaper Elevation="0" Class="d-flex justify-center">
+                    <MudPaper Elevation="0" Class="d-flex justify-center" MaxWidth="320px">
+                        <MudImage Class="my-6 rounded-lg" Elevation="4" Src="Images/SM-AddServerDialog.png" Fluid=true/>
+                    </MudPaper>
+                </MudPaper>
+                <MudDivider Class="help-divider" />
+                <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Running server commands</MudText>
+                <MudText>
+                    Once you have added your server it will be available in the server list. Here you can simply click on the server you would like to control, and you will the be taken to the specific page for that server.
+                    On this page you can see different information about your server and different buttons, which can change map, start knife rounds, nade practice and more...
+                </MudText>
+            </ChildContent>
+        </MudExpansionPanel>
+        <MudExpansionPanel>
+            <TitleContent>
+                <MudText Typo="Typo.h6" Class="">Dathost account</MudText>
+            </TitleContent>
+            <ChildContent>
+                <MudText>This guide will teach you how to attach your dathost account automaticly to the app, allowing you to unluck additionally function for your servers.</MudText>
+                <MudPaper Class="my-4" Elevation="0">
+                    <MudText Style="font-weight: bold" Align="Align.Center">!! - - DISCLAIMER - - !!</MudText>
+                    <MudText Align="Align.Center">CSGO - ServerManager does not take any resbonsibility for your dathost account information.</MudText>
+                </MudPaper>
+                <MudDivider Class="help-divider"/>
+                <MudText>
+                    In the settings tap there will be at "Dathost account" box with your dathost account credentials. 
+                    Here you can enter your credentials which will link your dathost account to the app.
+                    Your dathost server will then be automatically fetched from dathost, and you will be able to have additional features unlocked.
+
+                </MudText>
+            </ChildContent>
+        </MudExpansionPanel>
+        <MudExpansionPanel>
+            <TitleContent>
+                <MudText Typo="Typo.h6" Class="">Server settings</MudText>
+            </TitleContent>
+            <ChildContent>
+
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</MudPaper>
+
+@code {
+
+}

@@ -1,0 +1,69 @@
+﻿@inject ISnackbar Snackbar
+@inject ICsgoServerData csgoServerData
+
+<MudDialog @bind-IsVisible="isVisible" Options="dialogOptions" OnBackdropClick="(async () => await ChangeVisibility.InvokeAsync(false))">
+    <TitleContent>
+        <MudText>@(EditType == EditType.Edit ? "Edit server" : "Add a new server")</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudForm @bind-IsValid="@isValid">
+            <MudTextField @bind-Value="TempServer.Name" Label="Name" Required=true RequiredError="Server name is required" Immediate=true></MudTextField>
+            <MudTextField @bind-Value="TempServer.Ip" Label="Ip" Required=true RequiredError="Server ip is required" Immediate=true></MudTextField>
+            <MudTextField @bind-Value="TempServer.Password" Label="Password" Required=true RequiredError="Server password is required" Immediate=true></MudTextField>
+            <MudTextField @bind-Value="TempServer.RconPassword" Label="Rcon password" Required=true RequiredError="Rcon password name is required" Immediate=true></MudTextField>
+            <MudTextField T="int" @bind-Value="TempServer.GamePort" Label="Port" Required=true RequiredError="Server port is required" Immediate=true></MudTextField>
+        </MudForm>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="(async () => await ChangeVisibility.InvokeAsync(false))">Cancel</MudButton>
+            <MudButton Disabled="!isValid" Variant="Variant.Filled" Color="Color.Primary" OnClick="(async () => await Submit())">@(EditType == EditType.Edit ? "Edit" : "Add")</MudButton>
+    </DialogActions>
+</MudDialog>
+
+    @code {
+    [Parameter, EditorRequired]
+    public bool isVisible { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<bool> ChangeVisibility { get; set; }
+
+    [Parameter, EditorRequired]
+    public CsgoServer TempServer { get; set; }
+
+    [Parameter, EditorRequired]
+    public EditType EditType { get; set; }
+
+    DialogOptions dialogOptions = new() { FullWidth = true, CloseButton = false };
+    bool isValid;
+
+    private async Task Submit()
+    {
+        if(EditType == EditType.Edit)
+        {
+            try
+            {
+                await csgoServerData.CsgoServers_Update(TempServer);
+                Snackbar.Add($"Updated server \"{TempServer.Name}\"", Severity.Info);
+            }
+            catch (Exception e)
+            {
+                Snackbar.Add(e.Message, Severity.Warning);
+            }
+        } else
+        {
+            try
+            {
+                await csgoServerData.CsgoServers_Create(TempServer);
+                Snackbar.Add($"Added server \"{TempServer.Name}\"", Severity.Info);
+            }
+            catch (Exception e)
+            {
+                Snackbar.Add(e.Message, Severity.Warning);
+            }
+        }
+        EventArgs args = new();
+        await ChangeVisibility.InvokeAsync(true);
+    }
+}
