@@ -69,23 +69,26 @@ public class CsgoServerService : ICsgoServerService
     {
         try
         {
-            if (server.IsOn)
+            if (!server.IsOn)
             {
                 await Server.StartServer(_httpClient);
-                server.Booting = false;
+                server.Booting = true;
             }
             else
             {
                 await Server.StopServer(_httpClient);
-                server.Booting = true;
+                server.Booting = false;
+                server.IsOn = false;
             }
-            server.IsOn = !Server.IsOn;
+        }
+        catch (CsgoServerException serverExeption)
+        {
+            throw new Exception(server.IsOn ? $"Could not stop server: {serverExeption.Message}" : $"Could not start server: {serverExeption.Message}");
         }
         catch (Exception e)
         {
-            throw new CsgoServerException(e.Message, server);
+            throw new Exception($"Something went wrong: {e.Message}");
         }
-
     }
 
     public async Task ChangeMap(string map)
