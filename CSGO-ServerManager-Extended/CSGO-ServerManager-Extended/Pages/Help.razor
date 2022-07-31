@@ -2,7 +2,7 @@
 
 <MudPaper Class="content-container">
     <MudExpansionPanels MultiExpansion=true>
-        <MudExpansionPanel >
+        <MudExpansionPanel>
             <TitleContent>
                 <MudText Typo="Typo.h6" Class="">Getting started</MudText>
             </TitleContent>
@@ -11,7 +11,7 @@
                 <MudDivider Class="help-divider"/>
                 <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Before you start</MudText>
                 <MudText>
-                    Before you start you will need to add the config files from the following link --- Insert link --- to your cfg folder on your servers. 
+                    Before you start you will need to add the config files from <MudLink Href="https://drive.google.com/drive/folders/1gklrlxvCXc6PvJRVT9febu3p8TFQ3bCQ?usp=sharing">this</MudLink> google drive, to your "cfg" folder on your servers.
                     These are the config files that will be executed as default by the app (The configs being called from the app can be changed at any point).
                 </MudText>
                 <MudDivider Class="help-divider" />
@@ -36,6 +36,11 @@
                     Once you have added your server it will be available in the server list. Here you can simply click on the server you would like to control, and you will the be taken to the specific page for that server.
                     On this page you can see different information about your server and different buttons, which can change map, start knife rounds, nade practice and more...
                 </MudText>
+                <MudPaper Elevation="0" Class="d-flex justify-center">
+                    <MudPaper Elevation="0" Class="d-flex justify-center" MaxWidth="700px">
+                        <MudImage Class="my-6 rounded-lg" Elevation="4" Src="Images/SM-CommandsHelp.png" Fluid=true />
+                    </MudPaper>
+                </MudPaper>
             </ChildContent>
         </MudExpansionPanel>
         <MudExpansionPanel>
@@ -53,8 +58,12 @@
                     In the settings tap there will be at "Dathost account" box with your dathost account credentials. 
                     Here you can enter your credentials which will link your dathost account to the app.
                     Your dathost server will then be automatically fetched from dathost, and you will be able to have additional features unlocked.
-
                 </MudText>
+                <MudPaper Elevation="0" Class="d-flex justify-center">
+                    <MudPaper Elevation="0" Class="d-flex justify-center" MaxWidth="700px">
+                        <MudImage Class="my-6 rounded-lg" Elevation="4" Src="Images/SM-DathostAccountHelp.png" Fluid=true />
+                    </MudPaper>
+                </MudPaper>
             </ChildContent>
         </MudExpansionPanel>
         <MudExpansionPanel>
