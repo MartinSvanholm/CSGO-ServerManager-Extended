@@ -82,6 +82,8 @@ namespace CSGOServerInterface.Server.CsgoServer
 
         public virtual async Task GetConnection()
         {
+            CheckInternetConnection();
+
             Rcon = new(IPAddress.Parse(Ip), Convert.ToUInt16(GamePort), Password);
 
             await Rcon.ConnectAsync();

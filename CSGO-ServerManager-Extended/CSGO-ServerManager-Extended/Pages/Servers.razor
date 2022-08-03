@@ -1,4 +1,5 @@
 ﻿@page "/servers"
+@using CsgoServerInterface.Exceptions
 
 @inject ICsgoServerService CsgoServerService
 @inject ISettingsService settingsService
@@ -80,9 +81,15 @@
             _loading = false;
             await InvokeAsync(StateHasChanged);
         }
+        catch (CsgoServerException serverException) 
+        {
+            Snackbar.Add($"Could not load your DathostServers: {serverException.Message}", Severity.Warning);
+            _loading = false;
+        }
         catch (Exception e)
         {
-            Snackbar.Add(e.Message, Severity.Warning);
+            Snackbar.Add($"Something went wrong: {e.Message}", Severity.Error);
+            _loading = false;
         }
     }
 

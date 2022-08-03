@@ -23,7 +23,8 @@ public class CsgoServerService : ICsgoServerService
 
     public async Task<List<DatHostCsgoServer>> GetDatHostServers()
     {
-        //Check for internet connection
+        if (!(Connectivity.Current.NetworkAccess == NetworkAccess.Internet))
+            throw new CsgoServerException("Device not connected to the internet", System.Net.HttpStatusCode.InternalServerError);
 
         string uri = _httpClient.BaseAddress.ToString() + "/api/0.1/game-servers";
 
@@ -49,7 +50,8 @@ public class CsgoServerService : ICsgoServerService
 
     public async Task<DatHostCsgoServer> GetDatHostServer(string id)
     {
-        //Check for internet connection
+        if (!(Connectivity.Current.NetworkAccess == NetworkAccess.Internet))
+            throw new CsgoServerException("Device not connected to the internet", System.Net.HttpStatusCode.InternalServerError);
 
         string uri = _httpClient.BaseAddress.ToString() + $"/api/0.1/game-servers/{id}";
 
