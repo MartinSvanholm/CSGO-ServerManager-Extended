@@ -13,7 +13,8 @@
             <MudTextField @bind-Value="TempServer.Password" Label="Password" Immediate=true></MudTextField>
             <MudTextField @bind-Value="TempServer.RconPassword" Label="Rcon password" Immediate=true></MudTextField>
             <MudTextField T="int" @bind-Value="TempServer.GamePort" Label="Port" Required=true RequiredError="Server port is required" Immediate=true></MudTextField>
-                <MudCheckBox @bind-Checked="TempServer.IsFavourite" Label="Favourite" CheckedIcon="@Icons.Filled.Star" UncheckedIcon="@Icons.Filled.StarBorder"/>
+            <MudCheckBox @bind-Checked="TempServer.IsFavourite" Label="Favourite" CheckedIcon="@Icons.Filled.Star" UncheckedIcon="@Icons.Filled.StarBorder"/>
+            <MudTextField @bind-Value="TempServer.Description" Lines="3" Label="Description" Immediate=true></MudTextField>
         </MudForm>
     </DialogContent>
 

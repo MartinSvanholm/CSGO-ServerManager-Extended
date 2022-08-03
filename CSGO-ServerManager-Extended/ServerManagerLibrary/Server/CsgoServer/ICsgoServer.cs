@@ -17,6 +17,7 @@ namespace CsgoServerInterface.CsgoServer
         RCON Rcon { get; set; }
         string RconPassword { get; set; }
         string Status { get; }
+        string Description { get; set; }
 
         Task GetConnection();
         Task RunCommand(string command, HttpClient httpClient);

@@ -80,6 +80,9 @@ namespace CSGOServerInterface.Server.CsgoServer
             }
         }
 
+        [Column("description")]
+        public string Description { get; set; }
+
         public virtual async Task GetConnection()
         {
             CheckInternetConnection();
