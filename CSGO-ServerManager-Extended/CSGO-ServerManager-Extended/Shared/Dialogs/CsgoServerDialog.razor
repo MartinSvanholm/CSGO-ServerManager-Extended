@@ -10,8 +10,8 @@
         <MudForm @bind-IsValid="@isValid">
             <MudTextField @bind-Value="TempServer.Name" Label="Name" Required=true RequiredError="Server name is required" Immediate=true></MudTextField>
             <MudTextField @bind-Value="TempServer.Ip" Label="Ip" Required=true RequiredError="Server ip is required" Immediate=true></MudTextField>
-            <MudTextField @bind-Value="TempServer.Password" Label="Password" Required=true RequiredError="Server password is required" Immediate=true></MudTextField>
-            <MudTextField @bind-Value="TempServer.RconPassword" Label="Rcon password" Required=true RequiredError="Rcon password name is required" Immediate=true></MudTextField>
+            <MudTextField @bind-Value="TempServer.Password" Label="Password" Immediate=true></MudTextField>
+            <MudTextField @bind-Value="TempServer.RconPassword" Label="Rcon password" Immediate=true></MudTextField>
             <MudTextField T="int" @bind-Value="TempServer.GamePort" Label="Port" Required=true RequiredError="Server port is required" Immediate=true></MudTextField>
                 <MudCheckBox @bind-Checked="TempServer.IsFavourite" Label="Favourite" CheckedIcon="@Icons.Filled.Star" UncheckedIcon="@Icons.Filled.StarBorder"/>
         </MudForm>
