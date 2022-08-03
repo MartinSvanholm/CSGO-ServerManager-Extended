@@ -1,4 +1,5 @@
 ﻿@page "/servers"
+@using CsgoServerInterface.Exceptions
 
 @inject ICsgoServerService CsgoServerService
 @inject ISettingsService settingsService
@@ -66,8 +67,7 @@
 
     private void RowClickEvent(TableRowClickEventArgs<ICsgoServer> args)
     {
-        CsgoServerService.Server = args.Item;
-        navigation.NavigateTo("/server", true);
+        navigation.NavigateTo($"/server/{args.Item.Id}", true);
     }
 
     private async Task GetServersAsync()
@@ -81,9 +81,15 @@
             _loading = false;
             await InvokeAsync(StateHasChanged);
         }
+        catch (CsgoServerException serverException) 
+        {
+            Snackbar.Add($"Could not load your DathostServers: {serverException.Message}", Severity.Warning);
+            _loading = false;
+        }
         catch (Exception e)
         {
-            Snackbar.Add(e.Message, Severity.Warning);
+            Snackbar.Add($"Something went wrong: {e.Message}", Severity.Error);
+            _loading = false;
         }
     }
 

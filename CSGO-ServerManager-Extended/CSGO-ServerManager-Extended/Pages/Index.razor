@@ -1,8 +1,24 @@
 ﻿@page "/"
+@inject ICsgoServerService CsgoServerService
+@inject ICsgoServerData CsgoServerData
 
 <MudPaper Class="content-container" Elevation="0">
     <MudPaper Class="pa-5">
         <MudText Typo="Typo.h4" GutterBottom="true">CS:GO ServerManager</MudText>
         <MudText Typo="Typo.body1">Click <MudLink Href="/servers">here</MudLink> to add your first server, or check out the <MudLink Href="/help">getting started guide.</MudLink> for a complete guide</MudText>
     </MudPaper>
+
+    @if(csgoServers != null) {
+        @foreach (ICsgoServer server in csgoServers)
+        {
+            <MudPaper Class="my-10">
+                <ServerComponent Server="server">
+                    <ServerHeader>
+                        <MudText Typo="Typo.h6">@server.Name</MudText>
+                    </ServerHeader>
+                </ServerComponent>
+            </MudPaper>   
+        }
+    }
+
 </MudPaper>

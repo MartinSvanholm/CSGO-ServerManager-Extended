@@ -8,7 +8,7 @@ namespace CSGOServerInterface.Mappers
         public static DatHostCsgoServer Map(DatHostServerDTO dto)
         {
             return new DatHostCsgoServer(
-                id: -1,
+                id: dto.Id,
                 name: dto.Name,
                 ip: dto.RawIp,
                 password: dto.CsgoSettings.Password,
@@ -17,8 +17,7 @@ namespace CSGOServerInterface.Mappers
                 gOTVPort: dto.Ports.Gotv,
                 isOn: dto.On,
                 booting: dto.Booting,
-                isFavourite: false,
-                datHostID: dto.Id
+                isFavourite: false
                 );
         }
 
