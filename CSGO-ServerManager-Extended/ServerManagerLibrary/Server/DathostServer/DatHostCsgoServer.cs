@@ -13,7 +13,7 @@ namespace CSGOServerInterface.Server.DathostServer
 {
     public class DatHostCsgoServer : AbstractCsgoServer
     {
-        public DatHostCsgoServer(bool booting, int gamePort, int? gOTVPort, int id, string ip, bool isFavourite, bool isOn, string name, string password, string rconPassword, string datHostID)
+        public DatHostCsgoServer(bool booting, int gamePort, int? gOTVPort, string id, string ip, bool isFavourite, bool isOn, string name, string password, string rconPassword)
         {
             Booting = booting;
             GamePort = gamePort;
@@ -25,7 +25,6 @@ namespace CSGOServerInterface.Server.DathostServer
             Name = name;
             Password = password;
             RconPassword = rconPassword;
-            DatHostID = datHostID;
         }
 
         public override Task GetConnection()
@@ -37,7 +36,7 @@ namespace CSGOServerInterface.Server.DathostServer
         {
             CheckInternetConnection();
 
-            string uri = httpClient.BaseAddress.ToString() + $"/api/0.1/game-servers/{DatHostID}/console";
+            string uri = httpClient.BaseAddress.ToString() + $"/api/0.1/game-servers/{Id}/console";
 
             var data = new Dictionary<string, string>
             {
@@ -56,7 +55,7 @@ namespace CSGOServerInterface.Server.DathostServer
         {
             CheckInternetConnection();
 
-            string uri = httpClient.BaseAddress.ToString() + $"/api/0.1/game-servers/{DatHostID}/start";
+            string uri = httpClient.BaseAddress.ToString() + $"/api/0.1/game-servers/{Id}/start";
 
             using HttpResponseMessage responseMessage = await httpClient.PostAsync(uri, null);
 
@@ -68,7 +67,7 @@ namespace CSGOServerInterface.Server.DathostServer
         {
             CheckInternetConnection();
             
-            string uri = httpClient.BaseAddress.ToString() + $"/api/0.1/game-servers/{DatHostID}/stop";
+            string uri = httpClient.BaseAddress.ToString() + $"/api/0.1/game-servers/{Id}/stop";
 
             using HttpResponseMessage responseMessage = await httpClient.PostAsync(uri, null);
 

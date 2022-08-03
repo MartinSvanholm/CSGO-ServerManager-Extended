@@ -1,0 +1,36 @@
+﻿<MudGrid>
+    <MudItem xs="9">
+        <MudText Typo="Typo.h6">@Server.Name</MudText>
+    </MudItem>
+
+    <MudItem xs="3" Class="d-flex justify-end">
+        <MudStack Row="true" Spacing="0" Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudText>Server is @Server.Status</MudText>
+            @if (Server is DatHostCsgoServer)
+            {
+                <MudToggleIconButton @bind-Toggled="Server.IsOn" Icon="@Icons.Filled.NotStarted" Color="Color.Success" Size="Size.Large" ToggledIcon="@Icons.Filled.Stop" ToggledColor="Color.Error" ToggledSize="Size.Large"
+                                    @onclick="@(async () => await StartStopServer.InvokeAsync())" />
+            }
+        </MudStack>
+    </MudItem>
+
+    <MudItem xs="12" sm="7">
+        <MudText>This is your own description of the server</MudText>
+    </MudItem>
+
+    <MudItem xs="12" sm="5">
+        <MudStack>
+            <MudText>Connection Ip:</MudText>
+            <MudDivider />
+            <MudText>@Server.ConnectionIp</MudText>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter, EditorRequired]
+    public ICsgoServer Server { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback StartStopServer { get; set; }
+}

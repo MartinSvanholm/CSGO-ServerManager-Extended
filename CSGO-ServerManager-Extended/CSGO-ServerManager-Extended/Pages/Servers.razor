@@ -66,8 +66,7 @@
 
     private void RowClickEvent(TableRowClickEventArgs<ICsgoServer> args)
     {
-        CsgoServerService.Server = args.Item;
-        navigation.NavigateTo("/server", true);
+        navigation.NavigateTo($"/server/{args.Item.Id}", true);
     }
 
     private async Task GetServersAsync()

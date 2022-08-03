@@ -1,10 +1,12 @@
 ﻿using CoreRCON;
+using CoreRCON.Parsers.Standard;
 using CsgoServerInterface.CsgoServer;
 using CsgoServerInterface.Exceptions;
 using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,7 +16,7 @@ namespace CSGOServerInterface.Server.CsgoServer
     {
         [PrimaryKey, Unique, NotNull]
         [Column("id")]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [NotNull, Unique]
         [Column("name")]
@@ -78,12 +80,12 @@ namespace CSGOServerInterface.Server.CsgoServer
             }
         }
 
-        [Ignore]
-        public string DatHostID { get; set; }
-
         public virtual async Task GetConnection()
         {
+            Rcon = new(IPAddress.Parse(Ip), Convert.ToUInt16(GamePort), Password);
+
             await Rcon.ConnectAsync();
+            Status status = await Rcon.SendCommandAsync<Status>("status");
         }
 
         public virtual async Task RunCommand(string command, HttpClient httpClient)

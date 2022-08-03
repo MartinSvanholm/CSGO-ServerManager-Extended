@@ -1,8 +1,19 @@
 ﻿using CSGO_ServerManager_Extended.Services.DataAccess;
 using CsgoServerInterface.CsgoServer;
+using System.Linq.Expressions;
 
 namespace CSGO_ServerManager_Extended.Services.Data.CsgoServerData
 {
+    public interface ICsgoServerData
+    {
+        Task CsgoServers_Create(CsgoServer csgoServer);
+        Task<ICsgoServer> CsgoServers_Get(Expression<Func<CsgoServer, bool>> condition);
+        Task<List<ICsgoServer>> CsgoServers_GetAll();
+        Task<ICsgoServer> CsgoServers_GetByName(string name);
+        Task CsgoServers_Update(CsgoServer csgoServer);
+        Task CsgoServer_Delete(CsgoServer csgoServer);
+    }
+
     public class CsgoServerData : ICsgoServerData
     {
         private readonly IDataAccess _dataAccess;
@@ -32,8 +43,14 @@ namespace CSGO_ServerManager_Extended.Services.Data.CsgoServerData
                 return result;
         }
 
+        public async Task<ICsgoServer> CsgoServers_Get(Expression<Func<CsgoServer, bool>> condition)
+        {
+            return await _dataAccess.GetByConditionAsync(condition);
+        }
+
         public async Task CsgoServers_Create(CsgoServer csgoServer)
         {
+            csgoServer.Id = Guid.NewGuid().ToString().Replace("-", "");
             await _dataAccess.InsertDataAsync(csgoServer);
         }
 

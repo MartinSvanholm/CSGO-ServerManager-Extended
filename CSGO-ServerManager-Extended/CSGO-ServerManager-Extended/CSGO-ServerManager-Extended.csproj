@@ -86,7 +86,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Resources\Raw\Cfg\" />
-	  <Folder Include="Shared\Components\" />
 	</ItemGroup>
 
 	<ItemGroup>

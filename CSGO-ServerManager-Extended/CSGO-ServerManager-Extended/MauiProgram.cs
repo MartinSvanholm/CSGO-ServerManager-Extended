@@ -45,10 +45,10 @@ public static class MauiProgram
             config.SnackbarConfiguration.ShowTransitionDuration = 500;
             config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
         });
-        builder.Services.AddSingleton<ICsgoServerService, CsgoServerService>();
+        builder.Services.AddSingleton<IDataAccess, DataAccess>(x => new DataAccess(Path.Combine(FileSystem.AppDataDirectory, "ServerManagerDb.db")));
+        builder.Services.AddSingleton<ICsgoServerData, CsgoServerData>(x => new CsgoServerData(x.GetRequiredService<IDataAccess>()));
+		builder.Services.AddSingleton<ICsgoServerService, CsgoServerService>();
 		builder.Services.AddSingleton<ISettingsService>(x => new SettingsService(x.GetRequiredService<HttpClient>(), dathostAccount, DathostAccountIsConnected));
-		builder.Services.AddSingleton<IDataAccess, DataAccess>(x => new DataAccess(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ServerManagerDb.db")));
-		builder.Services.AddSingleton<ICsgoServerData, CsgoServerData>(x => new CsgoServerData(x.GetRequiredService<IDataAccess>()));
 
 		return builder.Build();
 	}
