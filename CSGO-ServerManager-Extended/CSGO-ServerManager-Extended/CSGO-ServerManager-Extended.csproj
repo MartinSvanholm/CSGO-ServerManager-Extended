@@ -51,6 +51,11 @@
 
 	<ItemGroup>
 	  <None Remove="Platforms\Android\Resources\xml\auto_backup_rules.xml" />
+	  <None Remove="Shared\Components\ServerComponents\ServerComponent.razor.css" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Shared\Components\ServerComponents\ServerComponent.razor.css" />
 	</ItemGroup>
 
 	<ItemGroup>
