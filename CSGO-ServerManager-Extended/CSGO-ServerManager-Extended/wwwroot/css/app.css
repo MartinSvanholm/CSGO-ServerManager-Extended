@@ -92,3 +92,13 @@ a, .btn-link {
 .t-bold {
     font-weight: bold;
 }
+
+@media only screen and (max-width: 600px) {
+    .btn-full-width {
+        width: 100%;
+    }
+
+    #td-column {
+        border-bottom: solid #DDDDDD 1px;
+    }
+}

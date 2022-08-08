@@ -7,7 +7,7 @@
 @inject NavigationManager navigation
 @inject ICsgoServerData csgoServerData
 
-<MudTable Items="@csgoServers" Hover="true" Loading="@_loading" OnRowClick="RowClickEvent" T="ICsgoServer" RowStyle="cursor: pointer;" LoadingProgressColor="Color.Info" Striped="true" Elevation="0">
+<MudTable RowClass="row-border" Height="85vh" Items="@csgoServers" RowStyle="cursor: pointer;" Hover="true" Loading="@_loading" OnRowClick="RowClickEvent" T="ICsgoServer" LoadingProgressColor="Color.Info" Striped="true" Elevation="0" FixedHeader=true>
     <ToolBarContent>
         <MudText Typo="Typo.h6">Your servers</MudText>
         <MudSpacer />
@@ -27,18 +27,15 @@
     <RowTemplate >
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Connection Ip" HideSmall="true">@context.ConnectionIp</MudTd>
-        <MudTd Style="text-align: center;" DataLabel="Status">@context.Status</MudTd>
-        <MudTd Style="text-align: center;" DataLabel="Players online">0</MudTd>
-        <MudTd Style="text-align: center;" HideSmall="true">
-            <MudIconButton Class="pa-0" Icon="@Icons.Filled.Edit" OnClick="(() => OpenEditDialog(EditType.Edit, context))"></MudIconButton>
+        <MudTd Style="text-align: center" DataLabel="Status">@context.Status</MudTd>
+        <MudTd Style="text-align: center" id="td-column" DataLabel="Players online">0</MudTd>
+        <MudTd HideSmall="true">
+            <MudIconButton Icon="@Icons.Filled.Edit" OnClick="(() => OpenEditDialog(EditType.Edit, context))"></MudIconButton>
         </MudTd>
-        <MudTd Style="text-align: center;" HideSmall="true">
-            <MudIconButton Class="pa-0" Icon="@Icons.Filled.Delete" OnClick="(async () => await OnDeleteConfirmShow(context))"></MudIconButton>
+        <MudTd HideSmall="true">
+            <MudIconButton Icon="@Icons.Filled.Delete" OnClick="(async () => await OnDeleteConfirmShow(context))"></MudIconButton>
         </MudTd>
     </RowTemplate>
-    <PagerContent>
-        <MudDivider />
-    </PagerContent>
 </MudTable>
 
 <CsgoServerDialog isVisible="isVisible" ChangeVisibility="(async (bool isSucces) => await OnVisibilityChanged(isSucces))" TempServer="tempServer" EditType="_editType" />
