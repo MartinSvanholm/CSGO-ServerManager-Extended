@@ -4,7 +4,6 @@
 @inject ICsgoServerService CsgoServerService
 @inject HttpClient _client
 @inject ISnackbar _snackBar
-@implements IDisposable
 
 <MudBreakpointProvider>
     <MudPaper Class="content-container" Elevation="0">
@@ -56,22 +55,22 @@
             </MudItem>
 
             <MudItem xs="12" sm="4">
-                <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
-                    <MudButton Disabled="@(!Server.IsOn)" @onclick="@(async () => await StartMatch(false))">Start match</MudButton>
-                    <MudButton Disabled="@(!Server.IsOn)" @onclick="@(async () => await StartMatch(true))">Start match with overtime</MudButton>
+                <MudButtonGroup Class="btn-full-width" Color="Color.Primary" Variant="Variant.Outlined">
+                    <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" @onclick="@(async () => await StartMatch(false))">Start match</MudButton>
+                    <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" @onclick="@(async () => await StartMatch(true))">Start match with overtime</MudButton>
                 </MudButtonGroup>
             </MudItem>
 
             <MudItem xs="12" sm="4" Class="d-flex justify-center">
-                <MudButton Disabled="@(!Server.IsOn)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await PauseUnpauseMatch())">@pausedBtnText</MudButton>
+                <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await PauseUnpauseMatch())">@pausedBtnText</MudButton>
             </MudItem>
 
             <MudItem xs="12" sm="4" Class="d-flex justify-end">
-                <MudButton Disabled="@(!Server.IsOn)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartKnife())">Start knife</MudButton>
+                <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartKnife())">Start knife</MudButton>
             </MudItem>
 
             <MudItem xs="12" Class="d-flex justify-end">
-                <MudButton Disabled="@(!Server.IsOn)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SwitchSides())">Switch sides</MudButton>
+                <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SwitchSides())">Switch sides</MudButton>
             </MudItem>
 
             <MudItem xs="12">
@@ -82,7 +81,7 @@
             </MudItem>
 
             <MudItem xs="12" Class="d-flex justify-start">
-                <MudButton Disabled="@(!Server.IsOn)" FullWidth="@useFullSize" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartNadePractice())">Start nade practice</MudButton>
+                <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartNadePractice())">Start nade practice</MudButton>
             </MudItem>
 
         </MudGrid>
@@ -90,9 +89,6 @@
 </MudBreakpointProvider>
 
 @code {
-    [Inject] 
-    IBreakpointService BreakpointListener { get; set; }
-
     [Parameter, AllowNull]
     public RenderFragment ServerHeader { get; set; }
 
@@ -105,7 +101,6 @@
     Timer serverUpdateTimer = new(10000);
     Guid _subscriptionId;
     MudListItem selectedItem;
-    bool useFullSize = false;
     bool expandList = false;
     bool matchpaused = false;
     string pausedBtnText = "Pause match";
@@ -135,41 +130,10 @@
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var subscriptionResult = await BreakpointListener.Subscribe((breakpoint) =>
-            {
-                if(breakpoint == Breakpoint.Xs)
-                    useFullSize = true;
-                else
-                    useFullSize = false;
-
-                StateHasChanged();
-            }, new ResizeOptions
-            {
-                ReportRate = 500,
-                NotifyOnBreakpointOnly = true,
-            });
-
-            if (subscriptionResult.Breakpoint == Breakpoint.Xs)
-                useFullSize = true;
-            else
-                useFullSize = false;
-
-            _subscriptionId = subscriptionResult.SubscriptionId;
-            StateHasChanged();
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
     public void Dispose()
     {
         serverUpdateTimer.Stop();
         serverUpdateTimer.Close();
-        BreakpointListener.Unsubscribe(_subscriptionId);
     }
 
     private async Task UpdateServer()
