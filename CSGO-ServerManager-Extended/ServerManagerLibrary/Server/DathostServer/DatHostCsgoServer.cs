@@ -1,13 +1,5 @@
-﻿using CoreRCON;
-using CsgoServerInterface.CsgoServer;
-using CsgoServerInterface.Exceptions;
+﻿using CsgoServerInterface.Exceptions;
 using CSGOServerInterface.Server.CsgoServer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSGOServerInterface.Server.DathostServer
 {

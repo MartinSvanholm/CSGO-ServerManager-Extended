@@ -18,6 +18,10 @@ namespace CsgoServerInterface.CsgoServer
         string RconPassword { get; set; }
         string Status { get; }
         string Description { get; set; }
+        public string MatchCommand { get; set; }
+        public string OvertimeCommand { get; set; }
+        public string KnifeCommand { get; set; }
+        public string PracticeCommand { get; set; }
 
         Task GetConnection();
         Task RunCommand(string command, HttpClient httpClient);

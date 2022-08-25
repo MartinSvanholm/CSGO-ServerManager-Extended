@@ -1,23 +1,19 @@
-﻿using CSGO_ServerManager_Extended.Services.Data.CsgoServerData;
-using CsgoServerInterface.CsgoServer;
+﻿using CsgoServerInterface.CsgoServer;
 using CsgoServerInterface.Exceptions;
 using CSGOServerInterface.Mappers;
 using CSGOServerInterface.Server.DathostServer;
 using CSGOServerInterface.Server.DTO;
-using MudBlazor;
 
 namespace CSGO_ServerManager_Extended.Services.CsgoServerService;
 
 public class CsgoServerService : ICsgoServerService
 {
-    public CsgoServerService(HttpClient httpClient, ICsgoServerData csgoServerData)
+    public CsgoServerService(HttpClient httpClient)
     {
         _httpClient = httpClient;
-        _csgoServerData = csgoServerData;
     }
 
     private HttpClient _httpClient;
-    private readonly ICsgoServerData _csgoServerData;
 
     public ICsgoServer Server { get; set; }
 
@@ -60,7 +56,7 @@ public class CsgoServerService : ICsgoServerService
         if (responseMessage.IsSuccessStatusCode)
         {
             var result = await responseMessage.Content.ReadAsAsync<DatHostServerDTO>();
-            return DatHostCsgoServerMapper.Map(result);
+            return DatHostCsgoServerMapper.MapFromDTO(result);
         }
         else
         {

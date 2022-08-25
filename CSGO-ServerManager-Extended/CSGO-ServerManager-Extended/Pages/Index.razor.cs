@@ -1,8 +1,4 @@
-﻿using CSGO_ServerManager_Extended.Services.CsgoServerService;
-using CSGO_ServerManager_Extended.Services.Data.CsgoServerData;
-using CsgoServerInterface.CsgoServer;
-using Microsoft.AspNetCore.Components;
-using MudBlazor;
+﻿using CsgoServerInterface.CsgoServer;
 
 namespace CSGO_ServerManager_Extended.Pages
 {
@@ -12,8 +8,7 @@ namespace CSGO_ServerManager_Extended.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var data = await CsgoServerData.CsgoServers_GetAll();
-            csgoServers = data.Where(s => s.IsFavourite).ToList();
+            csgoServers = await CsgoServerRepository.GetCsgoServerByCondition(s => s.IsFavourite);
         }
     }
 }

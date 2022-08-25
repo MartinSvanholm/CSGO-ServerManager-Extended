@@ -5,7 +5,7 @@ namespace CSGOServerInterface.Mappers
 {
     public static class DatHostCsgoServerMapper
     {
-        public static DatHostCsgoServer Map(DatHostServerDTO dto)
+        public static DatHostCsgoServer MapFromDTO(DatHostServerDTO dto)
         {
             return new DatHostCsgoServer(
                 id: dto.Id,
@@ -27,7 +27,7 @@ namespace CSGOServerInterface.Mappers
 
             foreach (var dto in dTOs)
             {
-                result.Add(Map(dto));
+                result.Add(MapFromDTO(dto));
             }
 
             return result;

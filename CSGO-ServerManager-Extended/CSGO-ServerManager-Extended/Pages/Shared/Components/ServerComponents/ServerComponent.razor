@@ -84,6 +84,15 @@
                 <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartNadePractice())">Start nade practice</MudButton>
             </MudItem>
 
+            @if(!(Server is DatHostCsgoServer))
+            {
+                <MudItem xs="12">
+                    <ServerSettings csgoServer="Server">
+
+                    </ServerSettings>
+                </MudItem>
+            }
+
         </MudGrid>
     </MudPaper>
 </MudBreakpointProvider>
@@ -184,7 +193,13 @@
     {
         try
         {
-            await CsgoServerService.StartMatch(overtime);
+            if(overtime == false)
+            {
+                await CsgoServerService.StartMatch(overtime, Server.MatchCommand);
+            } else
+            {
+                await CsgoServerService.StartMatch(overtime, Server.OvertimeCommand);
+            }
             _snackBar.Add("Starting match", Severity.Info);
         }
         catch (Exception e)
@@ -221,7 +236,7 @@
     {
         try
         {
-            await CsgoServerService.StartKnife();
+            await CsgoServerService.StartKnife(Server.KnifeCommand);
             _snackBar.Add("Starting knife round", Severity.Info);
         }
         catch (Exception e)
@@ -247,7 +262,7 @@
     {
         try
         {
-            await CsgoServerService.StartNadePractice();
+            await CsgoServerService.StartNadePractice(Server.PracticeCommand);
             _snackBar.Add("Starting nade practice", Severity.Info);
         }
         catch (Exception e)

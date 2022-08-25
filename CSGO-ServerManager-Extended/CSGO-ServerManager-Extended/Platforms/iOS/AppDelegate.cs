@@ -1,9 +1,9 @@
 ﻿using Foundation;
 
-namespace CSGO_ServerManager_Extended;
+namespace CSGO_ServerManager_Extended.Platforms.iOS;
 
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate
 {
-	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+    protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 }

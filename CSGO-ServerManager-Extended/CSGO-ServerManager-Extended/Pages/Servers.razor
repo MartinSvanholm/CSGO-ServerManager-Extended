@@ -1,11 +1,9 @@
 ﻿@page "/servers"
-@using CsgoServerInterface.Exceptions
-
 @inject ICsgoServerService CsgoServerService
 @inject ISettingsService settingsService
 @inject ISnackbar Snackbar
 @inject NavigationManager navigation
-@inject ICsgoServerData csgoServerData
+@inject ICsgoServerRepository CsgoServerRepository
 
 <MudTable RowClass="row-border" Height="85vh" Items="@csgoServers" RowStyle="cursor: pointer;" Hover="true" Loading="@_loading" OnRowClick="RowClickEvent" T="ICsgoServer" LoadingProgressColor="Color.Info" Striped="true" Elevation="0" FixedHeader=true>
     <ToolBarContent>
@@ -64,7 +62,14 @@
 
     private void RowClickEvent(TableRowClickEventArgs<ICsgoServer> args)
     {
-        navigation.NavigateTo($"/server/{args.Item.Id}", true);
+        if(args.Item is DatHostCsgoServer)
+        {
+            navigation.NavigateTo($"/server?ServerId={args.Item.Id}&ServerType={CsgoServerConstants.DathostCsgoServerType}", true);
+        }
+        else if(args.Item is CsgoServer)
+        {
+            navigation.NavigateTo($"/server?ServerId={args.Item.Id}&ServerType={CsgoServerConstants.NormalCsgoServerType}", true);
+        }
     }
 
     private async Task GetServersAsync()
@@ -74,7 +79,7 @@
             csgoServers = new();
             if(settingsService.DathostAccountIsConnected)
                 csgoServers.AddRange(await CsgoServerService.GetDatHostServers());
-            csgoServers.AddRange(await csgoServerData.CsgoServers_GetAll());
+            csgoServers.AddRange(await CsgoServerRepository.GetCsgoServers());
             _loading = false;
             await InvokeAsync(StateHasChanged);
         }
@@ -116,7 +121,7 @@
         {
             try
             {
-                await csgoServerData.CsgoServer_Delete((CsgoServer)csgoServer);
+                await CsgoServerRepository.DeleteCsgoServer(csgoServer);
                 csgoServers.Remove(csgoServer);
                 Snackbar.Add($"Deleted server \"{csgoServer.Name}\"", Severity.Info);
                 await InvokeAsync(StateHasChanged);

@@ -1,13 +1,6 @@
-﻿using CSGO_ServerManager_Extended.Models;
-using CSGO_ServerManager_Extended.Services.SettingsService;
-using CSGO_ServerManager_Extended.Shared.Dialogs;
+﻿using CSGO_ServerManager_Extended.Services.SettingsService;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSGO_ServerManager_Extended.Pages
 {

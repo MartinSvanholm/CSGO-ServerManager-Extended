@@ -1,6 +1,6 @@
-﻿@page "/server/{ServerId}"
+﻿@page "/server"
 @inject ICsgoServerService CsgoServerService
-@inject ICsgoServerData CsgoServerData
+@inject ICsgoServerRepository CsgoServerRepository
 @inject ISnackbar _snackBar;
 
 @if(CsgoServer != null) {
@@ -12,17 +12,31 @@
 }
 
 @code {
-    [Parameter]
+    [Parameter, SupplyParameterFromQuery]
     public string ServerId { get; set; }
+
+    [Parameter, SupplyParameterFromQuery]
+    public string ServerType { get; set; }
 
     private ICsgoServer CsgoServer { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        CsgoServer = await CsgoServerData.CsgoServers_Get(s => s.Id == ServerId);
-
-        if (CsgoServer == null)
-            CsgoServer = await CsgoServerService.GetDatHostServer(ServerId);
+        try
+        {
+            if(ServerType == CsgoServerConstants.NormalCsgoServerType)
+            {
+                CsgoServer = await CsgoServerRepository.GetCsgoServerById(ServerId);
+            } 
+            else
+            {
+                CsgoServer = await CsgoServerService.GetDatHostServer(ServerId);
+            }                
+        }
+        catch (Exception e)
+        {
+            _snackBar.Add(e.Message);
+        }
     }
 
     private async Task StartStopServer()
