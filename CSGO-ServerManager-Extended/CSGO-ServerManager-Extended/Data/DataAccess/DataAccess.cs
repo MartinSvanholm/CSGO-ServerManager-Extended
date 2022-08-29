@@ -1,6 +1,7 @@
 ﻿using CsgoServerInterface.CsgoServer;
 using System.Linq.Expressions;
 using SQLite;
+using CSGOServerInterface.Server.CsgoServerSettings;
 
 namespace CSGO_ServerManager_Extended.Data.DataAccess
 {
@@ -8,7 +9,6 @@ namespace CSGO_ServerManager_Extended.Data.DataAccess
     {
         Task DeleteDataAsync(object data);
         Task<List<T>> GetAllAsync<T>() where T : new();
-        Task<List<T>> GetByConditionAsync<T>(Expression<Func<T, bool>> condition) where T : new();
         Task<T> GetById<T>(object id) where T : new();
         Task Init();
         Task InsertDataAsync(object data);
@@ -24,7 +24,9 @@ namespace CSGO_ServerManager_Extended.Data.DataAccess
         {
             _dbPath = dbPath;
 
-            Task.Run(async () => await Init());
+            var init = Init();
+
+            Task.WaitAll(init);
         }
 
         public async Task Init()
@@ -34,14 +36,9 @@ namespace CSGO_ServerManager_Extended.Data.DataAccess
 
             Db = new SQLiteAsyncConnection(_dbPath);
 
-            try
-            {
-                await Db.CreateTableAsync<CsgoServer>();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            Task[] tasks = { Db.CreateTableAsync<CsgoServer>(), Db.CreateTableAsync<ServerSettings>()};
+
+            Task.WaitAll(tasks);
         }
 
         public async Task<List<T>> GetAllAsync<T>() where T : new()
@@ -52,11 +49,6 @@ namespace CSGO_ServerManager_Extended.Data.DataAccess
         public async Task<T> GetById<T>(object id) where T : new()
         {
             return await Db.GetAsync<T>(id);
-        }
-
-        public async Task<List<T>> GetByConditionAsync<T>(Expression<Func<T, bool>> condition) where T : new()
-        {
-            return await Db.Table<T>().Where(condition).ToListAsync();
         }
 
         public async Task InsertDataAsync(object data)

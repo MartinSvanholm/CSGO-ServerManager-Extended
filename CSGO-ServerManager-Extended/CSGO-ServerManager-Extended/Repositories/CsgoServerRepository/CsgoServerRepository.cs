@@ -1,17 +1,18 @@
 ﻿using CSGO_ServerManager_Extended.Data.DataAccess;
 using CsgoServerInterface.CsgoServer;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
 {
     public interface ICsgoServerRepository
     {
-        Task<ICsgoServer> GetCsgoServerById(string id);
-        Task<List<ICsgoServer>> GetCsgoServers();
-        Task InsertCsgoServer(ICsgoServer csgoServer);
-        Task UpdateCsgoServer(ICsgoServer csgoServer);
-        Task<List<ICsgoServer>> GetCsgoServerByCondition(Expression<Func<CsgoServer, bool>> condition);
-        Task DeleteCsgoServer(ICsgoServer csgoServer);
+        Task<CsgoServer> GetCsgoServerById(string id);
+        Task<List<CsgoServer>> GetCsgoServers();
+        Task InsertCsgoServer(CsgoServer csgoServer);
+        Task UpdateCsgoServer(CsgoServer csgoServer);
+        Task<List<CsgoServer>> GetCsgoServerByCondition(Expression<Func<CsgoServer, bool>> condition);
+        Task DeleteCsgoServer(CsgoServer csgoServer);
     }
 
     public class CsgoServerRepository : RepositoryBase, ICsgoServerRepository
@@ -20,11 +21,11 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
         {
         }
 
-        public async Task<List<ICsgoServer>> GetCsgoServers()
+        public async Task<List<CsgoServer>> GetCsgoServers()
         {
             try
             {
-                return new List<ICsgoServer>(await _dataAccess.GetAllAsync<CsgoServer>());
+                return await _dataAccess.GetAllAsync<CsgoServer>();
             }
             catch (Exception e)
             {
@@ -32,7 +33,7 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
             }
         }
 
-        public async Task<ICsgoServer> GetCsgoServerById(string id)
+        public async Task<CsgoServer> GetCsgoServerById(string id)
         {
             try
             {
@@ -44,11 +45,12 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
             }
         }
 
-        public async Task<List<ICsgoServer>> GetCsgoServerByCondition(Expression<Func<CsgoServer, bool>> condition)
+        public async Task<List<CsgoServer>> GetCsgoServerByCondition(Expression<Func<CsgoServer, bool>> condition)
         {
             try
             {
-                return new List<ICsgoServer>(await _dataAccess.GetByConditionAsync(condition));
+                var data = await _dataAccess.GetAllAsync<CsgoServer>();
+                return data.AsQueryable().Where(condition).ToList();
             }
             catch (Exception e)
             {
@@ -56,7 +58,7 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
             }
         }
 
-        public async Task InsertCsgoServer(ICsgoServer csgoServer)
+        public async Task InsertCsgoServer(CsgoServer csgoServer)
         {
             try
             {
@@ -70,7 +72,7 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
             }
         }
 
-        public async Task UpdateCsgoServer(ICsgoServer csgoServer)
+        public async Task UpdateCsgoServer(CsgoServer csgoServer)
         {
             try
             {
@@ -82,7 +84,7 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
             }
         }
 
-        public async Task DeleteCsgoServer(ICsgoServer csgoServer)
+        public async Task DeleteCsgoServer(CsgoServer csgoServer)
         {
             try
             {

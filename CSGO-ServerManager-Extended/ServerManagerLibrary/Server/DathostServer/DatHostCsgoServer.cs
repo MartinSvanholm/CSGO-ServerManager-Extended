@@ -1,22 +1,23 @@
 ﻿using CsgoServerInterface.Exceptions;
 using CSGOServerInterface.Server.CsgoServer;
+using CSGOServerInterface.Server.CsgoServerSettings;
 
 namespace CSGOServerInterface.Server.DathostServer
 {
     public class DatHostCsgoServer : AbstractCsgoServer
     {
-        public DatHostCsgoServer(bool booting, int gamePort, int? gOTVPort, string id, string ip, bool isFavourite, bool isOn, string name, string password, string rconPassword)
+        public DatHostCsgoServer(bool booting, int gamePort, int? gOTVPort, string id, string ip, bool isOn, string name, string password, string rconPassword, ServerSettings serverSettings)
         {
             Booting = booting;
             GamePort = gamePort;
             GOTVPort = gOTVPort;
             Id = id;
             Ip = ip;
-            IsFavourite = isFavourite;
             IsOn = isOn;
             Name = name;
             Password = password;
             RconPassword = rconPassword;
+            ServerSettings = serverSettings;
         }
 
         public override Task GetConnection()

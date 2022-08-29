@@ -17,7 +17,7 @@ namespace CSGOServerInterface.Mappers
                 gOTVPort: dto.Ports.Gotv,
                 isOn: dto.On,
                 booting: dto.Booting,
-                isFavourite: false
+                serverSettings: new()
                 );
         }
 

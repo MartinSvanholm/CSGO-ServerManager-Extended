@@ -14,19 +14,19 @@
     </MudItem>
 
     <MudItem xs="12" sm="6">
-        <MudTextField @bind-Value="csgoServer.MatchCommand" Label="Start match command" Immediate=true Variant="Variant.Outlined" Placeholder="exec myMatchCfg.cfg"></MudTextField>
+        <MudTextField @bind-Value="csgoServer.ServerSettings.MatchCommand" Label="Start match command" Immediate=true Variant="Variant.Outlined" Placeholder="exec myMatchCfg.cfg"></MudTextField>
     </MudItem>
 
     <MudItem xs="12" sm="6">
-        <MudTextField @bind-Value="csgoServer.OvertimeCommand" Label="Start match with overtime command" Immediate=true Variant="Variant.Outlined" Placeholder="exec myOvertimeCfg.cfg"></MudTextField>
+        <MudTextField @bind-Value="csgoServer.ServerSettings.OvertimeCommand" Label="Start match with overtime command" Immediate=true Variant="Variant.Outlined" Placeholder="exec myOvertimeCfg.cfg"></MudTextField>
     </MudItem>
 
     <MudItem xs="12" sm="6">
-        <MudTextField @bind-Value="csgoServer.KnifeCommand" Label="Knfe round command" Immediate=true Variant="Variant.Outlined" Placeholder="exec myKnifeCfg.cfg"></MudTextField>
+        <MudTextField @bind-Value="csgoServer.ServerSettings.KnifeCommand" Label="Knfe round command" Immediate=true Variant="Variant.Outlined" Placeholder="exec myKnifeCfg.cfg"></MudTextField>
     </MudItem>
 
     <MudItem xs="12" sm="6">
-        <MudTextField @bind-Value="csgoServer.PracticeCommand" Label="Partice command" Immediate=true Variant="Variant.Outlined" Placeholder="exec myPracticeCfg.cfg"></MudTextField>
+        <MudTextField @bind-Value="csgoServer.ServerSettings.PracticeCommand" Label="Partice command" Immediate=true Variant="Variant.Outlined" Placeholder="exec myPracticeCfg.cfg"></MudTextField>
     </MudItem>
 
 </MudGrid>
@@ -39,7 +39,7 @@
     {
         try
         {
-            CsgoServerRepository.UpdateCsgoServer(csgoServer);
+            CsgoServerRepository.UpdateCsgoServer((CsgoServer)csgoServer);
             Snackbar.Add("Server settings updated", Severity.Success);
         }
         catch (Exception e)

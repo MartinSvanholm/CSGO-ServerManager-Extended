@@ -8,7 +8,14 @@ namespace CSGO_ServerManager_Extended.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            csgoServers = await CsgoServerRepository.GetCsgoServerByCondition(s => s.IsFavourite);
+            try
+            {
+                csgoServers = new(await CsgoServerRepository.GetCsgoServerByCondition(s => s.ServerSettings.IsFavourite));
+            }
+            catch (Exception e)
+            {
+                _snackbar.Add($"Something went wrong: {e.Message}");
+            }
         }
     }
 }

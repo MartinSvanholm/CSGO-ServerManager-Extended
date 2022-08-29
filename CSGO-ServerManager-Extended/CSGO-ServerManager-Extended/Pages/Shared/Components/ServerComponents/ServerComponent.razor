@@ -195,10 +195,10 @@
         {
             if(overtime == false)
             {
-                await CsgoServerService.StartMatch(overtime, Server.MatchCommand);
+                await CsgoServerService.StartMatch(overtime, Server.ServerSettings.MatchCommand);
             } else
             {
-                await CsgoServerService.StartMatch(overtime, Server.OvertimeCommand);
+                await CsgoServerService.StartMatch(overtime, Server.ServerSettings.OvertimeCommand);
             }
             _snackBar.Add("Starting match", Severity.Info);
         }
@@ -236,7 +236,7 @@
     {
         try
         {
-            await CsgoServerService.StartKnife(Server.KnifeCommand);
+            await CsgoServerService.StartKnife(Server.ServerSettings.KnifeCommand);
             _snackBar.Add("Starting knife round", Severity.Info);
         }
         catch (Exception e)
@@ -262,7 +262,7 @@
     {
         try
         {
-            await CsgoServerService.StartNadePractice(Server.PracticeCommand);
+            await CsgoServerService.StartNadePractice(Server.ServerSettings.PracticeCommand);
             _snackBar.Add("Starting nade practice", Severity.Info);
         }
         catch (Exception e)

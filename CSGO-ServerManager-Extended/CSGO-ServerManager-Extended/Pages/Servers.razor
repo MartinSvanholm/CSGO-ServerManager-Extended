@@ -121,7 +121,7 @@
         {
             try
             {
-                await CsgoServerRepository.DeleteCsgoServer(csgoServer);
+                await CsgoServerRepository.DeleteCsgoServer((CsgoServer)csgoServer);
                 csgoServers.Remove(csgoServer);
                 Snackbar.Add($"Deleted server \"{csgoServer.Name}\"", Severity.Info);
                 await InvokeAsync(StateHasChanged);
