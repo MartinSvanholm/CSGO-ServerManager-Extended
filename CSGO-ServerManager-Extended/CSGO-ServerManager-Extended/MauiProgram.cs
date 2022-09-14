@@ -1,7 +1,9 @@
 ﻿using CSGO_ServerManager_Extended.Data.DataAccess;
 using CSGO_ServerManager_Extended.Models;
 using CSGO_ServerManager_Extended.Repositories.CsgoServerRepository;
+using CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository;
 using CSGO_ServerManager_Extended.Services.CsgoServerService;
+using CSGO_ServerManager_Extended.Services.CsgoServerSettingsService;
 using CSGO_ServerManager_Extended.Services.SettingsService;
 using MudBlazor;
 using MudBlazor.Services;
@@ -46,7 +48,9 @@ public static class MauiProgram
         builder.Services.AddSingleton<IDataAccess, DataAccess>(x => new DataAccess(Path.Combine(FileSystem.AppDataDirectory, "ServerManagerDb.db")));
 		builder.Services.AddSingleton<ICsgoServerService, CsgoServerService>();
 		builder.Services.AddSingleton<ISettingsService>(x => new SettingsService(x.GetRequiredService<HttpClient>(), dathostAccount, DathostAccountIsConnected));
+		builder.Services.AddSingleton<IServerSettingsRepository, ServerSettingsRepository>();
 		builder.Services.AddSingleton<ICsgoServerRepository, CsgoServerRepository>();
+		builder.Services.AddSingleton<IServerSettingsService, ServerSettingsService>();
 
 		return builder.Build();
 	}

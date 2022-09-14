@@ -1,5 +1,5 @@
 ﻿@inject ISnackbar Snackbar
-@inject ICsgoServerRepository CsgoServerRepository
+@inject ICsgoServerService _csgoServerService
 
 <MudDialog @bind-IsVisible="isVisible" Options="dialogOptions" OnBackdropClick="(async () => await ChangeVisibility.InvokeAsync(false))">
     <TitleContent>
@@ -46,7 +46,7 @@
         {
             try
             {
-                await CsgoServerRepository.UpdateCsgoServer(TempServer);
+                await _csgoServerService.UpdateCsgoServer(TempServer);
                 Snackbar.Add($"Updated server \"{TempServer.Name}\"", Severity.Info);
             }
             catch (Exception e)
@@ -57,7 +57,7 @@
         {
             try
             {
-                await CsgoServerRepository.InsertCsgoServer(TempServer);
+                await _csgoServerService.AddCsgoServer(TempServer);
                 Snackbar.Add($"Added server \"{TempServer.Name}\"", Severity.Info);
             }
             catch (Exception e)
@@ -65,7 +65,6 @@
                 Snackbar.Add(e.Message, Severity.Warning);
             }
         }
-        EventArgs args = new();
         await ChangeVisibility.InvokeAsync(true);
     }
 }

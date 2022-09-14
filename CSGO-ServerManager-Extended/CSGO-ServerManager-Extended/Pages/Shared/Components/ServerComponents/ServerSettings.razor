@@ -1,4 +1,4 @@
-﻿@inject ICsgoServerRepository CsgoServerRepository
+﻿@inject IServerSettingsService _serverSettingsService
 @inject ISnackbar Snackbar
 
 <MudGrid Spacing="5">
@@ -39,7 +39,7 @@
     {
         try
         {
-            CsgoServerRepository.UpdateCsgoServer((CsgoServer)csgoServer);
+            _serverSettingsService.UpdateServerSettings(csgoServer.ServerSettings);
             Snackbar.Add("Server settings updated", Severity.Success);
         }
         catch (Exception e)

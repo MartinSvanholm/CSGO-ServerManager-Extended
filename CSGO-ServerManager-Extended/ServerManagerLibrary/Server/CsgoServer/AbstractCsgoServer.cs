@@ -36,7 +36,7 @@ namespace CSGOServerInterface.Server.CsgoServer
         public int? GOTVPort { get; set; }
 
         [Ignore]
-        public ServerSettings ServerSettings { get; set; }
+        public ServerSettings ServerSettings { get; set; } = new();
 
         /// <summary>
         /// Remote Console connection

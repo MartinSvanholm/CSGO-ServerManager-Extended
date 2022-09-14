@@ -84,14 +84,11 @@
                 <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartNadePractice())">Start nade practice</MudButton>
             </MudItem>
 
-            @if(!(Server is DatHostCsgoServer))
-            {
-                <MudItem xs="12">
-                    <ServerSettings csgoServer="Server">
+            <MudItem xs="12">
+                <ServerSettings csgoServer="Server">
 
-                    </ServerSettings>
-                </MudItem>
-            }
+                </ServerSettings>
+            </MudItem>
 
         </MudGrid>
     </MudPaper>
@@ -108,7 +105,6 @@
     public EventCallback<ICsgoServer> OnServerChange { get; set; }
 
     Timer serverUpdateTimer = new(10000);
-    Guid _subscriptionId;
     MudListItem selectedItem;
     bool expandList = false;
     bool matchpaused = false;

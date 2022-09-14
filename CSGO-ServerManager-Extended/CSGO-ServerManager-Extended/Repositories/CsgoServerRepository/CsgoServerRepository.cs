@@ -1,4 +1,5 @@
 ﻿using CSGO_ServerManager_Extended.Data.DataAccess;
+using CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository;
 using CsgoServerInterface.CsgoServer;
 using System.Linq;
 using System.Linq.Expressions;
@@ -17,83 +18,66 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
 
     public class CsgoServerRepository : RepositoryBase, ICsgoServerRepository
     {
-        public CsgoServerRepository(IDataAccess dataAccess) : base(dataAccess)
+        private readonly IServerSettingsRepository _serverSettingsRepository;
+
+        public CsgoServerRepository(IDataAccess dataAccess, IServerSettingsRepository serverSettingsRepository) : base(dataAccess)
         {
+            _serverSettingsRepository = serverSettingsRepository;
         }
 
         public async Task<List<CsgoServer>> GetCsgoServers()
         {
-            try
+            List<CsgoServer> servers = await _dataAccess.GetAllAsync<CsgoServer>();
+
+            foreach (CsgoServer server in servers)
             {
-                return await _dataAccess.GetAllAsync<CsgoServer>();
+                server.ServerSettings = await _serverSettingsRepository.GetServerSettingsByCsgoServerId(server.Id);
             }
-            catch (Exception e)
-            {
-                throw new Exception($"Something went wrong: {e.Message}");
-            }
+
+            return servers;
         }
 
         public async Task<CsgoServer> GetCsgoServerById(string id)
         {
-            try
-            {
-                return await _dataAccess.GetById<CsgoServer>(id);
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"Something went wrong: {e.Message}");
-            }
+            CsgoServer server = await _dataAccess.GetById<CsgoServer>(id);
+
+            server.ServerSettings = await _serverSettingsRepository.GetServerSettingsByCsgoServerId(server.Id);
+
+            return server;
         }
 
         public async Task<List<CsgoServer>> GetCsgoServerByCondition(Expression<Func<CsgoServer, bool>> condition)
         {
-            try
+            var data = await _dataAccess.GetAllAsync<CsgoServer>();
+            List<CsgoServer> servers = data.AsQueryable().Where(condition).ToList();
+
+            foreach (CsgoServer server in servers)
             {
-                var data = await _dataAccess.GetAllAsync<CsgoServer>();
-                return data.AsQueryable().Where(condition).ToList();
+                server.ServerSettings = await _serverSettingsRepository.GetServerSettingsByCsgoServerId(server.Id);
             }
-            catch (Exception e)
-            {
-                throw new Exception($"Something went wrong: {e.Message}");
-            }
+
+            return servers;
         }
 
         public async Task InsertCsgoServer(CsgoServer csgoServer)
         {
-            try
-            {
-                csgoServer.Id = Guid.NewGuid().ToString();
+            csgoServer.Id = Guid.NewGuid().ToString();
+            csgoServer.ServerSettings.CsgoServerId = csgoServer.Id;
 
-                await _dataAccess.InsertDataAsync(csgoServer);
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"Something went wrong: {e.Message}");
-            }
+            await _dataAccess.InsertDataAsync(csgoServer);
+            await _serverSettingsRepository.InsertServerSettings(csgoServer.ServerSettings);
         }
 
         public async Task UpdateCsgoServer(CsgoServer csgoServer)
         {
-            try
-            {
-                await _dataAccess.UpdateDataAsync(csgoServer);
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"Something went wrong: {e.Message}");
-            }
+            await _dataAccess.UpdateDataAsync(csgoServer);
+            await _serverSettingsRepository.UpdateServerSettings(csgoServer.ServerSettings);
         }
 
         public async Task DeleteCsgoServer(CsgoServer csgoServer)
         {
-            try
-            {
-                await _dataAccess.DeleteDataAsync(csgoServer);
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"Something went wrong: {e.Message}");
-            }
+            await _dataAccess.DeleteDataAsync(csgoServer);
+            await _serverSettingsRepository.DeleteServerSettings(csgoServer.ServerSettings);
         }
     }
 }
