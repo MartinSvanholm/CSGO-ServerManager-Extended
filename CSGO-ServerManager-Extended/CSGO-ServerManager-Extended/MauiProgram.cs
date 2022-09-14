@@ -1,10 +1,10 @@
-﻿using CSGO_ServerManager_Extended.Models;
+﻿using CSGO_ServerManager_Extended.Data.DataAccess;
+using CSGO_ServerManager_Extended.Models;
+using CSGO_ServerManager_Extended.Repositories.CsgoServerRepository;
+using CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository;
 using CSGO_ServerManager_Extended.Services.CsgoServerService;
-using CSGO_ServerManager_Extended.Services.Data.CsgoServerData;
-using CSGO_ServerManager_Extended.Services.DataAccess;
+using CSGO_ServerManager_Extended.Services.CsgoServerSettingsService;
 using CSGO_ServerManager_Extended.Services.SettingsService;
-using Microsoft.AspNetCore.Components.WebView.Maui;
-using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
 using MudBlazor.Services;
 using System.Net.Http.Headers;
@@ -46,9 +46,11 @@ public static class MauiProgram
             config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
         });
         builder.Services.AddSingleton<IDataAccess, DataAccess>(x => new DataAccess(Path.Combine(FileSystem.AppDataDirectory, "ServerManagerDb.db")));
-        builder.Services.AddSingleton<ICsgoServerData, CsgoServerData>(x => new CsgoServerData(x.GetRequiredService<IDataAccess>()));
 		builder.Services.AddSingleton<ICsgoServerService, CsgoServerService>();
 		builder.Services.AddSingleton<ISettingsService>(x => new SettingsService(x.GetRequiredService<HttpClient>(), dathostAccount, DathostAccountIsConnected));
+		builder.Services.AddSingleton<IServerSettingsRepository, ServerSettingsRepository>();
+		builder.Services.AddSingleton<ICsgoServerRepository, CsgoServerRepository>();
+		builder.Services.AddSingleton<IServerSettingsService, ServerSettingsService>();
 
 		return builder.Build();
 	}

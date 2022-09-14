@@ -1,29 +1,137 @@
-﻿using CSGO_ServerManager_Extended.Services.Data.CsgoServerData;
+﻿using CSGO_ServerManager_Extended.Repositories.CsgoServerRepository;
+using CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository;
+using CSGO_ServerManager_Extended.Services.CsgoServerSettingsService;
+using CSGO_ServerManager_Extended.Services.SettingsService;
 using CsgoServerInterface.CsgoServer;
 using CsgoServerInterface.Exceptions;
 using CSGOServerInterface.Mappers;
 using CSGOServerInterface.Server.DathostServer;
 using CSGOServerInterface.Server.DTO;
-using MudBlazor;
 
 namespace CSGO_ServerManager_Extended.Services.CsgoServerService;
 
+public interface ICsgoServerService
+{
+    ICsgoServer Server { get; set; }
+
+    Task<CsgoServer> AddCsgoServer(CsgoServer csgoServer);
+    Task ChangeMap(string map);
+    Task<CsgoServer> DeleteCsgoServer(CsgoServer csgoServer);
+    Task<ICsgoServer> GetCsgoServerById(string csgoServerId);
+    Task<List<ICsgoServer>> GetCsgoServers();
+    Task<DatHostCsgoServer> GetDatHostServer(string id);
+    Task<List<DatHostCsgoServer>> GetDatHostServers();
+    Task PauseUnpauseMatch(bool isMatchPaused);
+    Task RunCommand(string command);
+    Task StartKnife(string cfg = null);
+    Task StartMatch(bool withOvertime, string cfg = null);
+    Task StartNadePractice(string cfg = null);
+    Task StartStopServer(ICsgoServer server);
+    Task<CsgoServer> UpdateCsgoServer(CsgoServer csgoServer);
+}
+
 public class CsgoServerService : ICsgoServerService
 {
-    public CsgoServerService(HttpClient httpClient, ICsgoServerData csgoServerData)
+    private HttpClient _httpClient;
+    private readonly ICsgoServerRepository _csgoServerRepository;
+    private readonly ISettingsService _settingsService;
+    private readonly IServerSettingsRepository _serverSettingsRepository;
+    public ICsgoServer Server { get; set; }
+
+    public CsgoServerService(HttpClient httpClient, ICsgoServerRepository csgoServerRepository, ISettingsService settingsService, IServerSettingsRepository serverSettingsRepository)
     {
         _httpClient = httpClient;
-        _csgoServerData = csgoServerData;
+        _csgoServerRepository = csgoServerRepository;
+        _settingsService = settingsService;
+        _serverSettingsRepository = serverSettingsRepository;
     }
 
-    private HttpClient _httpClient;
-    private readonly ICsgoServerData _csgoServerData;
+    public async Task<List<ICsgoServer>> GetCsgoServers()
+    {
+        List<ICsgoServer> csgoServers = new List<ICsgoServer>();
 
-    public ICsgoServer Server { get; set; }
+        try
+        {
+            csgoServers.AddRange(await _csgoServerRepository.GetCsgoServers());
+
+            if (_settingsService.DathostAccountIsConnected)
+                csgoServers.AddRange(await GetDatHostServers());
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
+        }
+
+        if (csgoServers == null)
+            throw new Exception("Could not find any csgo servers, please add a server");
+
+        return csgoServers;
+    }
+
+    public async Task<ICsgoServer> GetCsgoServerById(string csgoServerId)
+    {
+        ICsgoServer csgoServer;
+
+        try
+        {
+            csgoServer = await _csgoServerRepository.GetCsgoServerById(csgoServerId);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
+        }
+
+        if (csgoServer == null)
+            throw new Exception("Could not find csgo server");
+
+        return csgoServer;
+    }
+
+    public async Task<CsgoServer> AddCsgoServer(CsgoServer csgoServer)
+    {
+        try
+        {
+            await _csgoServerRepository.InsertCsgoServer(csgoServer);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
+        }
+
+        return csgoServer;
+    }
+
+    public async Task<CsgoServer> UpdateCsgoServer(CsgoServer csgoServer)
+    {
+        try
+        {
+            await _csgoServerRepository.UpdateCsgoServer(csgoServer);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
+        }
+
+        return csgoServer;
+    }
+
+    public async Task<CsgoServer> DeleteCsgoServer(CsgoServer csgoServer)
+    {
+        try
+        {
+            await _csgoServerRepository.DeleteCsgoServer(csgoServer);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
+        }
+
+        return csgoServer;
+    }
 
     public async Task<List<DatHostCsgoServer>> GetDatHostServers()
     {
-        if (!(Connectivity.Current.NetworkAccess == NetworkAccess.Internet))
+        if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             throw new CsgoServerException("Device not connected to the internet", System.Net.HttpStatusCode.InternalServerError);
 
         string uri = _httpClient.BaseAddress.ToString() + "/api/0.1/game-servers";
@@ -40,7 +148,22 @@ public class CsgoServerService : ICsgoServerService
                     datHostDTOs.RemoveAt(i);
             }
 
-            return DatHostCsgoServerMapper.MapList(datHostDTOs);
+            List<DatHostCsgoServer> datHostCsgoServers = DatHostCsgoServerMapper.MapList(datHostDTOs);
+
+            foreach (DatHostCsgoServer datHostCsgoServer in datHostCsgoServers)
+            {
+                datHostCsgoServer.ServerSettings = await _serverSettingsRepository.GetServerSettingsByCsgoServerId(datHostCsgoServer.Id);
+
+                if (datHostCsgoServer.ServerSettings == null)
+                {
+                    datHostCsgoServer.ServerSettings = new();
+                    datHostCsgoServer.ServerSettings.CsgoServerId = datHostCsgoServer.Id;
+
+                    await _serverSettingsRepository.InsertServerSettings(datHostCsgoServer.ServerSettings);
+                }
+            }
+
+            return datHostCsgoServers;
         }
         else
         {
@@ -50,7 +173,7 @@ public class CsgoServerService : ICsgoServerService
 
     public async Task<DatHostCsgoServer> GetDatHostServer(string id)
     {
-        if (!(Connectivity.Current.NetworkAccess == NetworkAccess.Internet))
+        if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             throw new CsgoServerException("Device not connected to the internet", System.Net.HttpStatusCode.InternalServerError);
 
         string uri = _httpClient.BaseAddress.ToString() + $"/api/0.1/game-servers/{id}";
@@ -60,7 +183,19 @@ public class CsgoServerService : ICsgoServerService
         if (responseMessage.IsSuccessStatusCode)
         {
             var result = await responseMessage.Content.ReadAsAsync<DatHostServerDTO>();
-            return DatHostCsgoServerMapper.Map(result);
+            DatHostCsgoServer datHostCsgoServer = DatHostCsgoServerMapper.MapFromDTO(result);
+
+            datHostCsgoServer.ServerSettings = await _serverSettingsRepository.GetServerSettingsByCsgoServerId(datHostCsgoServer.Id);
+
+            if (datHostCsgoServer.ServerSettings == null)
+            {
+                datHostCsgoServer.ServerSettings = new();
+                datHostCsgoServer.ServerSettings.CsgoServerId = datHostCsgoServer.Id;
+
+                await _serverSettingsRepository.InsertServerSettings(datHostCsgoServer.ServerSettings);
+            }
+
+            return datHostCsgoServer;
         }
         else
         {

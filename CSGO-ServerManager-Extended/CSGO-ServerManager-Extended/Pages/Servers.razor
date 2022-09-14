@@ -1,13 +1,10 @@
 ﻿@page "/servers"
-@using CsgoServerInterface.Exceptions
-
 @inject ICsgoServerService CsgoServerService
 @inject ISettingsService settingsService
 @inject ISnackbar Snackbar
 @inject NavigationManager navigation
-@inject ICsgoServerData csgoServerData
 
-<MudTable RowClass="row-border" Height="85vh" Items="@csgoServers" RowStyle="cursor: pointer;" Hover="true" Loading="@_loading" OnRowClick="RowClickEvent" T="ICsgoServer" LoadingProgressColor="Color.Info" Striped="true" Elevation="0" FixedHeader=true>
+<MudTable RowClass="row-border" Items="@csgoServers" RowStyle="cursor: pointer;" Hover="true" Loading="@_loading" OnRowClick="RowClickEvent" T="ICsgoServer" LoadingProgressColor="Color.Info" Striped="true" Elevation="0" FixedHeader=true>
     <ToolBarContent>
         <MudText Typo="Typo.h6">Your servers</MudText>
         <MudSpacer />
@@ -64,24 +61,23 @@
 
     private void RowClickEvent(TableRowClickEventArgs<ICsgoServer> args)
     {
-        navigation.NavigateTo($"/server/{args.Item.Id}", true);
+        if(args.Item is DatHostCsgoServer)
+        {
+            navigation.NavigateTo($"/server?ServerId={args.Item.Id}&ServerType={CsgoServerConstants.DathostCsgoServerType}", true);
+        }
+        else if(args.Item is CsgoServer)
+        {
+            navigation.NavigateTo($"/server?ServerId={args.Item.Id}&ServerType={CsgoServerConstants.NormalCsgoServerType}", true);
+        }
     }
 
     private async Task GetServersAsync()
     {
         try
         {
-            csgoServers = new();
-            if(settingsService.DathostAccountIsConnected)
-                csgoServers.AddRange(await CsgoServerService.GetDatHostServers());
-            csgoServers.AddRange(await csgoServerData.CsgoServers_GetAll());
+            csgoServers = await CsgoServerService.GetCsgoServers();
             _loading = false;
             await InvokeAsync(StateHasChanged);
-        }
-        catch (CsgoServerException serverException) 
-        {
-            Snackbar.Add($"Could not load your DathostServers: {serverException.Message}", Severity.Warning);
-            _loading = false;
         }
         catch (Exception e)
         {
@@ -116,7 +112,7 @@
         {
             try
             {
-                await csgoServerData.CsgoServer_Delete((CsgoServer)csgoServer);
+                await CsgoServerService.DeleteCsgoServer((CsgoServer)csgoServer);
                 csgoServers.Remove(csgoServer);
                 Snackbar.Add($"Deleted server \"{csgoServer.Name}\"", Severity.Info);
                 await InvokeAsync(StateHasChanged);

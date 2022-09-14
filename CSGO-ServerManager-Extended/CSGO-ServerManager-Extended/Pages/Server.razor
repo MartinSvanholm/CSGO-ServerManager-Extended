@@ -1,7 +1,6 @@
-﻿@page "/server/{ServerId}"
-@inject ICsgoServerService CsgoServerService
-@inject ICsgoServerData CsgoServerData
-@inject ISnackbar _snackBar;
+﻿@page "/server"
+@inject ICsgoServerService _csgoServerService
+@inject ISnackbar _snackbar;
 
 @if(CsgoServer != null) {
     <ServerComponent Server="CsgoServer" OnServerChange="(ICsgoServer tempServer) => OnServerChanged(tempServer)">
@@ -12,32 +11,46 @@
 }
 
 @code {
-    [Parameter]
+    [Parameter, SupplyParameterFromQuery]
     public string ServerId { get; set; }
+
+    [Parameter, SupplyParameterFromQuery]
+    public string ServerType { get; set; }
 
     private ICsgoServer CsgoServer { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        CsgoServer = await CsgoServerData.CsgoServers_Get(s => s.Id == ServerId);
-
-        if (CsgoServer == null)
-            CsgoServer = await CsgoServerService.GetDatHostServer(ServerId);
+        try
+        {
+            if(ServerType == CsgoServerConstants.NormalCsgoServerType)
+            {
+                CsgoServer = await _csgoServerService.GetCsgoServerById(ServerId);
+            } 
+            else
+            {
+                CsgoServer = await _csgoServerService.GetDatHostServer(ServerId);
+            }                
+        }
+        catch (Exception e)
+        {
+            _snackbar.Add(e.Message);
+        }
     }
 
     private async Task StartStopServer()
     {
         try
         {
-            await CsgoServerService.StartStopServer(CsgoServer);
+            await _csgoServerService.StartStopServer(CsgoServer);
             if (CsgoServer.Booting)
-                _snackBar.Add("Starting server", Severity.Info);
+                _snackbar.Add("Starting server", Severity.Info);
             else
-                _snackBar.Add("Stopping server", Severity.Info);
+                _snackbar.Add("Stopping server", Severity.Info);
         }
         catch (Exception e)
         {
-            _snackBar.Add(e.Message, Severity.Error);
+            _snackbar.Add(e.Message, Severity.Error);
         }
 
         StateHasChanged();

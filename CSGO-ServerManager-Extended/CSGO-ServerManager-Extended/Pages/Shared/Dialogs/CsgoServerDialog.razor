@@ -1,5 +1,5 @@
 ﻿@inject ISnackbar Snackbar
-@inject ICsgoServerData csgoServerData
+@inject ICsgoServerService _csgoServerService
 
 <MudDialog @bind-IsVisible="isVisible" Options="dialogOptions" OnBackdropClick="(async () => await ChangeVisibility.InvokeAsync(false))">
     <TitleContent>
@@ -13,8 +13,8 @@
             <MudTextField @bind-Value="TempServer.Password" Label="Password" Immediate=true></MudTextField>
             <MudTextField @bind-Value="TempServer.RconPassword" Label="Rcon password" Immediate=true></MudTextField>
             <MudTextField T="int" @bind-Value="TempServer.GamePort" Label="Port" Required=true RequiredError="Server port is required" Immediate=true></MudTextField>
-            <MudCheckBox @bind-Checked="TempServer.IsFavourite" Label="Favourite" CheckedIcon="@Icons.Filled.Star" UncheckedIcon="@Icons.Filled.StarBorder"/>
-            <MudTextField @bind-Value="TempServer.Description" Lines="3" Label="Description" Immediate=true></MudTextField>
+            <MudCheckBox @bind-Checked="TempServer.ServerSettings.IsFavourite" Label="Favourite" CheckedIcon="@Icons.Filled.Star" UncheckedIcon="@Icons.Filled.StarBorder"/>
+            <MudTextField @bind-Value="TempServer.ServerSettings.Description" Lines="3" Label="Description" Immediate=true></MudTextField>
         </MudForm>
     </DialogContent>
 
@@ -46,7 +46,7 @@
         {
             try
             {
-                await csgoServerData.CsgoServers_Update(TempServer);
+                await _csgoServerService.UpdateCsgoServer(TempServer);
                 Snackbar.Add($"Updated server \"{TempServer.Name}\"", Severity.Info);
             }
             catch (Exception e)
@@ -57,7 +57,7 @@
         {
             try
             {
-                await csgoServerData.CsgoServers_Create(TempServer);
+                await _csgoServerService.AddCsgoServer(TempServer);
                 Snackbar.Add($"Added server \"{TempServer.Name}\"", Severity.Info);
             }
             catch (Exception e)
@@ -65,7 +65,6 @@
                 Snackbar.Add(e.Message, Severity.Warning);
             }
         }
-        EventArgs args = new();
         await ChangeVisibility.InvokeAsync(true);
     }
 }

@@ -1,10 +1,20 @@
 ﻿using CsgoServerInterface.CsgoServer;
-using CSGOServerInterface.Server.CsgoServer;
-using SQLite;
 using System.Linq.Expressions;
+using SQLite;
+using CSGOServerInterface.Server.CsgoServerSettings;
 
-namespace CSGO_ServerManager_Extended.Services.DataAccess
+namespace CSGO_ServerManager_Extended.Data.DataAccess
 {
+    public interface IDataAccess
+    {
+        Task DeleteDataAsync(object data);
+        Task<List<T>> GetAllAsync<T>() where T : new();
+        Task<T> GetById<T>(object id) where T : new();
+        Task Init();
+        Task InsertDataAsync(object data);
+        Task UpdateDataAsync(object data);
+    }
+
     public class DataAccess : IDataAccess
     {
         private SQLiteAsyncConnection Db { get; set; }
@@ -14,7 +24,9 @@ namespace CSGO_ServerManager_Extended.Services.DataAccess
         {
             _dbPath = dbPath;
 
-            Task.Run(async () => await Init());
+            var init = Init();
+
+            Task.WaitAll(init);
         }
 
         public async Task Init()
@@ -24,28 +36,19 @@ namespace CSGO_ServerManager_Extended.Services.DataAccess
 
             Db = new SQLiteAsyncConnection(_dbPath);
 
-            await CreateTableAsync<CsgoServer>();
+            Task[] tasks = { Db.CreateTableAsync<CsgoServer>(), Db.CreateTableAsync<ServerSettings>()};
+
+            Task.WaitAll(tasks);
         }
 
-        public async Task CreateTableAsync<T>() where T : new()
-        {
-            await Db.CreateTableAsync<T>();
-        }
-
-        public async Task<List<T>> GetListAsync<T>() where T : new()
+        public async Task<List<T>> GetAllAsync<T>() where T : new()
         {
             return await Db.Table<T>().ToListAsync();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public async Task<T> GetByConditionAsync<T>(Expression<Func<T, bool>> condition) where T : new()
+        public async Task<T> GetById<T>(object id) where T : new()
         {
-            return await Db.Table<T>().Where(condition).FirstOrDefaultAsync();
+            return await Db.GetAsync<T>(id);
         }
 
         public async Task InsertDataAsync(object data)
@@ -55,7 +58,7 @@ namespace CSGO_ServerManager_Extended.Services.DataAccess
 
         public async Task UpdateDataAsync(object data)
         {
-            var result = await Db.UpdateAsync(data);
+            await Db.UpdateAsync(data);
         }
 
         public async Task DeleteDataAsync(object data)

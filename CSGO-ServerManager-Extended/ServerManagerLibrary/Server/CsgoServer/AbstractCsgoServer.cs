@@ -2,13 +2,9 @@
 using CoreRCON.Parsers.Standard;
 using CsgoServerInterface.CsgoServer;
 using CsgoServerInterface.Exceptions;
+using CSGOServerInterface.Server.CsgoServerSettings;
 using SQLite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSGOServerInterface.Server.CsgoServer
 {
@@ -39,8 +35,8 @@ namespace CSGOServerInterface.Server.CsgoServer
         [Column("gotv_port")]
         public int? GOTVPort { get; set; }
 
-        [Column("is_favourite")]
-        public bool IsFavourite { get; set; }
+        [Ignore]
+        public ServerSettings ServerSettings { get; set; } = new();
 
         /// <summary>
         /// Remote Console connection
@@ -79,9 +75,6 @@ namespace CSGOServerInterface.Server.CsgoServer
                     return $"connect {Ip.Trim()}:{GamePort}; password {Password.Trim()}";
             }
         }
-
-        [Column("description")]
-        public string Description { get; set; }
 
         public virtual async Task GetConnection()
         {
