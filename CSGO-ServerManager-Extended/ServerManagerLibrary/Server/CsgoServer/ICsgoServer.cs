@@ -1,5 +1,6 @@
 ﻿using CoreRCON;
 using CSGOServerInterface.Server.CsgoServerSettings;
+using SQLite;
 
 namespace CsgoServerInterface.CsgoServer
 {

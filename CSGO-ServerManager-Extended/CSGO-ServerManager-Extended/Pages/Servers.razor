@@ -4,12 +4,14 @@
 @inject ISnackbar Snackbar
 @inject NavigationManager navigation
 
-<MudTable RowClass="row-border" Items="@csgoServers" RowStyle="cursor: pointer;" Hover="true" Loading="@_loading" OnRowClick="RowClickEvent" T="ICsgoServer" LoadingProgressColor="Color.Info" Striped="true" Elevation="0" FixedHeader=true>
+<MudTable RowClass="row-border" Items="@csgoServers" RowStyle="cursor: pointer;" Hover="true" Loading="@_loading" OnRowClick="RowClickEvent" T="ICsgoServer" LoadingProgressColor="Color.Info" Striped="true" Elevation="0">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Your servers</MudText>
         <MudSpacer />
         <MudStack Row="true">
-            <MudIconButton Icon="@Icons.Filled.Refresh" OnClick="(async () => await GetServersAsync())"></MudIconButton>
+            <Tooltip Text="Reload servers">
+                <MudIconButton Icon="@Icons.Filled.Refresh" OnClick="(async () => await GetServersAsync())"></MudIconButton>
+            </Tooltip>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => OpenEditDialog(EditType.Create, null))">Add server</MudButton>
         </MudStack>
     </ToolBarContent>
@@ -27,10 +29,14 @@
         <MudTd Style="text-align: center" DataLabel="Status">@context.Status</MudTd>
         <MudTd Style="text-align: center" id="td-column" DataLabel="Players online">0</MudTd>
         <MudTd HideSmall="true">
-            <MudIconButton Icon="@Icons.Filled.Edit" OnClick="(() => OpenEditDialog(EditType.Edit, context))"></MudIconButton>
+            <Tooltip Text="Edit server">
+                <MudIconButton Icon="@Icons.Filled.Edit" OnClick="(() => OpenEditDialog(EditType.Edit, context))"></MudIconButton>
+            </Tooltip>
         </MudTd>
         <MudTd HideSmall="true">
-            <MudIconButton Icon="@Icons.Filled.Delete" OnClick="(async () => await OnDeleteConfirmShow(context))"></MudIconButton>
+            <Tooltip Text="Delete server">
+                <MudIconButton Icon="@Icons.Filled.Delete" OnClick="(async () => await OnDeleteConfirmShow(context))"></MudIconButton>
+            </Tooltip>
         </MudTd>
     </RowTemplate>
 </MudTable>

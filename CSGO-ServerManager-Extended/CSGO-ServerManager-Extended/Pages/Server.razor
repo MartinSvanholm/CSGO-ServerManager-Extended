@@ -5,7 +5,7 @@
 @if(CsgoServer != null) {
     <ServerComponent Server="CsgoServer" OnServerChange="(ICsgoServer tempServer) => OnServerChanged(tempServer)">
         <ServerHeader>
-            <StandardServerHeader Server="CsgoServer" StartStopServer="(async () => await StartStopServer())"/>
+            <StandardServerHeader Server="CsgoServer" StartStopServer="(async () => await StartStopServer())" IconData="@iconData"/>
         </ServerHeader>
     </ServerComponent>
 }
@@ -18,6 +18,14 @@
     public string ServerType { get; set; }
 
     private ICsgoServer CsgoServer { get; set; }
+
+    private IconData iconData { get; set; } = new();
+
+    string toggleBtnIcon = "";
+    MudBlazor.Color toggleBtnIconColor;
+    bool serverHasBeenStarted = false;
+
+    Snackbar snackbar;
 
     protected override async Task OnInitializedAsync()
     {
@@ -36,22 +44,41 @@
         {
             _snackbar.Add(e.Message);
         }
+
+        changeToggleBtnIconAndColor();
     }
 
     private async Task StartStopServer()
     {
+        if (!CsgoServer.IsOn)
+        {
+            snackbar = _snackbar.Add("Starting server", Severity.Normal);
+            serverHasBeenStarted = true;
+        }
+        else
+        {
+            snackbar = _snackbar.Add("Stopping server", Severity.Normal);
+            serverHasBeenStarted = false;
+        }
+
         try
         {
             await _csgoServerService.StartStopServer(CsgoServer);
-            if (CsgoServer.Booting)
-                _snackbar.Add("Starting server", Severity.Info);
-            else
-                _snackbar.Add("Stopping server", Severity.Info);
         }
         catch (Exception e)
         {
             _snackbar.Add(e.Message, Severity.Error);
         }
+
+        if (snackbar is not null)
+            _snackbar.Remove(snackbar);
+
+        if (CsgoServer.Booting)
+            snackbar = _snackbar.Add("Server booting", Severity.Normal);
+        else
+            snackbar = _snackbar.Add("Server offline", Severity.Normal);
+
+        changeToggleBtnIconAndColor();
 
         StateHasChanged();
     }
@@ -59,6 +86,36 @@
     private void OnServerChanged(ICsgoServer csgoServer)
     {
         CsgoServer = csgoServer;
+        changeToggleBtnIconAndColor();
+
+        if (serverHasBeenStarted && snackbar is not null && CsgoServer.Booting == false)
+        {
+            _snackbar.Remove(snackbar);
+            snackbar = _snackbar.Add("Server online", Severity.Success);
+            serverHasBeenStarted = false;
+        }
         StateHasChanged();
+    }
+
+    private void changeToggleBtnIconAndColor()
+    {
+        if (CsgoServer.Booting)
+        {
+            iconData.Icon = Icons.Filled.Refresh;
+            iconData.IconColor = Color.Info;
+            iconData.IconAnimationClass = "toggle-btn-spin";
+        } 
+        else if (CsgoServer.IsOn)
+        {
+            iconData.Icon = Icons.Filled.Stop;
+            iconData.IconColor = Color.Error;
+            iconData.IconAnimationClass = "";
+        } 
+        else
+        {
+            iconData.Icon = Icons.Filled.NotStarted;
+            iconData.IconColor = Color.Success;
+            iconData.IconAnimationClass = "";
+        }
     }
 }

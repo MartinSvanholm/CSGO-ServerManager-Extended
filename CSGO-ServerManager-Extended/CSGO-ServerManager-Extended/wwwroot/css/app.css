@@ -2,6 +2,10 @@
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+html {
+    box-sizing: border-box;
+}
+
 h1:focus {
     outline: none;
 }
@@ -101,4 +105,59 @@ a, .btn-link {
     #td-column {
         border-bottom: solid #DDDDDD 1px;
     }
+}
+
+/* ------ Custom CSS ------ */
+.toggle-btn-spin {
+    animation: spin-animation 1s infinite;
+}
+
+@keyframes spin-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(359deg);
+    }
+}
+
+[data-tooltip] {
+    position: relative;
+    width: fit-content;
+}
+
+[data-tooltip]:after {
+    /* Position */
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    top: 100%;
+    bottom: auto;
+    left: 50%;
+    transform: translate(-50%, 8px);
+
+    /* Shape */
+    border-radius: 5px;
+    z-index: 1000;
+    padding: 8px;
+    white-space: nowrap;
+    background-color: #000;
+    background-color: hsla(0, 0%, 20%, 0.9);
+    color: #fff;
+    content: attr(data-tooltip);
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+[data-tooltip]:hover:after,
+[data-tooltip]:focus:after {
+    visibility: visible;
+    opacity: 1;
+    text-align: center;
+    transition: opacity 1s 0.2s;
+}
+
+.mud-table-container {
+    overflow-y: visible;
 }

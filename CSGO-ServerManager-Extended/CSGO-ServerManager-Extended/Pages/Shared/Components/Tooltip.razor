@@ -1,0 +1,11 @@
+﻿<div data-tooltip="@Text">
+    @Childcontent
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment Childcontent { get; set; }
+
+    [Parameter, EditorRequired]
+    public string Text { get; set; }
+}

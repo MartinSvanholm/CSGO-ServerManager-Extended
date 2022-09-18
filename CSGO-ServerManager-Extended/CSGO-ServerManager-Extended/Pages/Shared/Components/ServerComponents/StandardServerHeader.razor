@@ -8,8 +8,7 @@
             <MudText>Server is @Server.Status</MudText>
             @if (Server is DatHostCsgoServer)
             {
-                <MudToggleIconButton @bind-Toggled="Server.IsOn" Icon="@Icons.Filled.NotStarted" Color="Color.Success" Size="Size.Large" ToggledIcon="@Icons.Filled.Stop" ToggledColor="Color.Error" ToggledSize="Size.Large"
-                                    @onclick="@(async () => await StartStopServer.InvokeAsync())" />
+                <MudIconButton Class="@IconData.IconAnimationClass" Size="Size.Large" Color="@IconData.IconColor" Icon="@IconData.Icon" OnClick="@(async () => await StartStopServer.InvokeAsync())" />
             }
         </MudStack>
     </MudItem>
@@ -33,4 +32,7 @@
 
     [Parameter, EditorRequired]
     public EventCallback StartStopServer { get; set; }
+
+    [Parameter, EditorRequired]
+    public IconData IconData { get; set; }
 }

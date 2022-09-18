@@ -58,9 +58,9 @@ namespace CSGOServerInterface.Server.CsgoServer
                 if (Booting == true)
                     return "booting";
                 else if (IsOn)
-                    return "on";
+                    return "online";
                 else
-                    return "off";
+                    return "offline";
             }
         }
 

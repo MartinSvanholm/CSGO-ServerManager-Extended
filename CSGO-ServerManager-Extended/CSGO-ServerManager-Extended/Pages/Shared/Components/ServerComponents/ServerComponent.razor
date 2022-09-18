@@ -24,26 +24,28 @@
 
             <MudItem xs="12" sm="5" md="3">
                 <MudCard>
-                    <MudList Disabled="@(!Server.IsOn)" Clickable="true" @bind-SelectedItem="selectedItem">
-                        <MudListItem @bind-Expanded="expandList" Text="Change map">
-                            <NestedList>
-                                <MudListItem Text="Inferno" @onclick="@(async () => await ChangeMap("inferno"))" />
-                                <MudListItem Text="Overpass" @onclick="@(async () => await ChangeMap("overpass"))" />
-                                <MudListItem Text="Nuke" @onclick="@(async () => await ChangeMap("nuke"))" />
-                                <MudListItem Text="Ancient" @onclick="@(async () => await ChangeMap("ancient"))" />
-                                <MudListItem Text="Dust2" @onclick="@(async () => await ChangeMap("dust2"))" />
-                                <MudListItem Text="Vertigo" @onclick="@(async () => await ChangeMap("vertigo"))" />
-                                <MudListItem Text="Mirage" @onclick="@(async () => await ChangeMap("mirage"))" />
-                            </NestedList>
-                        </MudListItem>
-                    </MudList>
+                    <Tooltip Text="Click to choose a map">
+                        <MudList Disabled="@disable" Clickable="true" @bind-SelectedItem="selectedItem">
+                            <MudListItem @bind-Expanded="expandList" Text="Change map">
+                                <NestedList>
+                                    <MudListItem Text="Inferno" @onclick="@(async () => await ChangeMap("inferno"))" />
+                                    <MudListItem Text="Overpass" @onclick="@(async () => await ChangeMap("overpass"))" />
+                                    <MudListItem Text="Nuke" @onclick="@(async () => await ChangeMap("nuke"))" />
+                                    <MudListItem Text="Ancient" @onclick="@(async () => await ChangeMap("ancient"))" />
+                                    <MudListItem Text="Dust2" @onclick="@(async () => await ChangeMap("dust2"))" />
+                                    <MudListItem Text="Vertigo" @onclick="@(async () => await ChangeMap("vertigo"))" />
+                                    <MudListItem Text="Mirage" @onclick="@(async () => await ChangeMap("mirage"))" />
+                                </NestedList>
+                            </MudListItem>
+                        </MudList>
+                    </Tooltip>
                 </MudCard>
             </MudItem>
 
             <MudItem xs="12" sm="7" md="6">
                 <MudStack Row="true" Spacing="10" AlignItems="AlignItems.Center">
-                    <MudTextField Disabled="@(!Server.IsOn)" @bind-Value="@customCommand" Immediate="true" Label="Send custom command" />
-                    <MudButton Disabled="@(!Server.IsOn)" Size="Size.Medium" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SendCustomCommand())">Send command</MudButton>
+                    <MudTextField Disabled="@disable" @bind-Value="@customCommand" Immediate="true" Label="Send custom command" />
+                    <MudButton Disabled="@disable" Size="Size.Medium" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SendCustomCommand())">Send command</MudButton>
                 </MudStack>
             </MudItem>
 
@@ -56,21 +58,21 @@
 
             <MudItem xs="12" sm="4">
                 <MudButtonGroup Class="btn-full-width" Color="Color.Primary" Variant="Variant.Outlined">
-                    <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" @onclick="@(async () => await StartMatch(false))">Start match</MudButton>
-                    <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" @onclick="@(async () => await StartMatch(true))">Start match with overtime</MudButton>
+                    <MudButton Class="btn-full-width" Disabled="@disable" @onclick="@(async () => await StartMatch(false))">Start match</MudButton>
+                    <MudButton Class="btn-full-width" Disabled="@disable" @onclick="@(async () => await StartMatch(true))">Start match with overtime</MudButton>
                 </MudButtonGroup>
             </MudItem>
 
             <MudItem xs="12" sm="4" Class="d-flex justify-center">
-                <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await PauseUnpauseMatch())">@pausedBtnText</MudButton>
+                <MudButton Class="btn-full-width" Disabled="@disable" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await PauseUnpauseMatch())">@pausedBtnText</MudButton>
             </MudItem>
 
             <MudItem xs="12" sm="4" Class="d-flex justify-end">
-                <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartKnife())">Start knife</MudButton>
+                <MudButton Class="btn-full-width" Disabled="@disable" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartKnife())">Start knife</MudButton>
             </MudItem>
 
             <MudItem xs="12" Class="d-flex justify-end">
-                <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SwitchSides())">Switch sides</MudButton>
+                <MudButton Class="btn-full-width" Disabled="@disable" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await SwitchSides())">Switch sides</MudButton>
             </MudItem>
 
             <MudItem xs="12">
@@ -81,7 +83,7 @@
             </MudItem>
 
             <MudItem xs="12" Class="d-flex justify-start">
-                <MudButton Class="btn-full-width" Disabled="@(!Server.IsOn)" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartNadePractice())">Start nade practice</MudButton>
+                <MudButton Class="btn-full-width" Disabled="@disable" Color="Color.Primary" Variant="Variant.Filled" @onclick="@(async () => await StartNadePractice())">Start nade practice</MudButton>
             </MudItem>
 
             <MudItem xs="12">
@@ -103,6 +105,8 @@
 
     [Parameter]
     public EventCallback<ICsgoServer> OnServerChange { get; set; }
+
+    private bool disable { get => Server.IsOn == false || Server.Booting == true; }
 
     Timer serverUpdateTimer = new(10000);
     MudListItem selectedItem;
@@ -151,24 +155,6 @@
     private async Task OnServerChanged()
     {
         await OnServerChange.InvokeAsync(Server);
-    }
-
-    public async Task StartStopServer()
-    {
-        try
-        {
-            await CsgoServerService.StartStopServer(Server);
-            if (Server.Booting)
-                _snackBar.Add("Starting server", Severity.Info);
-            else
-                _snackBar.Add("Stopping server", Severity.Info);
-        }
-        catch (Exception e)
-        {
-            _snackBar.Add(e.Message, Severity.Error);
-        }
-
-        StateHasChanged();
     }
 
     private async Task ChangeMap(string map)
