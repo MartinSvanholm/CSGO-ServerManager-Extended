@@ -10,26 +10,13 @@
     />
 <MudSnackbarProvider />
 
-<MudLayout>
-    <MudAppBar>
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        CS:GO ServerManager - Extended
-    </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen" ClipMode="@DrawerClipMode.Always">
-        <NavMenu />
-    </MudDrawer>
-    <MudMainContent>
-        <div style="margin: 0px;">
-            @Body
-        </div>
+<MudLayout id="body">
+    <MudMainContent id="content">
+        @Body
     </MudMainContent>
+    <NavMenu />
 </MudLayout>
 
 @code {
-    bool _drawerOpen = true;
 
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
 }

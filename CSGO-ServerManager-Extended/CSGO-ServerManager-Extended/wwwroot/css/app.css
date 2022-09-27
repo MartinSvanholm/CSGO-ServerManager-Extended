@@ -1,4 +1,10 @@
-﻿html, body {
+﻿/* ------ Variables ------ */
+:root {
+    --nav-menu-height: 60px;
+    --main-content-margin: 15px;
+}
+
+html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -85,10 +91,6 @@ a, .btn-link {
 	}
 }
 
-.content-container {
-    margin: 15px;
-}
-
 .help-divider {
     margin: 15px 0px;
 }
@@ -108,6 +110,10 @@ a, .btn-link {
 }
 
 /* ------ Custom CSS ------ */
+.content-container {
+    margin: 15px;
+}
+
 .toggle-btn-spin {
     animation: spin-animation 1s infinite;
 }
@@ -160,4 +166,28 @@ a, .btn-link {
 
 .mud-table-container {
     overflow-y: visible;
+}
+
+#nav-menu {
+    height: var(--nav-menu-height);
+}
+
+#body {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+}
+
+#content {
+    flex: 1;
+    overflow: auto;
+    overflow-x: hidden;
+    padding: 0;
+}
+
+.active {
+    border-top: solid 2px;
+    border-top-color: var(--mud-palette-primary);
+    color: var(--mud-palette-primary);
 }

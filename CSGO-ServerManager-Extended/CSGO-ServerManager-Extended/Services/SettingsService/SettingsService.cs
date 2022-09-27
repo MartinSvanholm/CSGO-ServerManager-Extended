@@ -1,61 +1,97 @@
 ﻿using CSGO_ServerManager_Extended.Models;
+using CSGO_ServerManager_Extended.Models.Constants;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace CSGO_ServerManager_Extended.Services.SettingsService
+namespace CSGO_ServerManager_Extended.Services.SettingsService;
+
+public interface ISettingsService
 {
-    public class SettingsService : ISettingsService
+    HttpClient _httpClient { get; set; }
+    string DashboardVisibilitySetting { get; set; }
+    DathostAccount DathostAccount { get; set; }
+    bool DathostAccountIsConnected { get; set; }
+
+    Task<DathostAccount> AddDathostAccount(DathostAccount dathostAccount);
+    Task ChangeDashboardVisibilitySetting(string dashboardVisibilitySetting);
+    Task<string> LoadDashboardVisibilitySetting();
+    void RemoveDathostAccount();
+}
+
+public class SettingsService : ISettingsService
+{
+    public SettingsService(HttpClient httpClient, DathostAccount dathostAccount, bool dathostAccountIsConnected)
     {
-        public SettingsService(HttpClient httpClient, DathostAccount dathostAccount, bool dathostAccountIsConnected)
+        _httpClient = httpClient;
+        DathostAccountIsConnected = dathostAccountIsConnected;
+        DathostAccount = dathostAccount;
+
+        Task init = Task.Run(() => Init());
+        init.Wait();
+    }
+
+    public HttpClient _httpClient { get; set; }
+    public bool DathostAccountIsConnected { get; set; } = false;
+    public DathostAccount DathostAccount { get; set; }
+    public string DashboardVisibilitySetting { get; set; }
+
+    public async Task<DathostAccount> AddDathostAccount(DathostAccount dathostAccount)
+    {
+        try
         {
-            _httpClient = httpClient;
-            DathostAccountIsConnected = dathostAccountIsConnected;
-            DathostAccount = dathostAccount;
+            await CheckDathostAccount(dathostAccount);
+
+            await SecureStorage.Default.SetAsync("Dathost_Email", dathostAccount.Email);
+            await SecureStorage.Default.SetAsync("Dathost_Password", dathostAccount.Password);
+
+            DathostAccountIsConnected = true;
+        }
+        catch (Exception)
+        {
+            throw;
         }
 
-        public HttpClient _httpClient { get; set; }
-        public bool DathostAccountIsConnected { get; set; } = false;
-        public DathostAccount DathostAccount { get; set; }
+        return dathostAccount;
+    }
 
-        public async Task<DathostAccount> AddDathostAccount(DathostAccount dathostAccount)
-        {
-            try
-            {
-                await CheckDathostAccount(dathostAccount);
+    public void RemoveDathostAccount()
+    {
+        SecureStorage.Default.Remove("Dathost_Email");
+        SecureStorage.Default.Remove("Dathost_Password");
+        DathostAccount = new("", "");
+        DathostAccountIsConnected = false;
+        _httpClient.DefaultRequestHeaders.Clear();
+    }
 
-                await SecureStorage.Default.SetAsync("Dathost_Email", dathostAccount.Email);
-                await SecureStorage.Default.SetAsync("Dathost_Password", dathostAccount.Password);
+    public async Task ChangeDashboardVisibilitySetting(string dashboardVisibilitySetting)
+    {
+        await SecureStorage.Default.SetAsync("DashboardVisibilitySetting", dashboardVisibilitySetting);
+        DashboardVisibilitySetting = dashboardVisibilitySetting;
+    }
 
-                DathostAccountIsConnected = true;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+    public async Task<string> LoadDashboardVisibilitySetting()
+    {
+        return await SecureStorage.Default.GetAsync("DashboardVisibilitySetting");
+    }
 
-            return dathostAccount;
-        }
+    private async Task CheckDathostAccount(DathostAccount dathostAccount)
+    {
+        string uri = _httpClient.BaseAddress.ToString() + "/api/0.1/account";
 
-        public void RemoveDathostAccount()
-        {
-            SecureStorage.Default.Remove("Dathost_Email");
-            SecureStorage.Default.Remove("Dathost_Password");
-            DathostAccount = new("", "");
-            DathostAccountIsConnected = false;
-            _httpClient.DefaultRequestHeaders.Clear();
-        }
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{dathostAccount.Email}:{dathostAccount.Password}")));
 
-        private async Task CheckDathostAccount(DathostAccount dathostAccount)
-        {
-            string uri = _httpClient.BaseAddress.ToString() + "/api/0.1/account";
+        using HttpResponseMessage responseMessage = await _httpClient.GetAsync(uri);
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{dathostAccount.Email}:{dathostAccount.Password}")));
+        if (!responseMessage.IsSuccessStatusCode)
+            throw new HttpRequestException(responseMessage.ReasonPhrase, null, responseMessage.StatusCode);
+    }
 
-            using HttpResponseMessage responseMessage = await _httpClient.GetAsync(uri);
+    private async Task Init()
+    {
+        DashboardVisibilitySetting = await LoadDashboardVisibilitySetting();
 
-            if (!responseMessage.IsSuccessStatusCode)
-                throw new HttpRequestException(responseMessage.ReasonPhrase, null, responseMessage.StatusCode);
-        }
+        if(DashboardVisibilitySetting == null)
+            DashboardVisibilitySetting = SettingsConstants.ShowFavouritesOnDashboard;
     }
 }

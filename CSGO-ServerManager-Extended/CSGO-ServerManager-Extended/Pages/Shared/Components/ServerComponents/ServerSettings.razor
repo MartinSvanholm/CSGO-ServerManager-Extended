@@ -40,11 +40,11 @@
         try
         {
             _serverSettingsService.UpdateServerSettings(csgoServer.ServerSettings);
-            Snackbar.Add("Server settings updated", Severity.Success);
+            Snackbar.Add("Server settings updated", Severity.Success, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
         catch (Exception e)
         {
-            Snackbar.Add(e.Message, Severity.Warning);
+            Snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
     }
 }

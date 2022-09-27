@@ -134,7 +134,7 @@
             }
             catch (Exception e)
             {
-                _snackBar.Add($"Could not connect to server: {e.Message}", Severity.Warning);
+                _snackBar.Add($"Could not connect to server: {e.Message}", Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
         }
     }
@@ -163,11 +163,11 @@
         try
         {
             await CsgoServerService.ChangeMap(map);
-            _snackBar.Add($"Switching to {map}");
+            _snackBar.Add($"Switching to {map}", Severity.Normal, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
         catch (Exception e)
         {
-            _snackBar.Add(e.Message, Severity.Error);
+            _snackBar.Add(e.Message, Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
     }
 
@@ -182,11 +182,11 @@
             {
                 await CsgoServerService.StartMatch(overtime, Server.ServerSettings.OvertimeCommand);
             }
-            _snackBar.Add("Starting match", Severity.Info);
+            _snackBar.Add("Starting match", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
         catch (Exception e)
         {
-            _snackBar.Add(e.Message, Severity.Error);
+            _snackBar.Add(e.Message, Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
     }
 
@@ -200,17 +200,17 @@
             if (matchpaused)
             {
                 pausedBtnText = "Unpause match";
-                _snackBar.Add("Match will be paused during next freezetime", Severity.Info);
+                _snackBar.Add("Match will be paused during next freezetime", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
             else
             {
                 pausedBtnText = "Pause match";
-                _snackBar.Add("Match will be unpaused", Severity.Info);
+                _snackBar.Add("Match will be unpaused", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
         }
         catch (Exception e)
         {
-            _snackBar.Add(e.Message);
+            _snackBar.Add(e.Message, Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
     }
 
@@ -219,11 +219,11 @@
         try
         {
             await CsgoServerService.StartKnife(Server.ServerSettings.KnifeCommand);
-            _snackBar.Add("Starting knife round", Severity.Info);
+            _snackBar.Add("Starting knife round", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
         catch (Exception e)
         {
-            _snackBar.Add(e.Message, Severity.Error);
+            _snackBar.Add(e.Message, Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
     }
 
@@ -232,11 +232,11 @@
         try
         {
             await CsgoServerService.RunCommand("mp_swapteams");
-            _snackBar.Add("Switching sides", Severity.Info);
+            _snackBar.Add("Switching sides", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
         catch (Exception e)
         {
-            _snackBar.Add(e.Message, Severity.Error);
+            _snackBar.Add(e.Message, Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
     }
 
@@ -245,11 +245,11 @@
         try
         {
             await CsgoServerService.StartNadePractice(Server.ServerSettings.PracticeCommand);
-            _snackBar.Add("Starting nade practice", Severity.Info);
+            _snackBar.Add("Starting nade practice", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
         catch (Exception e)
         {
-            _snackBar.Add(e.Message, Severity.Error);
+            _snackBar.Add(e.Message, Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
     }
 
@@ -258,11 +258,11 @@
         try
         {
             await CsgoServerService.RunCommand(customCommand);
-            _snackBar.Add("Running command", Severity.Info);
+            _snackBar.Add("Running command", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
         catch (Exception e)
         {
-            _snackBar.Add(e.Message, Severity.Error);
+            _snackBar.Add(e.Message, Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
     }
 }

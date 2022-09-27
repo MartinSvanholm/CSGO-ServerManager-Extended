@@ -52,12 +52,12 @@
     {
         if (!CsgoServer.IsOn)
         {
-            snackbar = _snackbar.Add("Starting server", Severity.Normal);
+            snackbar = _snackbar.Add("Starting server", Severity.Normal, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             serverHasBeenStarted = true;
         }
         else
         {
-            snackbar = _snackbar.Add("Stopping server", Severity.Normal);
+            snackbar = _snackbar.Add("Stopping server", Severity.Normal, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             serverHasBeenStarted = false;
         }
 
@@ -67,16 +67,16 @@
         }
         catch (Exception e)
         {
-            _snackbar.Add(e.Message, Severity.Error);
+            _snackbar.Add(e.Message, Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
 
         if (snackbar is not null)
             _snackbar.Remove(snackbar);
 
         if (CsgoServer.Booting)
-            snackbar = _snackbar.Add("Server booting", Severity.Normal);
+            snackbar = _snackbar.Add("Server booting", Severity.Normal, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         else
-            snackbar = _snackbar.Add("Server offline", Severity.Normal);
+            snackbar = _snackbar.Add("Server offline", Severity.Normal, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
 
         changeToggleBtnIconAndColor();
 
@@ -91,7 +91,7 @@
         if (serverHasBeenStarted && snackbar is not null && CsgoServer.Booting == false)
         {
             _snackbar.Remove(snackbar);
-            snackbar = _snackbar.Add("Server online", Severity.Success);
+            snackbar = _snackbar.Add("Server online", Severity.Success, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             serverHasBeenStarted = false;
         }
         StateHasChanged();

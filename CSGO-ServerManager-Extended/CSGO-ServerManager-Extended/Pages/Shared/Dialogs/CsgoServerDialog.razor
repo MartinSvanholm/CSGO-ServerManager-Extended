@@ -47,22 +47,22 @@
             try
             {
                 await _csgoServerService.UpdateCsgoServer(TempServer);
-                Snackbar.Add($"Updated server \"{TempServer.Name}\"", Severity.Info);
+                Snackbar.Add($"Updated server \"{TempServer.Name}\"", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
             catch (Exception e)
             {
-                Snackbar.Add(e.Message, Severity.Warning);
+                Snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
         } else
         {
             try
             {
                 await _csgoServerService.AddCsgoServer(TempServer);
-                Snackbar.Add($"Added server \"{TempServer.Name}\"", Severity.Info);
+                Snackbar.Add($"Added server \"{TempServer.Name}\"", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
             catch (Exception e)
             {
-                Snackbar.Add(e.Message, Severity.Warning);
+                Snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
         }
         await ChangeVisibility.InvokeAsync(true);

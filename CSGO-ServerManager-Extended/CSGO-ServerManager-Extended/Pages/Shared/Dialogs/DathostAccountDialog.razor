@@ -30,12 +30,12 @@
         try
         {
             dathostAccount = await settingsService.AddDathostAccount(dathostAccount);
-            snackbar.Add("Dathost account linked", Severity.Success);
+            snackbar.Add("Dathost account linked", Severity.Success, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             mudDialog.Close(DialogResult.Ok(dathostAccount));
         }
         catch (Exception e)
         {
-            snackbar.Add(e.Message, Severity.Error);
+            snackbar.Add(e.Message, Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             Cancel();
         }
     }

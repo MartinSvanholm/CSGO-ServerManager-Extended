@@ -1,0 +1,158 @@
+﻿@inject ICsgoServerService CsgoServerService
+@inject ISettingsService settingsService
+@inject ISnackbar Snackbar
+@inject NavigationManager navigation
+
+<MudTable RowClass="row-border" Items="@csgoServers" RowStyle="cursor: pointer;" Hover="true" Loading="@_loading" OnRowClick="RowClickEvent" T="ICsgoServer" LoadingProgressColor="Color.Info" Striped="true" Elevation="0">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Your servers</MudText>
+        <MudSpacer />
+        <MudStack Row="true">
+            <Tooltip Text="Reload servers">
+                <MudIconButton Icon="@Icons.Filled.Refresh" OnClick="(async () => await GetServersAsync())"></MudIconButton>
+            </Tooltip>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => OpenEditDialog(EditType.Create, null))">Add server</MudButton>
+        </MudStack>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh Style="font-weight: bold;">Name</MudTh>
+        <MudTh Style="font-weight: bold;">Connection Ip</MudTh>
+        <MudTh Style="font-weight: bold; text-align: center;">Status</MudTh>
+        <MudTh Style="font-weight: bold; text-align: center;">Players online</MudTh>
+        <MudTh></MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate >
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Connection Ip" HideSmall="true">@context.ConnectionIp</MudTd>
+        <MudTd Style="text-align: center" DataLabel="Status">@context.Status</MudTd>
+        <MudTd Style="text-align: center" id="td-column" DataLabel="Players online">0</MudTd>
+        <MudTd HideSmall="true">
+            <Tooltip Text="Edit server">
+                <MudIconButton Icon="@Icons.Filled.Edit" OnClick="(() => OpenEditDialog(EditType.Edit, context))"></MudIconButton>
+            </Tooltip>
+        </MudTd>
+        <MudTd HideSmall="true">
+            <Tooltip Text="Delete server">
+                <MudIconButton Icon="@Icons.Filled.Delete" OnClick="(async () => await OnDeleteConfirmShow(context))"></MudIconButton>
+            </Tooltip>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+<CsgoServerDialog isVisible="isVisible" ChangeVisibility="(async (bool isSucces) => await OnVisibilityChanged(isSucces))" TempServer="tempServer" EditType="_editType" />
+
+<MudMessageBox @ref="confirmMessageBox" Title="Warning" CancelText="Cancel">
+    <MessageContent>
+        Deleting cannot be undone!
+    </MessageContent>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteForever">Delete!</MudButton>
+    </YesButton>
+</MudMessageBox>
+
+@code {
+    private bool isVisible = false;
+    private List<ICsgoServer> csgoServers = new();
+    private CsgoServer tempServer = new();
+    private EditType _editType;
+    private bool _loading = true;
+    private MudMessageBox confirmMessageBox { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetServersAsync();
+    }
+
+    private void RowClickEvent(TableRowClickEventArgs<ICsgoServer> args)
+    {
+        if(args.Item is DatHostCsgoServer)
+        {
+            navigation.NavigateTo($"/server?ServerId={args.Item.Id}&ServerType={CsgoServerConstants.DathostCsgoServerType}", true);
+        }
+        else if(args.Item is CsgoServer)
+        {
+            navigation.NavigateTo($"/server?ServerId={args.Item.Id}&ServerType={CsgoServerConstants.NormalCsgoServerType}", true);
+        }
+    }
+
+    private async Task GetServersAsync()
+    {
+        try
+        {
+            csgoServers = await CsgoServerService.GetCsgoServers();
+            _loading = false;
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add($"Something went wrong: {e.Message}", Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+            _loading = false;
+        }
+    }
+
+    private void OpenEditDialog(EditType editType, ICsgoServer csgoServer)
+    {
+        _editType = editType;
+        if (_editType == EditType.Create)
+        {
+            isVisible = true;
+        }
+        else
+        {
+            if(csgoServer is DatHostCsgoServer)
+            {
+                Snackbar.Add("You cannot remove servers from dathost", Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+                return;
+            }
+
+            tempServer = (CsgoServer)csgoServer;
+            isVisible = true;
+        }
+    }
+
+    private async Task DeleteServerAsync(ICsgoServer csgoServer)
+    {
+        if(csgoServer is CsgoServer)
+        {
+            try
+            {
+                await CsgoServerService.DeleteCsgoServer((CsgoServer)csgoServer);
+                csgoServers.Remove(csgoServer);
+                Snackbar.Add($"Deleted server \"{csgoServer.Name}\"", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+                await InvokeAsync(StateHasChanged);
+            }
+            catch (Exception e)
+            {
+                Snackbar.Add(e.Message, Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+            }
+
+        } else
+        {
+            Snackbar.Add("You cannot remove servers from dathost", Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+            return;
+        }
+    }
+
+    private async Task OnDeleteConfirmShow(ICsgoServer csgoServer)
+    {
+        bool? result = await confirmMessageBox.Show() == null ? false : true;
+
+        if (result != null && (bool)result)
+            await DeleteServerAsync(csgoServer);
+        else
+            return;
+    }
+
+    private async Task OnVisibilityChanged(bool isSucces)
+    {
+        tempServer = new();
+        isVisible = !isVisible;
+
+        if(isSucces)
+        {
+            await GetServersAsync();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}

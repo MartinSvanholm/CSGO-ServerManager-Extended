@@ -21,6 +21,7 @@ public interface ICsgoServerService
     Task<List<ICsgoServer>> GetCsgoServers();
     Task<DatHostCsgoServer> GetDatHostServer(string id);
     Task<List<DatHostCsgoServer>> GetDatHostServers();
+    Task<List<ICsgoServer>> GetFavouriteCsgoServers();
     Task PauseUnpauseMatch(bool isMatchPaused);
     Task RunCommand(string command);
     Task StartKnife(string cfg = null);
@@ -85,6 +86,25 @@ public class CsgoServerService : ICsgoServerService
             throw new Exception("Could not find csgo server");
 
         return csgoServer;
+    }
+
+    public async Task<List<ICsgoServer>> GetFavouriteCsgoServers()
+    {
+        List<ICsgoServer> csgoServers = new();
+
+        try
+        {
+            csgoServers.AddRange(await _csgoServerRepository.GetCsgoServerByCondition(s => s.ServerSettings.IsFavourite));
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
+        }
+
+        if (csgoServers.Count() == 0)
+            throw new Exception("Could not find any csgo servers marked as favourite");
+
+        return csgoServers;
     }
 
     public async Task<CsgoServer> AddCsgoServer(CsgoServer csgoServer)

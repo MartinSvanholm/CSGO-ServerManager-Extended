@@ -49,12 +49,13 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
         public async Task<List<CsgoServer>> GetCsgoServerByCondition(Expression<Func<CsgoServer, bool>> condition)
         {
             var data = await _dataAccess.GetAllAsync<CsgoServer>();
-            List<CsgoServer> servers = data.AsQueryable().Where(condition).ToList();
 
-            foreach (CsgoServer server in servers)
+            foreach (CsgoServer server in data)
             {
                 server.ServerSettings = await _serverSettingsRepository.GetServerSettingsByCsgoServerId(server.Id);
             }
+
+            List<CsgoServer> servers = data.AsQueryable().Where(condition).ToList();
 
             return servers;
         }

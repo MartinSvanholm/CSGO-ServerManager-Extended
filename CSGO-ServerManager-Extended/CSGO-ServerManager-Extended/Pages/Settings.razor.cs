@@ -12,16 +12,23 @@ namespace CSGO_ServerManager_Extended.Pages
         [Inject]
         ISnackbar snackbar { get; set; }
 
+        private string TempDashboardVisibilitySetting { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            TempDashboardVisibilitySetting = await settingsService.LoadDashboardVisibilitySetting();
+        }
+
         private async Task Submit()
         {
             try
             {
                 settingsService.DathostAccount = await settingsService.AddDathostAccount(settingsService.DathostAccount);
-                snackbar.Add("Dathost account linked", Severity.Success);
+                snackbar.Add("Dathost account linked", Severity.Success, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
             catch (Exception e)
             {
-                snackbar.Add(e.Message, Severity.Error);
+                snackbar.Add(e.Message, Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
         }
 
@@ -29,7 +36,20 @@ namespace CSGO_ServerManager_Extended.Pages
         {
             settingsService.RemoveDathostAccount();
 
-            snackbar.Add("Deleted Dathost account", Severity.Success);
+            snackbar.Add("Deleted Dathost account", Severity.Success, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+        }
+
+        private async Task SaveDashboardVisibilitySetting()
+        {
+            try
+            {
+                await settingsService.ChangeDashboardVisibilitySetting(TempDashboardVisibilitySetting);
+                snackbar.Add("Saved", Severity.Success, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+            }
+            catch (Exception e)
+            {
+                snackbar.Add($"Something went wrong {e.Message}", Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+            }
         }
     }
 }

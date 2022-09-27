@@ -52,7 +52,9 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ICsgoServerRepository, CsgoServerRepository>();
 		builder.Services.AddSingleton<IServerSettingsService, ServerSettingsService>();
 
-		return builder.Build();
+		var sp = builder.Services.BuildServiceProvider();
+
+        return builder.Build();
 	}
 
 	private static HttpClient InitializeClient()
