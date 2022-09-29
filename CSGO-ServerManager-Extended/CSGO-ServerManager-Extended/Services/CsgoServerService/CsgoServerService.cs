@@ -5,6 +5,7 @@ using CSGO_ServerManager_Extended.Services.SettingsService;
 using CsgoServerInterface.CsgoServer;
 using CsgoServerInterface.Exceptions;
 using CSGOServerInterface.Mappers;
+using CSGOServerInterface.Server.CsgoServerSettings;
 using CSGOServerInterface.Server.DathostServer;
 using CSGOServerInterface.Server.DTO;
 
@@ -95,6 +96,13 @@ public class CsgoServerService : ICsgoServerService
         try
         {
             csgoServers.AddRange(await _csgoServerRepository.GetCsgoServerByCondition(s => s.ServerSettings.IsFavourite));
+
+            List<ServerSettings> dathostServerSettings = new List<ServerSettings>(await _serverSettingsRepository.GetServerSettingsByCondition(s => s.IsDathostServer && s.IsFavourite));
+
+            foreach (ServerSettings dathostServerSetting in dathostServerSettings)
+            {
+                csgoServers.Add(await GetDatHostServer(dathostServerSetting.CsgoServerId));
+            }
         }
         catch (Exception e)
         {
@@ -178,6 +186,7 @@ public class CsgoServerService : ICsgoServerService
                 {
                     datHostCsgoServer.ServerSettings = new();
                     datHostCsgoServer.ServerSettings.CsgoServerId = datHostCsgoServer.Id;
+                    datHostCsgoServer.ServerSettings.IsDathostServer = true;
 
                     await _serverSettingsRepository.InsertServerSettings(datHostCsgoServer.ServerSettings);
                 }

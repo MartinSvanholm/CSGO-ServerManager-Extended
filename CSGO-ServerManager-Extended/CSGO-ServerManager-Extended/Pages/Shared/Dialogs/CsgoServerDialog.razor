@@ -1,5 +1,6 @@
 ﻿@inject ISnackbar Snackbar
 @inject ICsgoServerService _csgoServerService
+@inject IServerSettingsService _serverSettingsService
 
 <MudDialog @bind-IsVisible="isVisible" Options="dialogOptions" OnBackdropClick="(async () => await ChangeVisibility.InvokeAsync(false))">
     <TitleContent>
@@ -8,11 +9,11 @@
 
     <DialogContent>
         <MudForm @bind-IsValid="@isValid">
-            <MudTextField @bind-Value="TempServer.Name" Label="Name" Required=true RequiredError="Server name is required" Immediate=true></MudTextField>
-            <MudTextField @bind-Value="TempServer.Ip" Label="Ip" Required=true RequiredError="Server ip is required" Immediate=true></MudTextField>
-            <MudTextField @bind-Value="TempServer.Password" Label="Password" Immediate=true></MudTextField>
-            <MudTextField @bind-Value="TempServer.RconPassword" Label="Rcon password" Immediate=true></MudTextField>
-            <MudTextField T="int" @bind-Value="TempServer.GamePort" Label="Port" Required=true RequiredError="Server port is required" Immediate=true></MudTextField>
+            <MudTextField Disabled=IsDathostServer @bind-Value="TempServer.Name" Label="Name" Required=true RequiredError="Server name is required" Immediate=true></MudTextField>
+            <MudTextField Disabled=IsDathostServer @bind-Value="TempServer.Ip" Label="Ip" Required=true RequiredError="Server ip is required" Immediate=true></MudTextField>
+            <MudTextField Disabled=IsDathostServer @bind-Value="TempServer.Password" Label="Password" Immediate=true></MudTextField>
+            <MudTextField Disabled=IsDathostServer @bind-Value="TempServer.RconPassword" Label="Rcon password" Immediate=true></MudTextField>
+            <MudTextField Disabled=IsDathostServer T="int" @bind-Value="TempServer.GamePort" Label="Port" Required=true RequiredError="Server port is required" Immediate=true></MudTextField>
             <MudCheckBox @bind-Checked="TempServer.ServerSettings.IsFavourite" Label="Favourite" CheckedIcon="@Icons.Filled.Star" UncheckedIcon="@Icons.Filled.StarBorder"/>
             <MudTextField @bind-Value="TempServer.ServerSettings.Description" Lines="3" Label="Description" Immediate=true></MudTextField>
         </MudForm>
@@ -32,10 +33,12 @@
     public EventCallback<bool> ChangeVisibility { get; set; }
 
     [Parameter, EditorRequired]
-    public CsgoServer TempServer { get; set; }
+    public ICsgoServer TempServer { get; set; }
 
     [Parameter, EditorRequired]
     public EditType EditType { get; set; }
+
+    private bool IsDathostServer { get => TempServer is DatHostCsgoServer ? true : false; }
 
     DialogOptions dialogOptions = new() { FullWidth = true, CloseButton = false };
     bool isValid;
@@ -44,20 +47,35 @@
     {
         if(EditType == EditType.Edit)
         {
-            try
+            if(TempServer is DatHostCsgoServer) {
+                try
+                {
+                    await _serverSettingsService.UpdateServerSettings(TempServer.ServerSettings);
+                }
+                catch (Exception e)
+                {
+                    Snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+                }
+            } 
+            else 
             {
-                await _csgoServerService.UpdateCsgoServer(TempServer);
-                Snackbar.Add($"Updated server \"{TempServer.Name}\"", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+                try
+                {
+                    await _csgoServerService.UpdateCsgoServer((CsgoServer)TempServer);
+                }
+                catch (Exception e)
+                {
+                    Snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+                }
             }
-            catch (Exception e)
-            {
-                Snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
-            }
-        } else
+
+            Snackbar.Add($"Updated server \"{TempServer.Name}\"", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+        } 
+        else
         {
             try
             {
-                await _csgoServerService.AddCsgoServer(TempServer);
+                await _csgoServerService.AddCsgoServer((CsgoServer)TempServer);
                 Snackbar.Add($"Added server \"{TempServer.Name}\"", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
             catch (Exception e)
@@ -66,5 +84,17 @@
             }
         }
         await ChangeVisibility.InvokeAsync(true);
+    }
+
+    private async Task UpdateDathostServerSettings() {
+        try
+        {
+            await _serverSettingsService.UpdateServerSettings(TempServer.ServerSettings);
+            Snackbar.Add($"Updated server \"{TempServer.Name}\"", Severity.Info, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+        }
     }
 }

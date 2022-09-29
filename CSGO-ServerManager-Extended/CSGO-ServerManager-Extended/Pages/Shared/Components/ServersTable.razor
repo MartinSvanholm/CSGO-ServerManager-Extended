@@ -54,7 +54,7 @@
 @code {
     private bool isVisible = false;
     private List<ICsgoServer> csgoServers = new();
-    private CsgoServer tempServer = new();
+    private ICsgoServer tempServer;
     private EditType _editType;
     private bool _loading = true;
     private MudMessageBox confirmMessageBox { get; set; }
@@ -100,13 +100,14 @@
         }
         else
         {
+            /*
             if(csgoServer is DatHostCsgoServer)
-            {
+                {
                 Snackbar.Add("You cannot remove servers from dathost", Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
                 return;
-            }
+            }*/
 
-            tempServer = (CsgoServer)csgoServer;
+            tempServer = csgoServer;
             isVisible = true;
         }
     }
@@ -146,7 +147,6 @@
 
     private async Task OnVisibilityChanged(bool isSucces)
     {
-        tempServer = new();
         isVisible = !isVisible;
 
         if(isSucces)

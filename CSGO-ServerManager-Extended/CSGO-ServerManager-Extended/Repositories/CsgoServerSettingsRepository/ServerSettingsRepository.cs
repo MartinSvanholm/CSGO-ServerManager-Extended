@@ -4,6 +4,7 @@ using CSGOServerInterface.Server.CsgoServerSettings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository
     {
         Task DeleteServerSettings(ServerSettings serverSettings);
         Task<List<ServerSettings>> GetServerSettings();
+        Task<List<ServerSettings>> GetServerSettingsByCondition(Expression<Func<ServerSettings, bool>> condition);
         Task<ServerSettings> GetServerSettingsByCsgoServerId(string csgoServerId);
         Task<ServerSettings> GetServerSettingsById(int id);
         Task InsertServerSettings(ServerSettings serverSettings);
@@ -40,6 +42,12 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository
         {
             var data = await _dataAccess.GetAllAsync<ServerSettings>();
             return data.AsQueryable().Where(s => s.CsgoServerId == csgoServerId).FirstOrDefault();
+        }
+
+        public async Task<List<ServerSettings>> GetServerSettingsByCondition(Expression<Func<ServerSettings, bool>> condition)
+        {
+            var data = await _dataAccess.GetAllAsync<ServerSettings>();
+            return data.AsQueryable().Where(condition).ToList();
         }
 
         public async Task InsertServerSettings(ServerSettings serverSettings)

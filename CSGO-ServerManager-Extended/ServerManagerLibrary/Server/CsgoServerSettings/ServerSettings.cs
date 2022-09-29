@@ -13,6 +13,10 @@ namespace CSGOServerInterface.Server.CsgoServerSettings
         [Column("csgo_server_id")]
         public string CsgoServerId { get; set; }
 
+        [NotNull]
+        [Column("is_dathostserver")]
+        public bool IsDathostServer { get; set; }
+
         [Column("is_favourite")]
         public bool IsFavourite { get; set; }
 
