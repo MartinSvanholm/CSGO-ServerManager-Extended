@@ -1,4 +1,6 @@
-﻿using CSGO_ServerManager_Extended.Repositories.CsgoServerRepository;
+﻿using CSGO_ServerManager_Extended.Models;
+using CSGO_ServerManager_Extended.Models.Constants;
+using CSGO_ServerManager_Extended.Repositories.CsgoServerRepository;
 using CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository;
 using CSGO_ServerManager_Extended.Services.CsgoServerSettingsService;
 using CSGO_ServerManager_Extended.Services.SettingsService;
@@ -39,6 +41,7 @@ public class CsgoServerService : ICsgoServerService
     private readonly ISettingsService _settingsService;
     private readonly IServerSettingsRepository _serverSettingsRepository;
     public ICsgoServer Server { get; set; }
+    private GlobalServerSettings GlobalServerSettings { get; set; }
 
     public CsgoServerService(HttpClient httpClient, ICsgoServerRepository csgoServerRepository, ISettingsService settingsService, IServerSettingsRepository serverSettingsRepository)
     {
@@ -294,16 +297,27 @@ public class CsgoServerService : ICsgoServerService
     {
         try
         {
-            if (cfg == null)
+            if (cfg != null)
             {
-                if (!withOvertime)
-                    await Server.RunCommand("exec esportliga_start.cfg", _httpClient);
-                else
-                    await Server.RunCommand("exec esportliga_start_med_overtime.cfg", _httpClient);
+                await Server.RunCommand(cfg, _httpClient);
             }
             else
             {
-                await Server.RunCommand(cfg, _httpClient);
+                if (withOvertime)
+                    cfg = Preferences.Get(GlobalServerCommandsConstants.OvertimeCommand, null);
+                else
+                    cfg = Preferences.Get(GlobalServerCommandsConstants.MatchCommand, null);
+
+
+                if (cfg != null)
+                    await Server.RunCommand(cfg, _httpClient);
+                else
+                {
+                    if (!withOvertime)
+                        await Server.RunCommand("exec esportliga_start.cfg", _httpClient);
+                    else
+                        await Server.RunCommand("exec esportliga_start_med_overtime.cfg", _httpClient);
+                }
             }
         }
         catch (CsgoServerException serverExeption)
@@ -340,10 +354,19 @@ public class CsgoServerService : ICsgoServerService
     {
         try
         {
-            if (cfg == null)
-                await Server.RunCommand("exec knife.cfg", _httpClient);
-            else
+            if (cfg != null)
+            {
                 await Server.RunCommand(cfg, _httpClient);
+            }
+            else
+            {
+                cfg = Preferences.Get(GlobalServerCommandsConstants.KnifeCommand, null);
+
+                if (cfg != null)
+                    await Server.RunCommand(cfg, _httpClient);
+                else
+                    await Server.RunCommand("exec knife.cfg", _httpClient);
+            }
         }
         catch (CsgoServerException serverExeption)
         {
@@ -359,10 +382,19 @@ public class CsgoServerService : ICsgoServerService
     {
         try
         {
-            if (cfg == null)
-                await Server.RunCommand("exec train.cfg", _httpClient);
-            else
+            if (cfg != null)
+            {
                 await Server.RunCommand(cfg, _httpClient);
+            }
+            else
+            {
+                cfg = Preferences.Get(GlobalServerCommandsConstants.PracticeCommand, null);
+
+                if (cfg != null)
+                    await Server.RunCommand(cfg, _httpClient);
+                else
+                    await Server.RunCommand("exec train.cfg", _httpClient);
+            }
         }
         catch (CsgoServerException serverExeption)
         {

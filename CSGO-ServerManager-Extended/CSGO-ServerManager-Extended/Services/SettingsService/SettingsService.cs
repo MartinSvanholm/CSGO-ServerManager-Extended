@@ -16,6 +16,9 @@ public interface ISettingsService
     Task ChangeDashboardVisibilitySetting(string dashboardVisibilitySetting);
     Task<string> LoadDashboardVisibilitySetting();
     void RemoveDathostAccount();
+    void SaveGlobalServerSettings(GlobalServerSettings globalServerSettings);
+    GlobalServerSettings GetGlobalServerSettings();
+
 }
 
 public class SettingsService : ISettingsService
@@ -34,6 +37,14 @@ public class SettingsService : ISettingsService
     public bool DathostAccountIsConnected { get; set; } = false;
     public DathostAccount DathostAccount { get; set; }
     public string DashboardVisibilitySetting { get; set; }
+
+    private async Task Init()
+    {
+        DashboardVisibilitySetting = await LoadDashboardVisibilitySetting();
+
+        if (DashboardVisibilitySetting == null)
+            DashboardVisibilitySetting = SettingsConstants.ShowFavouritesOnDashboard;
+    }
 
     public async Task<DathostAccount> AddDathostAccount(DathostAccount dathostAccount)
     {
@@ -87,11 +98,23 @@ public class SettingsService : ISettingsService
             throw new HttpRequestException(responseMessage.ReasonPhrase, null, responseMessage.StatusCode);
     }
 
-    private async Task Init()
+    public void SaveGlobalServerSettings(GlobalServerSettings globalServerSettings)
     {
-        DashboardVisibilitySetting = await LoadDashboardVisibilitySetting();
+        Preferences.Set(GlobalServerCommandsConstants.MatchCommand, globalServerSettings.MatchCommand);
+        Preferences.Set(GlobalServerCommandsConstants.OvertimeCommand, globalServerSettings.OvertimeCommand);
+        Preferences.Set(GlobalServerCommandsConstants.KnifeCommand, globalServerSettings.KnifeCommand);
+        Preferences.Set(GlobalServerCommandsConstants.PracticeCommand, globalServerSettings.PracticeCommand);
+    }
 
-        if(DashboardVisibilitySetting == null)
-            DashboardVisibilitySetting = SettingsConstants.ShowFavouritesOnDashboard;
+    public GlobalServerSettings GetGlobalServerSettings()
+    {
+        GlobalServerSettings globalServerSettings = new();
+
+        globalServerSettings.MatchCommand = Preferences.Get(GlobalServerCommandsConstants.MatchCommand, null);
+        globalServerSettings.OvertimeCommand = Preferences.Get(GlobalServerCommandsConstants.OvertimeCommand, null);
+        globalServerSettings.KnifeCommand = Preferences.Get(GlobalServerCommandsConstants.KnifeCommand, null);
+        globalServerSettings.PracticeCommand = Preferences.Get(GlobalServerCommandsConstants.PracticeCommand, null);
+
+        return globalServerSettings;
     }
 }

@@ -13,8 +13,8 @@
                         </MudPaper>
                         <MudPaper Class="d-flex align-stretch" Elevation="0">
                             <MudStack AlignItems="AlignItems.Stretch" Justify="Justify.Center">
-                                <MudButton OnClick="(async () => await Submit())" Color="Color.Success" Variant="Variant.Filled" Size="Size.Medium">Connect</MudButton>
-                                <MudButton OnClick="Reset" Color="Color.Error" Variant="Variant.Filled" Size="Size.Medium">Reset</MudButton>
+                                <MudButton OnClick="(async () => await SubmitDathostAccount())" Color="Color.Success" Variant="Variant.Filled" Size="Size.Medium">Connect</MudButton>
+                                <MudButton OnClick="ResetDathostAccount" Color="Color.Error" Variant="Variant.Filled" Size="Size.Medium">Reset</MudButton>
                             </MudStack>
                         </MudPaper>
                     </MudStack>
@@ -31,6 +31,19 @@
                         <MudRadio Option="@SettingsConstants.ShowAllServersOnDashboard">Show all servers on the dashboard</MudRadio>
                     </MudRadioGroup>
                     <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="(async () => await SaveDashboardVisibilitySetting())">Save</MudButton>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6">
+            <MudPaper Class="pa-6">
+                <MudStack>
+                    <MudText Typo="Typo.h6">Gobal server commands</MudText>
+                    <MudTextField @bind-Value="GlobalServerSettings.MatchCommand" Immediate=true T="string" Label="Match command" />
+                    <MudTextField @bind-Value="GlobalServerSettings.OvertimeCommand" Immediate=true T="string" Label="Overtime command" />
+                    <MudTextField @bind-Value="GlobalServerSettings.KnifeCommand" Immediate=true T="string" Label="Knife command" />
+                    <MudTextField @bind-Value="GlobalServerSettings.PracticeCommand" Immediate=true T="string" Label="Practice command" />
+                    <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="SaveGlobalServerSettings">Save</MudButton>
                 </MudStack>
             </MudPaper>
         </MudItem>

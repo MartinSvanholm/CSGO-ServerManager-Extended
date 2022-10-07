@@ -1,4 +1,5 @@
-﻿using CSGO_ServerManager_Extended.Services.SettingsService;
+﻿using CSGO_ServerManager_Extended.Models;
+using CSGO_ServerManager_Extended.Services.SettingsService;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -13,13 +14,16 @@ namespace CSGO_ServerManager_Extended.Pages
         ISnackbar snackbar { get; set; }
 
         private string TempDashboardVisibilitySetting { get; set; }
+        private GlobalServerSettings GlobalServerSettings { get; set; } = new();
 
         protected override async Task OnInitializedAsync()
         {
             TempDashboardVisibilitySetting = await settingsService.LoadDashboardVisibilitySetting();
+
+            GlobalServerSettings = settingsService.GetGlobalServerSettings();
         }
 
-        private async Task Submit()
+        private async Task SubmitDathostAccount()
         {
             try
             {
@@ -32,7 +36,7 @@ namespace CSGO_ServerManager_Extended.Pages
             }
         }
 
-        private void Reset()
+        private void ResetDathostAccount()
         {
             settingsService.RemoveDathostAccount();
 
@@ -44,6 +48,19 @@ namespace CSGO_ServerManager_Extended.Pages
             try
             {
                 await settingsService.ChangeDashboardVisibilitySetting(TempDashboardVisibilitySetting);
+                snackbar.Add("Saved", Severity.Success, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+            }
+            catch (Exception e)
+            {
+                snackbar.Add($"Something went wrong {e.Message}", Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+            }
+        }
+
+        private void SaveGlobalServerSettings()
+        {
+            try
+            {
+                settingsService.SaveGlobalServerSettings(GlobalServerSettings);
                 snackbar.Add("Saved", Severity.Success, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
             catch (Exception e)
