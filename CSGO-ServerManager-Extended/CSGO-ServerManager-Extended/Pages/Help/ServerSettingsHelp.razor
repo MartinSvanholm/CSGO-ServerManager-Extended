@@ -1,0 +1,43 @@
+﻿<MudExpansionPanel>
+    <TitleContent>
+        <MudText Typo="Typo.h6" Class="">Using your config files</MudText>
+    </TitleContent>
+    <ChildContent>
+        <MudText>
+            Assuming you have your own config files in your cfg folder on your server, you will be able to use them when interacting with a server. 
+            You can either set them as default per server og globally.
+        </MudText>
+        <MudDivider Class="help-divider" />
+        <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Server command settings</MudText>
+        <MudText>
+            If your to use a different config file for starting practice on your servers. 
+            You can write a custom practce command for your server, at the server settings section of the server view.
+            This command will then be executed when pressing the "start nade practice" button in the server view.
+        </MudText>
+        <MudPaper Elevation="0" Class="d-flex justify-center">
+            <MudPaper Elevation="0" Class="d-flex justify-center" MaxWidth="700px">
+                <MudImage Class="my-6 rounded-lg" Elevation="4" Src="Images/SM-ServerSettingsHelp.png" Fluid=true />
+            </MudPaper>
+        </MudPaper>
+        <MudText>
+            Let's say you have a config file name "MyCfg.cfg", then you can simply use the csgo console command "exec" to execute the config file on the server.
+            For example if you want to execute the config file when pressing the "start practice" button, you write "exec MyCfg.cfg" in the "practice command" box.
+            The config will then be executed next time you press the "start practice command" button, and you will only need to make sure the config file is in the cfg folder on your server.
+        </MudText>
+        <MudDivider Class="help-divider" />
+        <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Global server command settings</MudText>
+        <MudText>
+            If you have a lot of servers that all uses the same config files, you can set a global server command on the button of choice.
+            This is done the same way as when setting commands on idividual servers, but instead you have to use the box in the settings view.
+        </MudText>
+        <MudPaper Elevation="0" Class="d-flex justify-center">
+            <MudPaper Elevation="0" Class="d-flex justify-center" MaxWidth="700px">
+                <MudImage Class="my-6 rounded-lg" Elevation="4" Src="Images/SM-GlobalServerSettings.png" Fluid=true />
+            </MudPaper>
+        </MudPaper>
+    </ChildContent>
+</MudExpansionPanel>
+
+@code {
+
+}
