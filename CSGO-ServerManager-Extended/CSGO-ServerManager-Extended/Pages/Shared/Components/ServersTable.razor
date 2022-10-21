@@ -96,6 +96,8 @@
         _editType = editType;
         if (_editType == EditType.Create)
         {
+            CsgoServer server = new();
+            tempServer = server;
             isVisible = true;
         }
         else

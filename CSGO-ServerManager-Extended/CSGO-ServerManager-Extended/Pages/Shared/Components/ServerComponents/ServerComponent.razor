@@ -6,7 +6,7 @@
 @inject ISnackbar _snackBar
 
 <MudBreakpointProvider>
-    <MudPaper Class="content-container" Elevation="0">
+    <div class="content-container">
         <MudGrid Justify="Justify.SpaceBetween">
             
             @if(ServerHeader is not null) {
@@ -93,7 +93,7 @@
             </MudItem>
 
         </MudGrid>
-    </MudPaper>
+    </div>
 </MudBreakpointProvider>
 
 @code {

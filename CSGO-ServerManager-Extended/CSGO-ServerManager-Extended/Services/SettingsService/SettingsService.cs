@@ -11,6 +11,9 @@ public interface ISettingsService
     string DashboardVisibilitySetting { get; set; }
     DathostAccount DathostAccount { get; set; }
     bool DathostAccountIsConnected { get; set; }
+    bool UseDarkMode { get; set; }
+
+    public event EventHandler UseDarkModeChanged;
 
     Task<DathostAccount> AddDathostAccount(DathostAccount dathostAccount);
     Task ChangeDashboardVisibilitySetting(string dashboardVisibilitySetting);
@@ -18,7 +21,7 @@ public interface ISettingsService
     void RemoveDathostAccount();
     void SaveGlobalServerSettings(GlobalServerSettings globalServerSettings);
     GlobalServerSettings GetGlobalServerSettings();
-
+    void OnUseDarkModeChanged(EventArgs e);
 }
 
 public class SettingsService : ISettingsService
@@ -37,6 +40,8 @@ public class SettingsService : ISettingsService
     public bool DathostAccountIsConnected { get; set; } = false;
     public DathostAccount DathostAccount { get; set; }
     public string DashboardVisibilitySetting { get; set; }
+    public bool UseDarkMode { get; set; }
+    public event EventHandler UseDarkModeChanged;
 
     private async Task Init()
     {
@@ -44,6 +49,10 @@ public class SettingsService : ISettingsService
 
         if (DashboardVisibilitySetting == null)
             DashboardVisibilitySetting = SettingsConstants.ShowFavouritesOnDashboard;
+
+        await ChangeDashboardVisibilitySetting(DashboardVisibilitySetting);
+
+        UseDarkMode = Preferences.Get(SettingsConstants.UseDarkMode, false);
     }
 
     public async Task<DathostAccount> AddDathostAccount(DathostAccount dathostAccount)
@@ -116,5 +125,16 @@ public class SettingsService : ISettingsService
         globalServerSettings.PracticeCommand = Preferences.Get(GlobalServerCommandsConstants.PracticeCommand, null);
 
         return globalServerSettings;
+    }
+
+    /// <summary>
+    /// Invokes an event to change the state of the MainLayout page. This is needed to change to dark mode immediately.
+    /// </summary>
+    /// <param name="e"></param>
+    public void OnUseDarkModeChanged(EventArgs e)
+    {
+        Preferences.Set(SettingsConstants.UseDarkMode, UseDarkMode);
+
+        UseDarkModeChanged?.Invoke(this, e);
     }
 }

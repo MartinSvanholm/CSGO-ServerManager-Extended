@@ -10,5 +10,6 @@ namespace CSGO_ServerManager_Extended.Models.Constants
     {
         public static string ShowFavouritesOnDashboard { get => "ShowFavouritesOnDashboard"; }
         public static string ShowAllServersOnDashboard { get => "ShowAllServersOnDashboard"; }
+        public static string UseDarkMode { get => "UseDarkMode"; }
     }
 }

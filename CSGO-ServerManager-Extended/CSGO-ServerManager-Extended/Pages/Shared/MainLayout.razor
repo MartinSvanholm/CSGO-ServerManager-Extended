@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@inject ISettingsService _settingsService
 
-<MudThemeProvider />
+<MudThemeProvider Theme="MyCustomTheme" @ref="@_mudThemeProvider" @bind-IsDarkMode="@_settingsService.UseDarkMode"/>
 <MudDialogProvider 
     FullWidth="true"
     MaxWidth="MaxWidth.ExtraSmall"
@@ -18,5 +19,24 @@
 </MudLayout>
 
 @code {
+    private bool _isDarkMode;
+    private MudThemeProvider _mudThemeProvider;
 
+    MudTheme MyCustomTheme = new MudTheme()
+        {
+            Palette = new Palette()
+            {
+                Primary = "#5678B8"
+            }
+        };
+
+    protected override void OnInitialized()
+    { 
+        _settingsService.UseDarkModeChanged += UseDarkModeChanged;
+    }
+
+    //Listens for the UseDarkModeChanged event and then updates the state of the mainlayout page, changes to dark mode immediately.
+    public void UseDarkModeChanged(object sender, EventArgs e) {
+        StateHasChanged();
+    }
 }
