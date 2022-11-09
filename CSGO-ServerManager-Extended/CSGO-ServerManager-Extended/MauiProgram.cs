@@ -3,9 +3,12 @@ using CSGO_ServerManager_Extended.Models;
 using CSGO_ServerManager_Extended.Models.Constants;
 using CSGO_ServerManager_Extended.Repositories.CsgoServerRepository;
 using CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository;
+using CSGO_ServerManager_Extended.Repositories.MapPoolRepository;
 using CSGO_ServerManager_Extended.Services.CsgoServerService;
 using CSGO_ServerManager_Extended.Services.CsgoServerSettingsService;
+using CSGO_ServerManager_Extended.Services.MapPoolService;
 using CSGO_ServerManager_Extended.Services.SettingsService;
+using CSGO_ServerManager_Extended.Services.StartupService;
 using MudBlazor;
 using MudBlazor.Services;
 using System.Net.Http.Headers;
@@ -51,7 +54,10 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ISettingsService>(x => new SettingsService(x.GetRequiredService<HttpClient>(), dathostAccount, DathostAccountIsConnected));
 		builder.Services.AddSingleton<IServerSettingsRepository, ServerSettingsRepository>();
 		builder.Services.AddSingleton<ICsgoServerRepository, CsgoServerRepository>();
+		builder.Services.AddSingleton<IMapPoolRepository, MapPoolRepository>();
 		builder.Services.AddSingleton<IServerSettingsService, ServerSettingsService>();
+		builder.Services.AddSingleton<IStartupService, StartupService>();
+		builder.Services.AddSingleton<IMapPoolService, MapPoolService>();
 
 		var sp = builder.Services.BuildServiceProvider();
 

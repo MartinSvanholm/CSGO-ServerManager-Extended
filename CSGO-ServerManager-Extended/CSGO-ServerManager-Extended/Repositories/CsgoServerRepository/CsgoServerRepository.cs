@@ -1,6 +1,7 @@
 ﻿using CSGO_ServerManager_Extended.Data.DataAccess;
 using CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository;
-using CsgoServerInterface.CsgoServer;
+using CSGO_ServerManager_Extended.Repositories.MapPoolRepository;
+using CSGOServerInterface.Server.CsgoServer;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -19,10 +20,12 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
     public class CsgoServerRepository : RepositoryBase, ICsgoServerRepository
     {
         private readonly IServerSettingsRepository _serverSettingsRepository;
+        private readonly IMapPoolRepository _mapPoolRepository;
 
-        public CsgoServerRepository(IDataAccess dataAccess, IServerSettingsRepository serverSettingsRepository) : base(dataAccess)
+        public CsgoServerRepository(IDataAccess dataAccess, IServerSettingsRepository serverSettingsRepository, IMapPoolRepository mapPoolRepository) : base(dataAccess)
         {
             _serverSettingsRepository = serverSettingsRepository;
+            _mapPoolRepository = mapPoolRepository;
         }
 
         public async Task<List<CsgoServer>> GetCsgoServers()
@@ -39,9 +42,12 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
 
         public async Task<CsgoServer> GetCsgoServerById(string id)
         {
-            CsgoServer server = await _dataAccess.GetById<CsgoServer>(id);
+            CsgoServer server = await _dataAccess.GetAsync<CsgoServer>(condition: cs => cs.Id == id);
 
             server.ServerSettings = await _serverSettingsRepository.GetServerSettingsByCsgoServerId(server.Id);
+            server.MapPool = await _mapPoolRepository.GetMapPool(condition: mp => mp.Name == server.ServerSettings.MapPoolName);
+
+            server.MapPool ??= new();
 
             return server;
         }

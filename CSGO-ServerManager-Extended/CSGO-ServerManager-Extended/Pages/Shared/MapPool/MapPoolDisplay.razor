@@ -1,0 +1,59 @@
+﻿@inject ISnackbar _snackbar
+@inject IMapPoolService _mapPoolService
+
+<MudPaper>
+    <MudList Clickable="true" @bind-SelectedItem="SelectedItem">
+        <MudListItem Expanded="ListExpanded" Text="@($"Map pool: {ActiveMapPool}")">
+            <NestedList>
+                @foreach (MapPool mapPool in MapPools)
+                {
+                    <MudListItem Text="@mapPool.Name" OnClick="(async () => await ChangeCustomMapPool(mapPool))"/>
+                }
+            </NestedList>
+        </MudListItem>
+    </MudList>
+</MudPaper>  
+
+@code {
+    private MudListItem SelectedItem { get; set; }
+    private bool ListExpanded { get; set; }
+    private List<MapPool> MapPools = new();
+
+    [Parameter, EditorRequired]
+    public EventCallback<MapPool> OnMapPoolChange { get; set; }
+
+    [Parameter]
+    public string ActiveMapPool { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMapPools();
+    }
+
+    private async Task ChangeCustomMapPool(MapPool mapPool)
+    {
+        try
+        {
+            await OnMapPoolChange.InvokeAsync(mapPool);
+        }
+        catch (Exception e)
+        {
+            _snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+        }
+
+        ListExpanded = false;
+        ActiveMapPool = mapPool.Name;
+        StateHasChanged();
+    }
+
+    private async Task LoadMapPools() {
+        try
+        {
+            MapPools = await _mapPoolService.GetAllMapPools();
+        }
+        catch (Exception e)
+        {
+            _snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+        }
+    }
+}

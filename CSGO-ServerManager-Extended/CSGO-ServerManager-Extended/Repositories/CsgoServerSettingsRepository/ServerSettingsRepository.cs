@@ -35,7 +35,7 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository
 
         public async Task<ServerSettings> GetServerSettingsById(int id)
         {
-            return await _dataAccess.GetById<ServerSettings>(id);
+            return await _dataAccess.GetAsync<ServerSettings>(ss => ss.Id == id);
         }
 
         public async Task<ServerSettings> GetServerSettingsByCsgoServerId(string csgoServerId)

@@ -1,7 +1,8 @@
 ﻿using CSGO_ServerManager_Extended.Models.Constants;
 using CSGO_ServerManager_Extended.Services.CsgoServerService;
 using CSGO_ServerManager_Extended.Services.SettingsService;
-using CsgoServerInterface.CsgoServer;
+using CSGO_ServerManager_Extended.Services.StartupService;
+using CSGOServerInterface.Server.CsgoServer;
 using Microsoft.AspNetCore.Components;
 
 namespace CSGO_ServerManager_Extended.Pages
@@ -14,12 +15,17 @@ namespace CSGO_ServerManager_Extended.Pages
         [Inject]
         public ISettingsService _settingsService { get; set; }
 
+        [Inject]
+        private IStartupService _startupService { get; set; }
+
         private List<ICsgoServer> csgoServers = new();
 
         protected override async Task OnInitializedAsync()
         {
             if(_settingsService.DashboardVisibilitySetting == SettingsConstants.ShowFavouritesOnDashboard)
                 await GetFavouriteServers();
+
+            await _startupService.InitData();
         }
 
         private async Task GetFavouriteServers()

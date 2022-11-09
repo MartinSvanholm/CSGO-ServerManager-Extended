@@ -1,4 +1,4 @@
-﻿using CsgoServerInterface.CsgoServer;
+﻿using CSGOServerInterface.Server.CsgoServer;
 using System;
 using System.Collections.Generic;
 using System.Linq;

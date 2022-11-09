@@ -29,22 +29,34 @@
         <MudTextField @bind-Value="csgoServer.ServerSettings.PracticeCommand" Label="Partice command" Immediate=true Variant="Variant.Outlined" Placeholder="exec myPracticeCfg.cfg"></MudTextField>
     </MudItem>
 
+    <MudItem xs="12" sm="6">
+        <MapPoolDisplay ActiveMapPool="@csgoServer.ServerSettings.MapPoolName" OnMapPoolChange="async (MapPool mapPool) => await OnMapPoolChanged(mapPool)"/>
+    </MudItem>
+
 </MudGrid>
 
 @code {
     [Parameter, EditorRequired]
     public ICsgoServer csgoServer { get; set; } 
 
-    private void SaveServerSettings()
+    [Parameter, EditorRequired]
+    public EventCallback<CSGOServerInterface.Server.CsgoServerSettings.ServerSettings> OnServerSettingsChanged { get; set; }
+
+    private async Task SaveServerSettings()
     {
         try
         {
-            _serverSettingsService.UpdateServerSettings(csgoServer.ServerSettings);
+            await _serverSettingsService.UpdateServerSettings(csgoServer.ServerSettings);
+            await OnServerSettingsChanged.InvokeAsync(csgoServer.ServerSettings);
             Snackbar.Add("Server settings updated", Severity.Success, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
         catch (Exception e)
         {
             Snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
+    }
+
+    private async Task OnMapPoolChanged(MapPool mapPool) {
+        csgoServer.ServerSettings.MapPoolName = mapPool.Name;
     }
 }

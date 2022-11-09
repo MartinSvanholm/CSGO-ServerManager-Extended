@@ -1,0 +1,153 @@
+﻿@inject IMapPoolService _mapPoolService
+@inject ISnackbar _snackbar
+
+<MudStack Class="mb-3" Row="true" Justify="Justify.SpaceBetween">
+    <MudText Typo="Typo.h6">Map pools</MudText>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => ShowDetails(null))">Create map pool</MudButton>
+</MudStack>
+
+<MudTable Elevation="0" Dense="true" Items="MapPools" Hover="true">
+    <HeaderContent>
+        <MudTh Style="font-weight: bold;">Name</MudTh>
+        <MudTh Style="font-weight: bold;">Edit</MudTh>
+        <MudTh Style="font-weight: bold;">Delete</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Name</MudTd>
+        <MudTd><MudIconButton Icon="@Icons.Filled.Edit" OnClick="(() => ShowDetails(context))"></MudIconButton></MudTd>
+        <MudTd><MudIconButton Icon="@Icons.Filled.Delete" OnClick="(() => DeleteMapPool(context))"></MudIconButton></MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudDialog IsVisible="EditDialogIsVisisble" Options="EditDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@TempMapPool.Name</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => AddMapToMapPool()">Add map</MudButton>
+    </TitleContent>
+    <DialogContent>
+        <div Style="max-height: 500px; overflow-y: scroll">
+            <MudTextField FullWidth="true" T="string" @bind-Value="@TempMapPool.Name" Immediate="true" Label="Map pool name" />
+            <MudDivider Class="mb-6" />
+
+            @foreach (Map map in TempMapPool.Maps)
+            {
+                <MudStack Row="true" AlignItems="AlignItems.Center">
+                    <MudTextField Disabled="!map.IsNew" DisableUnderLine="true" FullWidth="true" T="string" @bind-Value="@map.DisplayName" Immediate="true" Label="Display name" />
+                    <MudTextField Disabled="!map.IsNew" DisableUnderLine="true" FullWidth="true" T="string" @bind-Value="@map.MapName" Immediate="true" Label="Map name" />
+                    <MudIconButton Icon="@Icons.Filled.Delete" OnClick="() => DeleteMapFromMapPool(map)"></MudIconButton>
+                </MudStack>
+                <MudDivider />
+            }
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="HideDetials">Cancel</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="@(IsEditMode ? (async () => await UpdateMapPool()) : (async () => await CreateMapPool()))">@(IsEditMode ? "Save" : "Create")</MudButton>
+    </DialogActions>
+</MudDialog>
+
+    @code {
+    private List<MapPool> MapPools { get; set; } = new();
+    private bool EditDialogIsVisisble { get; set; }
+    private MapPool TempMapPool { get; set; }
+    private bool IsEditMode { get; set; }
+
+    private DialogOptions EditDialogOptions = new()
+        {
+            DisableBackdropClick = true,
+            CloseButton = false,
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMapPools();
+    }
+
+    private async Task LoadMapPools() {
+        try
+        {
+            MapPools = await _mapPoolService.GetAllMapPools();
+        }
+        catch (Exception e)
+        {
+            _snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });   
+        }
+    }
+
+    private void ShowDetails(MapPool tempMapPool)
+    {
+        if (tempMapPool == null) {
+            TempMapPool = new();
+            IsEditMode = false;
+        }
+        else {
+            TempMapPool = tempMapPool;
+            IsEditMode = true;
+        }
+        EditDialogIsVisisble = !EditDialogIsVisisble;
+        StateHasChanged();
+    }
+
+    private void HideDetials() {
+        TempMapPool = new();
+        EditDialogIsVisisble = !EditDialogIsVisisble;
+        StateHasChanged();
+    }
+
+    private void AddMapToMapPool() {
+        TempMapPool.Maps.Add(new() { IsNew = true });
+    }
+
+    private void DeleteMapFromMapPool(Map map) {
+        TempMapPool.Maps.Remove(map);
+        StateHasChanged();
+    }
+
+    private async Task UpdateMapPool() {
+        try
+        {
+            await _mapPoolService.UpdateMapPool(TempMapPool);
+            _snackbar.Add("Map pool saved", Severity.Success, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+        }
+        catch (Exception e)
+        {
+            _snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+        }
+
+        EditDialogIsVisisble = false;
+        await LoadMapPools();
+        StateHasChanged();
+    }
+
+    private async Task CreateMapPool() {
+        try
+        {
+            await _mapPoolService.InsertMapPool(TempMapPool);
+            _snackbar.Add("Map pool created", Severity.Success, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+        }
+        catch (Exception e)
+        {
+            _snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+        }
+
+        EditDialogIsVisisble = false;
+        await LoadMapPools();
+        StateHasChanged();
+    }
+
+    private async Task DeleteMapPool(MapPool mapPool) {
+        try
+        {
+            await _mapPoolService.DeleteMapPool(mapPool);
+            _snackbar.Add("Map pool deleted", Severity.Success, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+        }
+        catch (Exception e)
+        {
+            _snackbar.Add(e.Message, Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+        }
+
+        await LoadMapPools();
+        StateHasChanged();
+    }
+}

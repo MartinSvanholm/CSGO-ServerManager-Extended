@@ -23,6 +23,8 @@ namespace CSGOServerInterface.Server.CsgoServerSettings
         [Column("description")]
         public string Description { get; set; }
 
+        public string MapPoolName { get; set; }
+
         [Column("match_cfg")]
         public string MatchCommand { get; set; }
 

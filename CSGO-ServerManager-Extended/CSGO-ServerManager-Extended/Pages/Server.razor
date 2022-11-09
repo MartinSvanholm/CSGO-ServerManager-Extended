@@ -1,6 +1,8 @@
 ﻿@page "/server"
+@using CSGO_ServerManager_Extended.Data.DataAccess
 @inject ICsgoServerService _csgoServerService
-@inject ISnackbar _snackbar;
+@inject ISnackbar _snackbar
+@inject IDataAccess _dataAccess
 
 @if(CsgoServer != null) {
     <ServerComponent Server="CsgoServer" OnServerChange="(ICsgoServer tempServer) => OnServerChanged(tempServer)">

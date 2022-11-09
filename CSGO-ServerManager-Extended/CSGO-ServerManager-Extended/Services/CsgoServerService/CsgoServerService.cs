@@ -1,15 +1,18 @@
 ﻿using CSGO_ServerManager_Extended.Models;
 using CSGO_ServerManager_Extended.Models.Constants;
+using CSGO_ServerManager_Extended.Pages;
 using CSGO_ServerManager_Extended.Repositories.CsgoServerRepository;
 using CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository;
 using CSGO_ServerManager_Extended.Services.CsgoServerSettingsService;
+using CSGO_ServerManager_Extended.Services.MapPoolService;
 using CSGO_ServerManager_Extended.Services.SettingsService;
-using CsgoServerInterface.CsgoServer;
 using CsgoServerInterface.Exceptions;
 using CSGOServerInterface.Mappers;
+using CSGOServerInterface.Server.CsgoServer;
 using CSGOServerInterface.Server.CsgoServerSettings;
 using CSGOServerInterface.Server.DathostServer;
 using CSGOServerInterface.Server.DTO;
+using CSGOServerInterface.Server.MapPoolNS;
 
 namespace CSGO_ServerManager_Extended.Services.CsgoServerService;
 
@@ -22,7 +25,7 @@ public interface ICsgoServerService
     Task<CsgoServer> DeleteCsgoServer(CsgoServer csgoServer);
     Task<ICsgoServer> GetCsgoServerById(string csgoServerId);
     Task<List<ICsgoServer>> GetCsgoServers();
-    Task<DatHostCsgoServer> GetDatHostServer(string id);
+    Task<DatHostCsgoServer> GetDatHostServer(string id, bool updateServerSettings = true, ServerSettings oldServerSettings = null, MapPool oldMapPool = null);
     Task<List<DatHostCsgoServer>> GetDatHostServers();
     Task<List<ICsgoServer>> GetFavouriteCsgoServers();
     Task PauseUnpauseMatch(bool isMatchPaused);
@@ -40,15 +43,16 @@ public class CsgoServerService : ICsgoServerService
     private readonly ICsgoServerRepository _csgoServerRepository;
     private readonly ISettingsService _settingsService;
     private readonly IServerSettingsRepository _serverSettingsRepository;
+    private readonly IMapPoolService _mapPoolService;
     public ICsgoServer Server { get; set; }
-    private GlobalServerSettings GlobalServerSettings { get; set; }
 
-    public CsgoServerService(HttpClient httpClient, ICsgoServerRepository csgoServerRepository, ISettingsService settingsService, IServerSettingsRepository serverSettingsRepository)
+    public CsgoServerService(HttpClient httpClient, ICsgoServerRepository csgoServerRepository, ISettingsService settingsService, IServerSettingsRepository serverSettingsRepository, IMapPoolService mapPoolService)
     {
         _httpClient = httpClient;
         _csgoServerRepository = csgoServerRepository;
         _settingsService = settingsService;
         _serverSettingsRepository = serverSettingsRepository;
+        _mapPoolService = mapPoolService;
     }
 
     public async Task<List<ICsgoServer>> GetCsgoServers()
@@ -193,6 +197,11 @@ public class CsgoServerService : ICsgoServerService
 
                     await _serverSettingsRepository.InsertServerSettings(datHostCsgoServer.ServerSettings);
                 }
+
+                if (datHostCsgoServer.ServerSettings.MapPoolName != null)
+                    datHostCsgoServer.MapPool = await _mapPoolService.GetMapPoolByName(datHostCsgoServer.ServerSettings.MapPoolName);
+
+                datHostCsgoServer.MapPool ??= new();
             }
 
             return datHostCsgoServers;
@@ -203,7 +212,7 @@ public class CsgoServerService : ICsgoServerService
         }
     }
 
-    public async Task<DatHostCsgoServer> GetDatHostServer(string id)
+    public async Task<DatHostCsgoServer> GetDatHostServer(string id, bool updateServerSettings = true, ServerSettings oldServerSettings = null, MapPool oldMapPool = null)
     {
         if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
             throw new CsgoServerException("Device not connected to the internet", System.Net.HttpStatusCode.InternalServerError);
@@ -217,14 +226,27 @@ public class CsgoServerService : ICsgoServerService
             var result = await responseMessage.Content.ReadAsAsync<DatHostServerDTO>();
             DatHostCsgoServer datHostCsgoServer = DatHostCsgoServerMapper.MapFromDTO(result);
 
-            datHostCsgoServer.ServerSettings = await _serverSettingsRepository.GetServerSettingsByCsgoServerId(datHostCsgoServer.Id);
-
-            if (datHostCsgoServer.ServerSettings == null)
+            if (updateServerSettings)
             {
-                datHostCsgoServer.ServerSettings = new();
-                datHostCsgoServer.ServerSettings.CsgoServerId = datHostCsgoServer.Id;
+                datHostCsgoServer.ServerSettings = await _serverSettingsRepository.GetServerSettingsByCsgoServerId(datHostCsgoServer.Id);
 
-                await _serverSettingsRepository.InsertServerSettings(datHostCsgoServer.ServerSettings);
+                if (datHostCsgoServer.ServerSettings == null)
+                {
+                    datHostCsgoServer.ServerSettings = new();
+                    datHostCsgoServer.ServerSettings.CsgoServerId = datHostCsgoServer.Id;
+
+                    await _serverSettingsRepository.InsertServerSettings(datHostCsgoServer.ServerSettings);
+                }
+
+                if (datHostCsgoServer.ServerSettings.MapPoolName != null)
+                    datHostCsgoServer.MapPool = await _mapPoolService.GetMapPoolByName(datHostCsgoServer.ServerSettings.MapPoolName);
+
+                datHostCsgoServer.MapPool ??= new();
+            }
+            else
+            {
+                datHostCsgoServer.ServerSettings = oldServerSettings;
+                datHostCsgoServer.MapPool = oldMapPool;
             }
 
             return datHostCsgoServer;
@@ -265,7 +287,7 @@ public class CsgoServerService : ICsgoServerService
     {
         try
         {
-            await Server.RunCommand($"map de_{map.ToLower()}", _httpClient);
+            await Server.RunCommand($"map {map}", _httpClient);
         }
         catch (CsgoServerException serverExeption)
         {
