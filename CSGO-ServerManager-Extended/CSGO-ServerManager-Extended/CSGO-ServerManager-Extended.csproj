@@ -16,7 +16,7 @@
 		<ApplicationTitle>Commander</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.csgo_servermanager_extended</ApplicationId>
+		<ApplicationId>CS:Commander</ApplicationId>
 		<ApplicationIdGuid>7D5E664C-6601-417C-8526-6C3A9FA49951</ApplicationIdGuid>
 
 		<!-- Versions -->
