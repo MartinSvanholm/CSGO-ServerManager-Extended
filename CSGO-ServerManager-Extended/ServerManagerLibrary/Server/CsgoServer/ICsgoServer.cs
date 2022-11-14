@@ -1,8 +1,9 @@
 ﻿using CoreRCON;
 using CSGOServerInterface.Server.CsgoServerSettings;
+using CSGOServerInterface.Server.MapPoolNS;
 using SQLite;
 
-namespace CsgoServerInterface.CsgoServer
+namespace CSGOServerInterface.Server.CsgoServer
 {
     public interface ICsgoServer
     {
@@ -19,6 +20,7 @@ namespace CsgoServerInterface.CsgoServer
         string RconPassword { get; set; }
         string Status { get; }
         ServerSettings ServerSettings { get; set; }
+        MapPool MapPool { get; set; }
 
         Task GetConnection();
         Task RunCommand(string command, HttpClient httpClient);

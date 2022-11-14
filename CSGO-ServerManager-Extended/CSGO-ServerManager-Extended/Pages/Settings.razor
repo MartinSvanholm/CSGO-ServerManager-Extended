@@ -3,7 +3,7 @@
 <div class="content-container">
     <MudGrid Justify="Justify.FlexStart" Class="align-stretch mud-elevation-0" Spacing="5" Style="background-color: transparent">
         <MudItem xs="12" sm="6">
-            <MudPaper Class="pa-6 d-flex align-content-center" Height="100%" Elevation="4">
+            <MudPaper Class="pa-6 d-flex align-content-center" Elevation="4">
                 <MudStack>
                     <MudText Typo="Typo.h6">General settings</MudText>
                     <MudCheckBox @bind-Checked="settingsService.UseDarkMode">Use dark mode</MudCheckBox>
@@ -13,7 +13,7 @@
         </MudItem>
 
         <MudItem xs="12" sm="6">
-            <MudPaper Class="pa-6" Height="100%" Elevation="4">
+            <MudPaper Class="pa-6" Elevation="4">
                 <MudStack>
                     <MudText Typo="Typo.h6">Dashboard settings</MudText>
                     <MudRadioGroup @bind-SelectedOption="@TempDashboardVisibilitySetting">
@@ -26,7 +26,7 @@
         </MudItem>
 
         <MudItem xs="12" sm="6">
-            <MudPaper Class="pa-6" Height="100%" Elevation="4">
+            <MudPaper Class="pa-6" Elevation="4">
                 <MudStack>
                     <MudText Typo="Typo.h6">Gobal server commands</MudText>
                     <MudTextField @bind-Value="GlobalServerSettings.MatchCommand" Immediate=true T="string" Label="Match command" />
@@ -39,7 +39,7 @@
         </MudItem>
 
         <MudItem xs="12" sm="6">
-            <MudPaper Class="pa-6" Height="100%" Elevation="4">
+            <MudPaper Class="pa-6" Elevation="4">
                 <MudStack Justify="Justify.Center" Style="width: 100%">
                     <MudText Typo="Typo.h6">Dathost account</MudText>
                     <MudStack Justify="Justify.SpaceBetween" Row="true">
@@ -55,6 +55,14 @@
                         </MudPaper>
                     </MudStack>
                 </MudStack>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" sm="6">
+            <MudPaper Class="pa-6" Elevation="4">
+                <MapPoolSettings>
+
+                </MapPoolSettings>
             </MudPaper>
         </MudItem>
 

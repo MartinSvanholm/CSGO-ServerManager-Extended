@@ -2,6 +2,7 @@
 @using System.Diagnostics.CodeAnalysis
 @using CsgoServerInterface.Exceptions
 @inject ICsgoServerService CsgoServerService
+@inject IMapPoolService _mapPoolService
 @inject HttpClient _client
 @inject ISnackbar _snackBar
 
@@ -23,23 +24,18 @@
             </MudItem>
 
             <MudItem xs="12" sm="5" md="3">
-                <MudCard>
-                    <Tooltip Text="Click to choose a map">
-                        <MudList Disabled="@disable" Clickable="true" @bind-SelectedItem="selectedItem">
-                            <MudListItem @bind-Expanded="expandList" Text="Change map">
-                                <NestedList>
-                                    <MudListItem Text="Inferno" @onclick="@(async () => await ChangeMap("inferno"))" />
-                                    <MudListItem Text="Overpass" @onclick="@(async () => await ChangeMap("overpass"))" />
-                                    <MudListItem Text="Nuke" @onclick="@(async () => await ChangeMap("nuke"))" />
-                                    <MudListItem Text="Ancient" @onclick="@(async () => await ChangeMap("ancient"))" />
-                                    <MudListItem Text="Dust2" @onclick="@(async () => await ChangeMap("dust2"))" />
-                                    <MudListItem Text="Vertigo" @onclick="@(async () => await ChangeMap("vertigo"))" />
-                                    <MudListItem Text="Mirage" @onclick="@(async () => await ChangeMap("mirage"))" />
-                                </NestedList>
-                            </MudListItem>
-                        </MudList>
-                    </Tooltip>
-                </MudCard>
+                <MudPaper>
+                    <MudList Disabled="@disable" Clickable="true" @bind-SelectedItem="selectedItem">
+                        <MudListItem @bind-Expanded="expandList" Text="Change map">
+                            <NestedList>
+                                @foreach (Map map in Server.MapPool.Maps)
+                                {
+                                    <MudListItem Text="@map.DisplayName" OnClick="@(async () => await ChangeMap(map))" />
+                                }
+                            </NestedList>
+                        </MudListItem>
+                    </MudList>
+                </MudPaper>
             </MudItem>
 
             <MudItem xs="12" sm="7" md="6">
@@ -87,7 +83,7 @@
             </MudItem>
 
             <MudItem xs="12">
-                <ServerSettings csgoServer="Server">
+                <ServerSettings csgoServer="Server" OnServerSettingsChanged="async (CSGOServerInterface.Server.CsgoServerSettings.ServerSettings serverSettings) => await ServerSettingsUpdated(serverSettings)">
 
                 </ServerSettings>
             </MudItem>
@@ -121,7 +117,7 @@
 
         if (Server is DatHostCsgoServer)
         {
-            serverUpdateTimer.Elapsed += async ( sender, e ) => await UpdateServer();
+            serverUpdateTimer.Elapsed += async ( sender, e ) => await UpdateServer(updateServerSettings: false);
             serverUpdateTimer.AutoReset = true;
             serverUpdateTimer.Enabled = true;
         } 
@@ -145,9 +141,16 @@
         serverUpdateTimer.Close();
     }
 
-    private async Task UpdateServer()
+    private async Task ServerSettingsUpdated(CSGOServerInterface.Server.CsgoServerSettings.ServerSettings serverSettings)
     {
-        Server = await CsgoServerService.GetDatHostServer(Server.Id);
+        Server.ServerSettings = serverSettings;
+        Server.MapPool = await _mapPoolService.GetMapPoolByName(Server.ServerSettings.MapPoolName);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task UpdateServer(bool updateServerSettings)
+    {
+        Server = await CsgoServerService.GetDatHostServer(Server.Id, updateServerSettings, Server.ServerSettings, Server.MapPool);
         await InvokeAsync(StateHasChanged);
         await InvokeAsync(OnServerChanged);
     }
@@ -157,13 +160,13 @@
         await OnServerChange.InvokeAsync(Server);
     }
 
-    private async Task ChangeMap(string map)
+    private async Task ChangeMap(Map map)
     {
         expandList = false;
         try
         {
-            await CsgoServerService.ChangeMap(map);
-            _snackBar.Add($"Switching to {map}", Severity.Normal, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+            await CsgoServerService.ChangeMap(map.MapName);
+            _snackBar.Add($"Switching to {map.DisplayName}", Severity.Normal, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
         }
         catch (Exception e)
         {

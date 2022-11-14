@@ -1,9 +1,8 @@
 ﻿using CoreRCON;
 using CsgoServerInterface.Exceptions;
-using CSGOServerInterface.Server.CsgoServer;
 using SQLite;
 
-namespace CsgoServerInterface.CsgoServer;
+namespace CSGOServerInterface.Server.CsgoServer;
 
 /// <summary>
 /// Standard cs:go server, which contains a RCON connection that needs to be created using the InitConnection method.

@@ -1,8 +1,8 @@
 ﻿using CoreRCON;
 using CoreRCON.Parsers.Standard;
-using CsgoServerInterface.CsgoServer;
 using CsgoServerInterface.Exceptions;
 using CSGOServerInterface.Server.CsgoServerSettings;
+using CSGOServerInterface.Server.MapPoolNS;
 using SQLite;
 using System.Net;
 
@@ -75,6 +75,9 @@ namespace CSGOServerInterface.Server.CsgoServer
                     return $"connect {Ip.Trim()}:{GamePort}; password {Password.Trim()}";
             }
         }
+
+        [Ignore]
+        public MapPool MapPool { get; set; }
 
         public virtual async Task GetConnection()
         {
