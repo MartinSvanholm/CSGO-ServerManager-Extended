@@ -1,4 +1,6 @@
 ﻿using SQLite;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 
 namespace CSGOServerInterface.Server.CsgoServerSettings
 {
@@ -23,7 +25,8 @@ namespace CSGOServerInterface.Server.CsgoServerSettings
         [Column("description")]
         public string Description { get; set; }
 
-        public string MapPoolName { get; set; }
+        [NotNull]
+        public string MapPoolName { get; set; } = "Active duty";
 
         [Column("match_cfg")]
         public string MatchCommand { get; set; }

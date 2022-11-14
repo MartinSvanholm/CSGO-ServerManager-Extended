@@ -13,9 +13,9 @@
         <MudTh Style="font-weight: bold;">Delete</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Name</MudTd>
-        <MudTd><MudIconButton Icon="@Icons.Filled.Edit" OnClick="(() => ShowDetails(context))"></MudIconButton></MudTd>
-        <MudTd><MudIconButton Icon="@Icons.Filled.Delete" OnClick="(() => DeleteMapPool(context))"></MudIconButton></MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Edit"><MudIconButton Icon="@Icons.Filled.Edit" OnClick="(() => ShowDetails(context))"></MudIconButton></MudTd>
+        <MudTd DataLabel="Delete"><MudIconButton Icon="@Icons.Filled.Delete" OnClick="(() => DeleteMapPool(context))"></MudIconButton></MudTd>
     </RowTemplate>
 </MudTable>
 
@@ -26,7 +26,7 @@
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => AddMapToMapPool()">Add map</MudButton>
     </TitleContent>
     <DialogContent>
-        <div Style="max-height: 500px; overflow-y: scroll">
+        <div Style="max-height: 350px; overflow-y: scroll">
             <MudTextField FullWidth="true" T="string" @bind-Value="@TempMapPool.Name" Immediate="true" Label="Map pool name" />
             <MudDivider Class="mb-6" />
 
@@ -57,6 +57,7 @@
         {
             DisableBackdropClick = true,
             CloseButton = false,
+            Position = DialogPosition.TopCenter
         };
 
     protected override async Task OnInitializedAsync()
