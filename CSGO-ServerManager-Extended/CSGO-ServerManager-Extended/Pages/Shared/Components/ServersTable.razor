@@ -19,23 +19,19 @@
         <MudTh Style="font-weight: bold;">Connection Ip</MudTh>
         <MudTh Style="font-weight: bold; text-align: center;">Status</MudTh>
         <MudTh Style="font-weight: bold; text-align: center;">Players online</MudTh>
-        <MudTh></MudTh>
-        <MudTh></MudTh>
+        <MudTh Style="font-weight: bold; text-align: center;">Edit</MudTh>
+        <MudTh Style="font-weight: bold; text-align: center;">Delete</MudTh>
     </HeaderContent>
     <RowTemplate >
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Connection Ip" HideSmall="true">@context.ConnectionIp</MudTd>
         <MudTd Style="text-align: center" DataLabel="Status">@context.Status</MudTd>
-        <MudTd Style="text-align: center" id="td-column" DataLabel="Players online">0</MudTd>
-        <MudTd HideSmall="true">
-            <Tooltip Text="Edit server">
-                <MudIconButton Icon="@Icons.Filled.Edit" OnClick="(() => OpenEditDialog(EditType.Edit, context))"></MudIconButton>
-            </Tooltip>
+        <MudTd Style="text-align: center" DataLabel="Players online">0</MudTd>
+        <MudTd Style="text-align: center" DataLabel="Edit">
+            <MudIconButton Icon="@Icons.Filled.Edit" OnClick="(() => OpenEditDialog(EditType.Edit, context))"></MudIconButton>
         </MudTd>
-        <MudTd HideSmall="true">
-            <Tooltip Text="Delete server">
-                <MudIconButton Icon="@Icons.Filled.Delete" OnClick="(async () => await OnDeleteConfirmShow(context))"></MudIconButton>
-            </Tooltip>
+        <MudTd Style="text-align: center" id="td-column" DataLabel="Delete">
+            <MudIconButton Icon="@Icons.Filled.Delete" OnClick="(async () => await OnDeleteConfirmShow(context))"></MudIconButton>
         </MudTd>
     </RowTemplate>
 </MudTable>
