@@ -20,12 +20,16 @@ namespace CSGO_ServerManager_Extended.Pages
 
         private List<ICsgoServer> csgoServers = new();
 
+        private bool WelcomeDialogIsVisible { get; set; } = false;
+
         protected override async Task OnInitializedAsync()
         {
             if(_settingsService.DashboardVisibilitySetting == SettingsConstants.ShowFavouritesOnDashboard)
                 await GetFavouriteServers();
 
             await _startupService.InitData();
+
+            GetWelcomeMessageVisibility();
         }
 
         private async Task GetFavouriteServers()
@@ -38,6 +42,16 @@ namespace CSGO_ServerManager_Extended.Pages
             {
                 _snackbar.Add(e.Message, MudBlazor.Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
+        }
+
+        private void DisableWelcomeMessage()
+        {
+            _settingsService.SetWelcomeMessageVisibility(false);
+        }
+
+        private void GetWelcomeMessageVisibility()
+        {
+            WelcomeDialogIsVisible = _settingsService.GetWelcomeMessageVisibility();
         }
     }
 }

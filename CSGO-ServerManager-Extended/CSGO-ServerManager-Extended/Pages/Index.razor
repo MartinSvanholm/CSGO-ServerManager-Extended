@@ -27,4 +27,27 @@
         </MudPaper>
     }
 
+    <MudDialog IsVisible="@WelcomeDialogIsVisible">
+        <TitleContent>
+            <MudText Typo="Typo.h5">Welcome</MudText>
+            <MudDivider Class="my-2" />
+            <MudText Typo="Typo.subtitle1">Thank you for using CS:Commander</MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudText>
+                CS:Commander is still in testing, this means that major changes will happen over the next period of time.
+            </MudText>
+            <MudText Class="mt-1">
+                If you have design or feature suggestions please send me an email on "email". Furthermore of you incounter any bugs or issues please do notify me also.
+            </MudText>
+            <MudDivider Class="my-2" />
+            <MudText>
+                I hope you will enjoy this app as much as i do - developer
+            </MudText>
+        </DialogContent>
+        <DialogActions>
+            <MudCheckBox CheckedChanged="DisableWelcomeMessage" Class="mr-3" UnCheckedColor="Color.Default" Color="Color.Info" T="bool">Don't show this again</MudCheckBox>
+        </DialogActions>
+    </MudDialog>
+
 </div>

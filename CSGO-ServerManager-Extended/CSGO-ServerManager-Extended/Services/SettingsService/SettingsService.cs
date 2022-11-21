@@ -13,15 +13,17 @@ public interface ISettingsService
     bool DathostAccountIsConnected { get; set; }
     bool UseDarkMode { get; set; }
 
-    public event EventHandler UseDarkModeChanged;
+    event EventHandler UseDarkModeChanged;
 
     Task<DathostAccount> AddDathostAccount(DathostAccount dathostAccount);
     Task ChangeDashboardVisibilitySetting(string dashboardVisibilitySetting);
+    GlobalServerSettings GetGlobalServerSettings();
+    bool GetWelcomeMessageVisibility();
     Task<string> LoadDashboardVisibilitySetting();
+    void OnUseDarkModeChanged(EventArgs e);
     void RemoveDathostAccount();
     void SaveGlobalServerSettings(GlobalServerSettings globalServerSettings);
-    GlobalServerSettings GetGlobalServerSettings();
-    void OnUseDarkModeChanged(EventArgs e);
+    void SetWelcomeMessageVisibility(bool welcomeMessageVisibility);
 }
 
 public class SettingsService : ISettingsService
@@ -136,5 +138,15 @@ public class SettingsService : ISettingsService
         Preferences.Set(SettingsConstants.UseDarkMode, UseDarkMode);
 
         UseDarkModeChanged?.Invoke(this, e);
+    }
+
+    public void SetWelcomeMessageVisibility(bool welcomeMessageVisibility)
+    {
+        Preferences.Set(SettingsConstants.WelcomeMessageVisibility, welcomeMessageVisibility);
+    }
+
+    public bool GetWelcomeMessageVisibility()
+    {
+        return Preferences.Get(SettingsConstants.WelcomeMessageVisibility, true);
     }
 }
