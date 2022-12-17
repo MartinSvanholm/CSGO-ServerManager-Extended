@@ -26,7 +26,7 @@
             <MudItem xs="12" sm="5" md="3">
                 <MudPaper>
                     <MudList Disabled="@disable" Clickable="true" @bind-SelectedItem="selectedItem">
-                        <MudListItem @bind-Expanded="expandList" Text="@(Server.MapBeingPlayed == null ? "ChangeMap" : Server.MapBeingPlayed.DisplayName)">
+                        <MudListItem @bind-Expanded="expandList" Text="@(Server.MapBeingPlayed == null ? "ChangeMap" : "ChangeMap: " + Server.MapBeingPlayed.DisplayName)">
                             <NestedList>
                                 @foreach (Map map in Server.MapPool.Maps)
                                 {
