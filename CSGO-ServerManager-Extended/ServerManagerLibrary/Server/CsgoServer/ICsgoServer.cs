@@ -1,4 +1,5 @@
 ﻿using CoreRCON;
+using CoreRCON.Parsers.Standard;
 using CSGOServerInterface.Server.CsgoServerSettings;
 using CSGOServerInterface.Server.MapPoolNS;
 using SQLite;
@@ -23,8 +24,9 @@ namespace CSGOServerInterface.Server.CsgoServer
         ServerSettings ServerSettings { get; set; }
         MapPool MapPool { get; set; }
         Map MapBeingPlayed { get; set; }
+        int PlayersOnline { get; set; }
 
-        Task GetConnection();
+        Task<Status> GetConnection();
         Task RunCommand(string command, HttpClient httpClient);
         Task StartServer(HttpClient httpClient);
         Task StopServer(HttpClient httpClient);

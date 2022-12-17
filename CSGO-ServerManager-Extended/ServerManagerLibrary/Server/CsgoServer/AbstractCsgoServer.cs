@@ -83,14 +83,17 @@ namespace CSGOServerInterface.Server.CsgoServer
         [Ignore]
         public Map MapBeingPlayed { get; set; }
 
-        public virtual async Task GetConnection()
+        [Ignore]
+        public int PlayersOnline { get; set; }
+
+        public virtual async Task<Status> GetConnection()
         {
             CheckInternetConnection();
 
             Rcon = new(IPAddress.Parse(Ip), Convert.ToUInt16(GamePort), Password);
 
             await Rcon.ConnectAsync();
-            Status status = await Rcon.SendCommandAsync<Status>("status");
+            return await Rcon.SendCommandAsync<Status>("status");
         }
 
         public virtual async Task RunCommand(string command, HttpClient httpClient)

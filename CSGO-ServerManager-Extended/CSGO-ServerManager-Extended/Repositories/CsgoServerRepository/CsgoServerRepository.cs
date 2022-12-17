@@ -1,9 +1,11 @@
-﻿using CSGO_ServerManager_Extended.Data.DataAccess;
+﻿using CoreRCON.Parsers.Standard;
+using CSGO_ServerManager_Extended.Data.DataAccess;
 using CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository;
 using CSGO_ServerManager_Extended.Repositories.MapPoolRepository;
 using CSGOServerInterface.Server.CsgoServer;
 using System.Linq;
 using System.Linq.Expressions;
+using Map = CSGOServerInterface.Server.MapPoolNS.Map;
 
 namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
 {

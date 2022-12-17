@@ -26,7 +26,7 @@
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Connection Ip" HideSmall="true">@context.ConnectionIp</MudTd>
         <MudTd Style="text-align: center" DataLabel="Status">@context.Status</MudTd>
-        <MudTd Style="text-align: center" DataLabel="Players online">0</MudTd>
+        <MudTd Style="text-align: center" DataLabel="Players online">@context.PlayersOnline</MudTd>
         <MudTd Style="text-align: center" DataLabel="Edit">
             <MudIconButton Icon="@Icons.Filled.Edit" OnClick="(() => OpenEditDialog(EditType.Edit, context))"></MudIconButton>
         </MudTd>
@@ -58,6 +58,7 @@
     protected override async Task OnInitializedAsync()
     {
         await GetServersAsync();
+        CsgoServerService.ServerChanged += OnServerChanged;
     }
 
     private void RowClickEvent(TableRowClickEventArgs<ICsgoServer> args)
@@ -82,7 +83,7 @@
         }
         catch (Exception e)
         {
-            Snackbar.Add($"Something went wrong: {e.Message}", Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+            Snackbar.Add(e.Message, Severity.Error, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             _loading = false;
         }
     }
@@ -152,5 +153,10 @@
             await GetServersAsync();
             await InvokeAsync(StateHasChanged);
         }
+    }
+
+    public void OnServerChanged(object sender, EventArgs e) 
+    {
+        StateHasChanged();
     }
 }
