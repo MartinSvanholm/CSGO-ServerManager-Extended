@@ -50,7 +50,7 @@ public class SettingsService : ISettingsService
         DashboardVisibilitySetting = await LoadDashboardVisibilitySetting();
 
         if (DashboardVisibilitySetting == null)
-            DashboardVisibilitySetting = SettingsConstants.ShowFavouritesOnDashboard;
+            DashboardVisibilitySetting = SettingsConstants.ShowAllServersOnDashboard;
 
         await ChangeDashboardVisibilitySetting(DashboardVisibilitySetting);
 
