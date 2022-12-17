@@ -13,6 +13,7 @@ using CSGOServerInterface.Server.CsgoServerSettings;
 using CSGOServerInterface.Server.DathostServer;
 using CSGOServerInterface.Server.DTO;
 using CSGOServerInterface.Server.MapPoolNS;
+using Map = CSGOServerInterface.Server.MapPoolNS.Map;
 
 namespace CSGO_ServerManager_Extended.Services.CsgoServerService;
 
@@ -21,7 +22,7 @@ public interface ICsgoServerService
     ICsgoServer Server { get; set; }
 
     Task<CsgoServer> AddCsgoServer(CsgoServer csgoServer);
-    Task ChangeMap(string map);
+    Task ChangeMap(Map map);
     Task<CsgoServer> DeleteCsgoServer(CsgoServer csgoServer);
     Task<ICsgoServer> GetCsgoServerById(string csgoServerId);
     Task<List<ICsgoServer>> GetCsgoServers();
@@ -283,11 +284,12 @@ public class CsgoServerService : ICsgoServerService
         }
     }
 
-    public async Task ChangeMap(string map)
+    public async Task ChangeMap(Map map)
     {
         try
         {
-            await Server.RunCommand($"map {map}", _httpClient);
+            await Server.RunCommand($"map {map.MapName}", _httpClient);
+            Server.MapBeingPlayed = map;
         }
         catch (CsgoServerException serverExeption)
         {

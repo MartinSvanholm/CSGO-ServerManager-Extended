@@ -5,6 +5,7 @@ using CSGOServerInterface.Server.CsgoServerSettings;
 using CSGOServerInterface.Server.MapPoolNS;
 using SQLite;
 using System.Net;
+using Map = CSGOServerInterface.Server.MapPoolNS.Map;
 
 namespace CSGOServerInterface.Server.CsgoServer
 {
@@ -78,6 +79,9 @@ namespace CSGOServerInterface.Server.CsgoServer
 
         [Ignore]
         public MapPool MapPool { get; set; }
+
+        [Ignore]
+        public Map MapBeingPlayed { get; set; }
 
         public virtual async Task GetConnection()
         {
