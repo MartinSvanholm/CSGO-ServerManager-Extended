@@ -11,7 +11,7 @@ namespace CSGOServerInterface.Server.CsgoServer
     {
         bool Booting { get; set; }
         string ConnectionIp { get; }
-        int GamePort { get; set; }
+        int? GamePort { get; set; }
         int? GOTVPort { get; set; }
         string Id { get; set; }
         string Ip { get; set; }

@@ -31,7 +31,7 @@ namespace CSGOServerInterface.Server.CsgoServer
 
         [NotNull]
         [Column("game_port")]
-        public int GamePort { get; set; }
+        public int? GamePort { get; set; }
 
         [Column("gotv_port")]
         public int? GOTVPort { get; set; }
