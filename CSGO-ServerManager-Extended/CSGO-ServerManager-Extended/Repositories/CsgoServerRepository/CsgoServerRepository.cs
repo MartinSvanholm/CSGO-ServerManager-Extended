@@ -61,6 +61,7 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
             foreach (CsgoServer server in data)
             {
                 server.ServerSettings = await _serverSettingsRepository.GetServerSettingsByCsgoServerId(server.Id);
+                server.MapPool = await _mapPoolRepository.GetMapPool(condition: mp => mp.Name == server.ServerSettings.MapPoolName);
             }
 
             List<CsgoServer> servers = data.AsQueryable().Where(condition).ToList();

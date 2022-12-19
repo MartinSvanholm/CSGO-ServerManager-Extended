@@ -10,7 +10,7 @@
     <DialogContent>
         <MudForm @bind-IsValid="@isValid">
             <MudTextField Disabled=IsDathostServer @bind-Value="TempServer.Name" Label="Name" Required=true RequiredError="Server name is required" Immediate=true Clearable=true MaxLength="30"></MudTextField>
-                <MudTextField Disabled=IsDathostServer @bind-Value="TempServer.Ip" Label="Ip" Required=true RequiredError="Server ip is required" Immediate=true Clearable=true Mask="@ipMask" Placeholder="123.456.789.00" HelperText="123.456.789.00" HelperTextOnFocus="true"></MudTextField>
+                <MudTextField Disabled=IsDathostServer @bind-Value="TempServer.Ip" Label="Ip" Required=true RequiredError="Server ip is required" DebounceInterval="1000" Clearable=true Mask="@ipMask" Placeholder="123.456.789.00" HelperText="123.456.789.00" HelperTextOnFocus="true"></MudTextField>
             <MudTextField Disabled=IsDathostServer T="int?" @bind-Value="TempServer.GamePort" Label="Port" Required=true RequiredError="Server port is required" Immediate=true Clearable=true Mask="@( new PatternMask("00000"))" Placeholder="12345" HelperText="12345" HelperTextOnFocus="true"></MudTextField>
             <MudTextField Disabled=IsDathostServer @bind-Value="TempServer.Password" Label="Password" Immediate=true Clearable=true></MudTextField>
             <MudTextField Disabled=IsDathostServer @bind-Value="TempServer.RconPassword" Label="Rcon password" Immediate=true Clearable=true></MudTextField>
@@ -50,6 +50,8 @@
 
     private async Task Submit()
     {
+        TempServer.Ip = TempServer.Ip.Substring(0, 3) + "." + TempServer.Ip.Substring(3, 3) + "." + TempServer.Ip.Substring(6, 3) + "." + TempServer.Ip.Substring(9, 2);
+
         if(EditType == EditType.Edit)
         {
             if(TempServer is DatHostCsgoServer) {

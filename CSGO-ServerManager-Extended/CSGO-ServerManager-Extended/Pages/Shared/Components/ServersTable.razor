@@ -146,11 +146,8 @@
     {
         isVisible = !isVisible;
 
-        if(isSucces)
-        {
-            await GetServersAsync();
-            await InvokeAsync(StateHasChanged);
-        }
+        await GetServersAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
     public void OnServerChanged(object sender, EventArgs e) 
