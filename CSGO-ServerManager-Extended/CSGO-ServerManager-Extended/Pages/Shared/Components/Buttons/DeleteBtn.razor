@@ -1,0 +1,49 @@
+﻿<MudButton Class="@Class" Style="@Style" OnClick="(async () => await ShowConfirm())" Color="Color.Error" StartIcon="@StartIcon" EndIcon="@EndIcon" Variant="Variant.Filled">
+    @if (ChildContent != null) {
+        @ChildContent
+    } 
+    else {
+        <p>Delete</p>
+    }
+</MudButton>
+
+<MudMessageBox @ref="confirmMessageBox" Title="Warning" CancelText="Cancel">
+    <MessageContent>
+        Deleting cannot be undone!
+    </MessageContent>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteForever">Delete!</MudButton>
+    </YesButton>
+</MudMessageBox>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback OnConfirm { get; set; }
+
+    [Parameter]
+    public string Class { get; set; }
+
+    [Parameter]
+    public string Style { get; set; }
+
+    [Parameter]
+    public string StartIcon { get; set; }
+
+    [Parameter]
+    public string EndIcon { get; set; }
+
+    private MudMessageBox confirmMessageBox { get; set; }
+
+    private async Task ShowConfirm() {
+        bool confirmDelete = await confirmMessageBox.Show() == null ? false : true;
+
+        if(confirmDelete) {
+            await OnConfirm.InvokeAsync();
+        } else {
+            return;
+        }
+    }
+}

@@ -49,7 +49,7 @@
                         <MudPaper Class="d-flex align-stretch" Elevation="0">
                             <MudStack AlignItems="AlignItems.Stretch" Justify="Justify.Center">
                                 <MudButton OnClick="(async () => await SubmitDathostAccount())" Color="Color.Success" Variant="Variant.Filled" Size="Size.Medium">Connect</MudButton>
-                                <MudButton OnClick="ResetDathostAccount" Color="Color.Error" Variant="Variant.Filled" Size="Size.Medium">Reset</MudButton>
+                                <DeleteBtn OnConfirm="ResetDathostAccount">Reset</DeleteBtn>
                             </MudStack>
                         </MudPaper>
                     </MudStack>

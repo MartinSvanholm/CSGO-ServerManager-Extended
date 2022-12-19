@@ -12,8 +12,7 @@
 
 @code {
     private MudTheme Theme = new MudTheme();
-
-    private string location { get => navigationManager.Uri.Split("/")[navigationManager.Uri.Split("/").Length - 1]; }
+    private string location { get => navigationManager.Uri.Split(navigationManager.BaseUri)[1].Split("?")[0]; }
 
     protected override void OnInitialized()
     {

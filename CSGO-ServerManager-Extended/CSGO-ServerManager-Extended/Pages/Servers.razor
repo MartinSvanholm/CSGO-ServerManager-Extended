@@ -1,9 +1,10 @@
 ﻿@page "/servers"
 
-<ServersTable>
+<ServersTable isVisible="@OpenAddServer">
 
 </ServersTable>
 
 @code {
-
+    [Parameter, SupplyParameterFromQuery]
+    public bool OpenAddServer { get; set; } = false;
 }
