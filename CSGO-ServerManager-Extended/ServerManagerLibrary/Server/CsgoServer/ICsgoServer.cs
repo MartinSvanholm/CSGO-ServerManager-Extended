@@ -1,7 +1,9 @@
 ﻿using CoreRCON;
+using CoreRCON.Parsers.Standard;
 using CSGOServerInterface.Server.CsgoServerSettings;
 using CSGOServerInterface.Server.MapPoolNS;
 using SQLite;
+using Map = CSGOServerInterface.Server.MapPoolNS.Map;
 
 namespace CSGOServerInterface.Server.CsgoServer
 {
@@ -9,7 +11,7 @@ namespace CSGOServerInterface.Server.CsgoServer
     {
         bool Booting { get; set; }
         string ConnectionIp { get; }
-        int GamePort { get; set; }
+        int? GamePort { get; set; }
         int? GOTVPort { get; set; }
         string Id { get; set; }
         string Ip { get; set; }
@@ -21,8 +23,10 @@ namespace CSGOServerInterface.Server.CsgoServer
         string Status { get; }
         ServerSettings ServerSettings { get; set; }
         MapPool MapPool { get; set; }
+        Map MapBeingPlayed { get; set; }
+        int PlayersOnline { get; set; }
 
-        Task GetConnection();
+        Task<Status> GetConnection();
         Task RunCommand(string command, HttpClient httpClient);
         Task StartServer(HttpClient httpClient);
         Task StopServer(HttpClient httpClient);

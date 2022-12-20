@@ -1,10 +1,11 @@
 ﻿@page "/"
+@using CSGO_ServerManager_Extended.Pages.Shared.Components.Buttons
 @inject ISnackbar _snackbar
 
 <div class="content-container">
     <MudPaper Class="pa-5">
         <MudText Typo="Typo.h4" GutterBottom="true">CS:Commander</MudText>
-        <MudText Typo="Typo.body1">Click <MudLink Href="/servers">here</MudLink> to add your first server, or check out the <MudLink Href="/help">getting started guide.</MudLink> for a complete guide</MudText>
+        <MudText Typo="Typo.body1">Click <MudLink Href="/servers?GettingStartedIsExpandedByDefault=true">here</MudLink> to add your first server, or check out the <MudLink Href="/help?GettingStartedIsExpanded=true">getting started guide.</MudLink> for a complete guide</MudText>
     </MudPaper>
 
     @if(_settingsService.DashboardVisibilitySetting == SettingsConstants.ShowFavouritesOnDashboard) {

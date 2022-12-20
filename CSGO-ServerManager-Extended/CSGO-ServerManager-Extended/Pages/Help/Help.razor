@@ -4,7 +4,7 @@
     <MudExpansionPanels MultiExpansion=true>
         <MudExpansionPanel>
             <TitleContent>
-                <MudText Typo="Typo.h6" Class="">Getting started</MudText>
+                <MudText Typo="Typo.h6">Getting started</MudText>
             </TitleContent>
             <ChildContent>
                 <MudText>This guide will teach you about some basic functions in CS:GO ServerManager. This includes adding servers and running basic commands.</MudText>
@@ -12,7 +12,7 @@
                 <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Before you start</MudText>
                 <MudText>
                     Before you start you will need to add the config files from <MudLink Href="https://drive.google.com/drive/folders/1gklrlxvCXc6PvJRVT9febu3p8TFQ3bCQ?usp=sharing">this</MudLink> google drive, to your "cfg" folder on your servers.
-                    These are the config files that will be executed as default by the app (The configs being called from the app can be changed at any point).
+                    These are the config files that will be executed as default by the app (The configs being called from the app can be changed at any point, see the "Using your config files" guide for more information).
                 </MudText>
                 <MudDivider Class="help-divider" />
                 <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Adding servers</MudText>
@@ -71,5 +71,6 @@
 </MudPaper>
 
 @code {
-
+    [Parameter, SupplyParameterFromQuery]
+    public bool GettingStartedIsExpandedByDefault { get; set; } = false;
 }

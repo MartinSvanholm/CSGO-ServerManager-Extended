@@ -1,4 +1,5 @@
-﻿using CSGO_ServerManager_Extended.Models;
+﻿using CoreRCON.Parsers.Standard;
+using CSGO_ServerManager_Extended.Models;
 using CSGO_ServerManager_Extended.Models.Constants;
 using CSGO_ServerManager_Extended.Pages;
 using CSGO_ServerManager_Extended.Repositories.CsgoServerRepository;
@@ -13,6 +14,9 @@ using CSGOServerInterface.Server.CsgoServerSettings;
 using CSGOServerInterface.Server.DathostServer;
 using CSGOServerInterface.Server.DTO;
 using CSGOServerInterface.Server.MapPoolNS;
+using Microsoft.Maui.Controls;
+using System.Reflection.Metadata.Ecma335;
+using Map = CSGOServerInterface.Server.MapPoolNS.Map;
 
 namespace CSGO_ServerManager_Extended.Services.CsgoServerService;
 
@@ -20,8 +24,9 @@ public interface ICsgoServerService
 {
     ICsgoServer Server { get; set; }
 
+    event EventHandler ServerChanged;
     Task<CsgoServer> AddCsgoServer(CsgoServer csgoServer);
-    Task ChangeMap(string map);
+    Task ChangeMap(Map map);
     Task<CsgoServer> DeleteCsgoServer(CsgoServer csgoServer);
     Task<ICsgoServer> GetCsgoServerById(string csgoServerId);
     Task<List<ICsgoServer>> GetCsgoServers();
@@ -55,6 +60,8 @@ public class CsgoServerService : ICsgoServerService
         _mapPoolService = mapPoolService;
     }
 
+    public event EventHandler ServerChanged;
+
     public async Task<List<ICsgoServer>> GetCsgoServers()
     {
         List<ICsgoServer> csgoServers = new List<ICsgoServer>();
@@ -62,6 +69,11 @@ public class CsgoServerService : ICsgoServerService
         try
         {
             csgoServers.AddRange(await _csgoServerRepository.GetCsgoServers());
+
+            foreach (ICsgoServer csgoServer in csgoServers)
+            {
+                Task task = CheckConnection(csgoServer);
+            }
 
             if (_settingsService.DathostAccountIsConnected)
                 csgoServers.AddRange(await GetDatHostServers());
@@ -283,11 +295,12 @@ public class CsgoServerService : ICsgoServerService
         }
     }
 
-    public async Task ChangeMap(string map)
+    public async Task ChangeMap(Map map)
     {
         try
         {
-            await Server.RunCommand($"map {map}", _httpClient);
+            await Server.RunCommand($"map {map.MapName}", _httpClient);
+            Server.MapBeingPlayed = map;
         }
         catch (CsgoServerException serverExeption)
         {
@@ -319,7 +332,7 @@ public class CsgoServerService : ICsgoServerService
     {
         try
         {
-            if (cfg != null)
+            if (!string.IsNullOrEmpty(cfg))
             {
                 await Server.RunCommand(cfg, _httpClient);
             }
@@ -331,7 +344,7 @@ public class CsgoServerService : ICsgoServerService
                     cfg = Preferences.Get(GlobalServerCommandsConstants.MatchCommand, null);
 
 
-                if (cfg != null)
+                if (!string.IsNullOrEmpty(cfg))
                     await Server.RunCommand(cfg, _httpClient);
                 else
                 {
@@ -376,7 +389,7 @@ public class CsgoServerService : ICsgoServerService
     {
         try
         {
-            if (cfg != null)
+            if (!string.IsNullOrEmpty(cfg))
             {
                 await Server.RunCommand(cfg, _httpClient);
             }
@@ -384,7 +397,7 @@ public class CsgoServerService : ICsgoServerService
             {
                 cfg = Preferences.Get(GlobalServerCommandsConstants.KnifeCommand, null);
 
-                if (cfg != null)
+                if (!string.IsNullOrEmpty(cfg))
                     await Server.RunCommand(cfg, _httpClient);
                 else
                     await Server.RunCommand("exec knife.cfg", _httpClient);
@@ -404,7 +417,7 @@ public class CsgoServerService : ICsgoServerService
     {
         try
         {
-            if (cfg != null)
+            if (!string.IsNullOrEmpty(cfg))
             {
                 await Server.RunCommand(cfg, _httpClient);
             }
@@ -412,7 +425,7 @@ public class CsgoServerService : ICsgoServerService
             {
                 cfg = Preferences.Get(GlobalServerCommandsConstants.PracticeCommand, null);
 
-                if (cfg != null)
+                if (!string.IsNullOrEmpty(cfg))
                     await Server.RunCommand(cfg, _httpClient);
                 else
                     await Server.RunCommand("exec train.cfg", _httpClient);
@@ -425,6 +438,23 @@ public class CsgoServerService : ICsgoServerService
         catch (Exception e)
         {
             throw new Exception($"Something went wrong: {e.Message}");
+        }
+    }
+
+    public async Task CheckConnection(ICsgoServer csgoServer)
+    {
+        try
+        {
+            Status status = await csgoServer.GetConnection();
+            csgoServer.MapBeingPlayed = new Map { DisplayName = status.Map, MapName = status.Map };
+            csgoServer.IsOn = true;
+            csgoServer.PlayersOnline = status.Humans;
+
+            ServerChanged?.Invoke(this, new());
+        }
+        catch (Exception)
+        {
+
         }
     }
 }

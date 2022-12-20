@@ -1,4 +1,5 @@
-﻿using CsgoServerInterface.Exceptions;
+﻿using CoreRCON.Parsers.Standard;
+using CsgoServerInterface.Exceptions;
 using CSGOServerInterface.Server.CsgoServer;
 using CSGOServerInterface.Server.CsgoServerSettings;
 
@@ -20,7 +21,7 @@ namespace CSGOServerInterface.Server.DathostServer
             ServerSettings = serverSettings;
         }
 
-        public override Task GetConnection()
+        public override Task<Status> GetConnection()
         {
             throw new NotImplementedException();
         }

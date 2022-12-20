@@ -5,6 +5,7 @@ using CSGOServerInterface.Server.CsgoServerSettings;
 using CSGOServerInterface.Server.MapPoolNS;
 using SQLite;
 using System.Net;
+using Map = CSGOServerInterface.Server.MapPoolNS.Map;
 
 namespace CSGOServerInterface.Server.CsgoServer
 {
@@ -30,7 +31,7 @@ namespace CSGOServerInterface.Server.CsgoServer
 
         [NotNull]
         [Column("game_port")]
-        public int GamePort { get; set; }
+        public int? GamePort { get; set; }
 
         [Column("gotv_port")]
         public int? GOTVPort { get; set; }
@@ -79,14 +80,20 @@ namespace CSGOServerInterface.Server.CsgoServer
         [Ignore]
         public MapPool MapPool { get; set; }
 
-        public virtual async Task GetConnection()
+        [Ignore]
+        public Map MapBeingPlayed { get; set; }
+
+        [Ignore]
+        public int PlayersOnline { get; set; }
+
+        public virtual async Task<Status> GetConnection()
         {
             CheckInternetConnection();
 
             Rcon = new(IPAddress.Parse(Ip), Convert.ToUInt16(GamePort), Password);
 
             await Rcon.ConnectAsync();
-            Status status = await Rcon.SendCommandAsync<Status>("status");
+            return await Rcon.SendCommandAsync<Status>("status");
         }
 
         public virtual async Task RunCommand(string command, HttpClient httpClient)

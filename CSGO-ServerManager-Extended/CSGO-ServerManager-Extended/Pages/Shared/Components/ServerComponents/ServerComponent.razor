@@ -26,7 +26,7 @@
             <MudItem xs="12" sm="5" md="3">
                 <MudPaper>
                     <MudList Disabled="@disable" Clickable="true" @bind-SelectedItem="selectedItem">
-                        <MudListItem @bind-Expanded="expandList" Text="Change map">
+                        <MudListItem @bind-Expanded="expandList" Text="@(Server.MapBeingPlayed == null ? "ChangeMap" : "ChangeMap: " + Server.MapBeingPlayed.DisplayName)">
                             <NestedList>
                                 @foreach (Map map in Server.MapPool.Maps)
                                 {
@@ -167,11 +167,12 @@
 
     private async Task ChangeMap(Map map)
     {
-        expandList = false;
         try
         {
-            await CsgoServerService.ChangeMap(map.MapName);
+            await CsgoServerService.ChangeMap(map);
             _snackBar.Add($"Switching to {map.DisplayName}", Severity.Normal, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
+            expandList = false;
+            StateHasChanged();
         }
         catch (Exception e)
         {

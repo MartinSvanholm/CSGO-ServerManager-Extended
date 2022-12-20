@@ -1,9 +1,11 @@
-﻿using CSGO_ServerManager_Extended.Data.DataAccess;
+﻿using CoreRCON.Parsers.Standard;
+using CSGO_ServerManager_Extended.Data.DataAccess;
 using CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository;
 using CSGO_ServerManager_Extended.Repositories.MapPoolRepository;
 using CSGOServerInterface.Server.CsgoServer;
 using System.Linq;
 using System.Linq.Expressions;
+using Map = CSGOServerInterface.Server.MapPoolNS.Map;
 
 namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
 {
@@ -59,6 +61,7 @@ namespace CSGO_ServerManager_Extended.Repositories.CsgoServerRepository
             foreach (CsgoServer server in data)
             {
                 server.ServerSettings = await _serverSettingsRepository.GetServerSettingsByCsgoServerId(server.Id);
+                server.MapPool = await _mapPoolRepository.GetMapPool(condition: mp => mp.Name == server.ServerSettings.MapPoolName);
             }
 
             List<CsgoServer> servers = data.AsQueryable().Where(condition).ToList();

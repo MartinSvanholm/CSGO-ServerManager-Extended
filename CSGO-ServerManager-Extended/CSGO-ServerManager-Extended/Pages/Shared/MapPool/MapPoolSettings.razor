@@ -15,7 +15,9 @@
     <RowTemplate>
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Edit"><MudIconButton Icon="@Icons.Filled.Edit" OnClick="(() => ShowDetails(context))"></MudIconButton></MudTd>
-        <MudTd DataLabel="Delete"><MudIconButton Icon="@Icons.Filled.Delete" OnClick="(() => DeleteMapPool(context))"></MudIconButton></MudTd>
+        <MudTd DataLabel="Delete">
+            <DeleteIconBtn Icon="@Icons.Filled.Delete" Color="@Color.Default" OnConfirm="(async () => await DeleteMapPool(context))"/>
+        </MudTd>
     </RowTemplate>
 </MudTable>
 
