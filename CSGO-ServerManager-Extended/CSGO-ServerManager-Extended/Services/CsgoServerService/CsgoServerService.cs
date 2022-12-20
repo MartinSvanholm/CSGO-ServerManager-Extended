@@ -332,7 +332,7 @@ public class CsgoServerService : ICsgoServerService
     {
         try
         {
-            if (cfg != null)
+            if (!string.IsNullOrEmpty(cfg))
             {
                 await Server.RunCommand(cfg, _httpClient);
             }
@@ -344,7 +344,7 @@ public class CsgoServerService : ICsgoServerService
                     cfg = Preferences.Get(GlobalServerCommandsConstants.MatchCommand, null);
 
 
-                if (cfg != null)
+                if (!string.IsNullOrEmpty(cfg))
                     await Server.RunCommand(cfg, _httpClient);
                 else
                 {
@@ -389,7 +389,7 @@ public class CsgoServerService : ICsgoServerService
     {
         try
         {
-            if (cfg != null)
+            if (!string.IsNullOrEmpty(cfg))
             {
                 await Server.RunCommand(cfg, _httpClient);
             }
@@ -397,7 +397,7 @@ public class CsgoServerService : ICsgoServerService
             {
                 cfg = Preferences.Get(GlobalServerCommandsConstants.KnifeCommand, null);
 
-                if (cfg != null)
+                if (!string.IsNullOrEmpty(cfg))
                     await Server.RunCommand(cfg, _httpClient);
                 else
                     await Server.RunCommand("exec knife.cfg", _httpClient);
@@ -417,7 +417,7 @@ public class CsgoServerService : ICsgoServerService
     {
         try
         {
-            if (cfg != null)
+            if (!string.IsNullOrEmpty(cfg))
             {
                 await Server.RunCommand(cfg, _httpClient);
             }
@@ -425,7 +425,7 @@ public class CsgoServerService : ICsgoServerService
             {
                 cfg = Preferences.Get(GlobalServerCommandsConstants.PracticeCommand, null);
 
-                if (cfg != null)
+                if (!string.IsNullOrEmpty(cfg))
                     await Server.RunCommand(cfg, _httpClient);
                 else
                     await Server.RunCommand("exec train.cfg", _httpClient);
