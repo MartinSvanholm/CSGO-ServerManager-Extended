@@ -70,7 +70,7 @@ namespace CSGOServerInterface.Server.CsgoServer
         {
             get
             {
-                if (string.IsNullOrEmpty(Password.Trim()))
+                if (string.IsNullOrEmpty(Password))
                     return $"connect {Ip.Trim()}:{GamePort}";
                 else
                     return $"connect {Ip.Trim()}:{GamePort}; password {Password.Trim()}";

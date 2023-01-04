@@ -15,8 +15,8 @@
                 <MudTextField T="string" Disabled=IsDathostServer @bind-Value="TempServer.Ip" Label="Ip" Required=true RequiredError="Server ip is required" DebounceInterval="1000" Validation="@(new Func<string, string>(IpValidation))" Clearable=true Placeholder="123.456.789.00" HelperText="123.456.789.00" HelperTextOnFocus="true"></MudTextField>
             <MudTextField Disabled=IsDathostServer T="int?" @bind-Value="TempServer.GamePort" Label="Port" Required=true RequiredError="Server port is required" Immediate=true MaxLength="5" Clearable=true Placeholder="12345" HelperText="12345" HelperTextOnFocus="true"></MudTextField>
             <MudTextField Disabled=IsDathostServer @bind-Value="TempServer.Password" Label="Password" Immediate=true Clearable=true></MudTextField>
-            <MudTextField Disabled=IsDathostServer @bind-Value="TempServer.RconPassword" Label="Rcon password" Immediate=true Clearable=true></MudTextField>
-            <MudCheckBox @bind-Checked="TempServer.ServerSettings.IsFavourite" Label="Favourite" CheckedIcon="@Icons.Filled.Star" UncheckedIcon="@Icons.Filled.StarBorder"/>
+            <MudTextField Disabled=IsDathostServer @bind-Value="TempServer.RconPassword" Label="Rcon password" Required=true Immediate=true Clearable=true></MudTextField>
+            <MudCheckBox @bind-Checked="TempServer.ServerSettings.IsFavourite" Label="Favourite" CheckedIcon="@Icons.Material.Filled.Star" UncheckedIcon="@Icons.Material.Filled.StarBorder"/>
             <MudTextField @bind-Value="TempServer.ServerSettings.Description" Lines="3" Variant="Variant.Outlined" Label="Description" Immediate=true Clearable=true></MudTextField>
         </MudForm>
     </DialogContent>
@@ -101,7 +101,7 @@
     }
 
     private string IpValidation(string ip) {
-        if(!IPAddress.TryParse(ip, out _))
+        if (!string.IsNullOrEmpty(ip) && !Regex.IsMatch(ip, @"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"))
         {
             return "Incorrect ip format";
         }
