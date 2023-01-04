@@ -116,11 +116,14 @@ public class CsgoServerService : ICsgoServerService
         {
             csgoServers.AddRange(await _csgoServerRepository.GetCsgoServerByCondition(s => s.ServerSettings.IsFavourite));
 
-            List<ServerSettings> dathostServerSettings = new List<ServerSettings>(await _serverSettingsRepository.GetServerSettingsByCondition(s => s.IsDathostServer && s.IsFavourite));
-
-            foreach (ServerSettings dathostServerSetting in dathostServerSettings)
+            if(_settingsService.DathostAccountIsConnected)
             {
-                csgoServers.Add(await GetDatHostServer(dathostServerSetting.CsgoServerId));
+                List<ServerSettings> dathostServerSettings = new List<ServerSettings>(await _serverSettingsRepository.GetServerSettingsByCondition(s => s.IsDathostServer && s.IsFavourite));
+
+                foreach (ServerSettings dathostServerSetting in dathostServerSettings)
+                {
+                    csgoServers.Add(await GetDatHostServer(dathostServerSetting.CsgoServerId));
+                }
             }
         }
         catch (Exception e)
