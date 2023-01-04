@@ -61,8 +61,7 @@
             <MudPaper Class="pa-6 d-flex align-content-center" Elevation="4">
                 <MudStack>
                     <MudText Typo="Typo.h6">General settings</MudText>
-                    <MudCheckBox @bind-Checked="settingsService.UseDarkMode">Use dark mode</MudCheckBox>
-                    <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="settingsService.OnUseDarkModeChanged">Save</MudButton>
+                    <MudSwitch T="bool" Color="@Color.Primary" Checked="@settingsService.UseDarkMode" CheckedChanged="DarkModeChanged">Use dark mode</MudSwitch>
                 </MudStack>
             </MudPaper>
         </MudItem>

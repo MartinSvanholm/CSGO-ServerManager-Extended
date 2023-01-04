@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject ISettingsService _settingsService
 
-<MudThemeProvider Theme="MyCustomTheme" @ref="@_mudThemeProvider" @bind-IsDarkMode="@_settingsService.UseDarkMode"/>
+<MudThemeProvider Theme="MyCustomTheme" @ref="@_mudThemeProvider" @bind-IsDarkMode="@_settingsService.UseDarkMode" />
 <MudDialogProvider 
     FullWidth="true"
     MaxWidth="MaxWidth.ExtraSmall"
@@ -25,6 +25,10 @@
     MudTheme MyCustomTheme = new MudTheme()
         {
             Palette = new Palette()
+            {
+                Primary = "#5678B8"
+            },
+            PaletteDark = new PaletteDark() 
             {
                 Primary = "#5678B8"
             }

@@ -68,5 +68,11 @@ namespace CSGO_ServerManager_Extended.Pages
                 snackbar.Add($"Something went wrong {e.Message}", Severity.Warning, config => { config.Onclick = snackbar => { return Task.CompletedTask; }; });
             }
         }
+
+        private void DarkModeChanged()
+        {
+            settingsService.UseDarkMode = !settingsService.UseDarkMode;
+            settingsService.OnUseDarkModeChanged(new EventArgs());
+        }
     }
 }
