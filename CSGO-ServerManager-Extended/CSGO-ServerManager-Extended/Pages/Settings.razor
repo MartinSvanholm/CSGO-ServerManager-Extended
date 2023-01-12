@@ -16,13 +16,15 @@
             </MudPaper>
         </MudItem>
 
-        <MudItem xs="12" sm="6">
-            <MudPaper Class="pa-6" Elevation="4">
-                <MapPoolSettings>
+        @if(Utils.IsPremiumAcount()) {
+            <MudItem xs="12" sm="6">
+                <MudPaper Class="pa-6" Elevation="4">
+                    <MapPoolSettings>
 
-                </MapPoolSettings>
-            </MudPaper>
-        </MudItem>
+                    </MapPoolSettings>
+                </MudPaper>
+            </MudItem>
+        }
 
         <MudItem xs="12" sm="6">
             <MudPaper Class="pa-6" Elevation="4">

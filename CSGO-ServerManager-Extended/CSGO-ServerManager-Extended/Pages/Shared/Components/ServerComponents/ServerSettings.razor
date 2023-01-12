@@ -29,9 +29,12 @@
         <MudTextField @bind-Value="csgoServer.ServerSettings.PracticeCommand" Label="Partice command" Immediate=true Variant="Variant.Outlined" Placeholder="exec myPracticeCfg.cfg"></MudTextField>
     </MudItem>
 
-    <MudItem xs="12" sm="6">
-        <MapPoolDisplay ActiveMapPool="@csgoServer.ServerSettings.MapPoolName" OnMapPoolChange="async (MapPool mapPool) => await OnMapPoolChanged(mapPool)"/>
-    </MudItem>
+    @if (Utils.IsPremiumAcount())
+    {
+        <MudItem xs="12" sm="6">
+            <MapPoolDisplay ActiveMapPool="@csgoServer.ServerSettings.MapPoolName" OnMapPoolChange="async (MapPool mapPool) => await OnMapPoolChanged(mapPool)" />
+        </MudItem>
+    }
 
 </MudGrid>
 
