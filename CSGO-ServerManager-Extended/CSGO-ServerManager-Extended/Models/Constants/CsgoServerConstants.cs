@@ -23,5 +23,10 @@ namespace CSGO_ServerManager_Extended.Models.Constants
                 return "DathostServer";
             }
         }
+
+        public static string DefaultMatchCommand => "exec esl5on5.cfg";
+        public static string DefaultOvertimeMatchCommand => "exec esl5on5Overtime.cfg";
+        public static string DefaultKnifeCommand => "exec knife.cfg";
+        public static string DefaultPracticeCommand => "exec practice.cfg";
     }
 }

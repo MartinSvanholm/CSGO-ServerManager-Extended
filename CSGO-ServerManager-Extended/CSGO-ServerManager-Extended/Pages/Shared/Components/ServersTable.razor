@@ -4,13 +4,13 @@
 @inject ISnackbar Snackbar
 @inject NavigationManager navigation
 
-<MudTable RowClass="row-border" Items="@csgoServers" RowStyle="cursor: pointer;" Hover="true" Loading="@_loading" OnRowClick="RowClickEvent" T="ICsgoServer" LoadingProgressColor="Color.Info" Striped="true" Elevation="0">
+<MudTable Items="@csgoServers" RowStyle="cursor: pointer;" Hover="true" Loading="@_loading" OnRowClick="RowClickEvent" T="ICsgoServer" LoadingProgressColor="Color.Info" Elevation="0">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Your servers</MudText>
         <MudSpacer />
         <MudStack Row="true">
             <Tooltip Text="Reload servers">
-                <MudIconButton Icon="@Icons.Filled.Refresh" OnClick="(async () => await GetServersAsync())"></MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="(async () => await GetServersAsync())"></MudIconButton>
             </Tooltip>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => OpenEditDialog(EditType.Create, null))">Add server</MudButton>
         </MudStack>
@@ -29,10 +29,10 @@
         <MudTd Style="text-align: center" DataLabel="Status">@context.Status</MudTd>
         <MudTd Style="text-align: center" DataLabel="Players online">@context.PlayersOnline</MudTd>
         <MudTd Style="text-align: center" DataLabel="Edit">
-            <MudIconButton Icon="@Icons.Filled.Edit" OnClick="(() => OpenEditDialog(EditType.Edit, context))"></MudIconButton>
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="(() => OpenEditDialog(EditType.Edit, context))"></MudIconButton>
         </MudTd>
         <MudTd Style="text-align: center" id="td-column" DataLabel="Delete">
-            <DeleteIconBtn Icon="@Icons.Filled.Delete" Color="@Color.Default" Size="@Size.Medium" OnConfirm="(async () => await DeleteServerAsync(context))"/>
+            <DeleteIconBtn Icon="@Icons.Material.Filled.Delete" Color="@Color.Default" Size="@Size.Medium" OnConfirm="(async () => await DeleteServerAsync(context))"/>
         </MudTd>
     </RowTemplate>
 </MudTable>

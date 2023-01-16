@@ -35,9 +35,10 @@ public interface ICsgoServerService
     Task<List<ICsgoServer>> GetFavouriteCsgoServers();
     Task PauseUnpauseMatch(bool isMatchPaused);
     Task RunCommand(string command);
-    Task StartKnife(string cfg = null);
-    Task StartMatch(bool withOvertime, string cfg = null);
-    Task StartNadePractice(string cfg = null);
+    Task StartKnife(ICsgoServer server);
+    Task StartMatch(ICsgoServer server);
+    Task StartMatchWithOvertime(ICsgoServer server);
+    Task StartNadePractice(ICsgoServer server);
     Task StartStopServer(ICsgoServer server);
     Task<CsgoServer> UpdateCsgoServer(CsgoServer csgoServer);
 }
@@ -331,32 +332,33 @@ public class CsgoServerService : ICsgoServerService
         }
     }
 
-    public async Task StartMatch(bool withOvertime, string cfg = null)
+    public async Task StartMatch(ICsgoServer server)
     {
         try
         {
-            if (!string.IsNullOrEmpty(cfg))
-            {
-                await Server.RunCommand(cfg, _httpClient);
-            }
+            if(!string.IsNullOrEmpty(server.ServerSettings.MatchCommand))
+                await server.RunCommand(server.ServerSettings.MatchCommand, _httpClient);
             else
-            {
-                if (withOvertime)
-                    cfg = Preferences.Get(GlobalServerCommandsConstants.OvertimeCommand, null);
-                else
-                    cfg = Preferences.Get(GlobalServerCommandsConstants.MatchCommand, null);
+                await server.RunCommand(Preferences.Get(GlobalServerCommandsConstants.MatchCommand, CsgoServerConstants.DefaultMatchCommand), _httpClient);
+        }
+        catch (CsgoServerException serverExeption)
+        {
+            throw new Exception($"Could not start match: {serverExeption.Message}");
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Something went wrong: {e.Message}");
+        }
+    }
 
-
-                if (!string.IsNullOrEmpty(cfg))
-                    await Server.RunCommand(cfg, _httpClient);
-                else
-                {
-                    if (!withOvertime)
-                        await Server.RunCommand("exec esportliga_start.cfg", _httpClient);
-                    else
-                        await Server.RunCommand("exec esportliga_start_med_overtime.cfg", _httpClient);
-                }
-            }
+    public async Task StartMatchWithOvertime(ICsgoServer server)
+    {
+        try
+        {
+            if(!string.IsNullOrEmpty(server.ServerSettings.OvertimeCommand))
+                await server.RunCommand(server.ServerSettings.OvertimeCommand, _httpClient);
+            else
+                await server.RunCommand(Preferences.Get(GlobalServerCommandsConstants.OvertimeCommand, CsgoServerConstants.DefaultOvertimeMatchCommand), _httpClient);
         }
         catch (CsgoServerException serverExeption)
         {
@@ -388,23 +390,14 @@ public class CsgoServerService : ICsgoServerService
         }
     }
 
-    public async Task StartKnife(string cfg = null)
+    public async Task StartKnife(ICsgoServer server)
     {
         try
         {
-            if (!string.IsNullOrEmpty(cfg))
-            {
-                await Server.RunCommand(cfg, _httpClient);
-            }
+            if (!string.IsNullOrEmpty(server.ServerSettings.KnifeCommand))
+                await server.RunCommand(server.ServerSettings.KnifeCommand, _httpClient);
             else
-            {
-                cfg = Preferences.Get(GlobalServerCommandsConstants.KnifeCommand, null);
-
-                if (!string.IsNullOrEmpty(cfg))
-                    await Server.RunCommand(cfg, _httpClient);
-                else
-                    await Server.RunCommand("exec knife.cfg", _httpClient);
-            }
+                await server.RunCommand(Preferences.Get(GlobalServerCommandsConstants.KnifeCommand, CsgoServerConstants.DefaultKnifeCommand), _httpClient);
         }
         catch (CsgoServerException serverExeption)
         {
@@ -416,23 +409,14 @@ public class CsgoServerService : ICsgoServerService
         }
     }
 
-    public async Task StartNadePractice(string cfg = null)
+    public async Task StartNadePractice(ICsgoServer server)
     {
         try
         {
-            if (!string.IsNullOrEmpty(cfg))
-            {
-                await Server.RunCommand(cfg, _httpClient);
-            }
+            if(!string.IsNullOrEmpty(server.ServerSettings.PracticeCommand))
+                await server.RunCommand(server.ServerSettings.PracticeCommand, _httpClient);
             else
-            {
-                cfg = Preferences.Get(GlobalServerCommandsConstants.PracticeCommand, null);
-
-                if (!string.IsNullOrEmpty(cfg))
-                    await Server.RunCommand(cfg, _httpClient);
-                else
-                    await Server.RunCommand("exec train.cfg", _httpClient);
-            }
+                await server.RunCommand(Preferences.Get(GlobalServerCommandsConstants.PracticeCommand, CsgoServerConstants.DefaultPracticeCommand), _httpClient);
         }
         catch (CsgoServerException serverExeption)
         {

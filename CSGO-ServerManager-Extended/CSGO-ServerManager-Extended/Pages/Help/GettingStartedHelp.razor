@@ -1,0 +1,47 @@
+﻿<MudExpansionPanel>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Getting started</MudText>
+    </TitleContent>
+    <ChildContent>
+        <MudText>This guide will teach you about some basic functions in CS:GO ServerManager. This includes adding servers and running basic commands.</MudText>
+        <MudDivider Class="help-divider" />
+        <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Before you start</MudText>
+        <MudText>
+            Before you start you will need to add the config files from <MudLink Href="https://drive.google.com/drive/folders/1gklrlxvCXc6PvJRVT9febu3p8TFQ3bCQ?usp=sharing">this</MudLink> google drive, to your "cfg" folder on your servers.
+            These are the config files that will be executed as default by the app (THese can be changed at any point, see the "Using your own config files" guide for more information).
+        </MudText>
+        <MudDivider Class="help-divider" />
+        <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Adding servers</MudText>
+        <MudText>
+            The first thing you want to do is to add the servers you want to control through the app.
+            To do this go to the "servers" tap, here you can add the servers using the "Add server" button.
+        </MudText>
+        <MudPaper Elevation="0" Width="100%" Class="d-flex justify-center">
+            <MudImage Class="my-6 rounded-lg" Elevation="4" Src="Images/ServerOverviewHelp.png" Width="800" Fluid=true />
+        </MudPaper>
+        <MudText>
+            When adding servers you have to provide a name (that you choose), the ip address of the server, the password of the server (if it has one), the rcon password of the server (if it has one)
+            and the port of the server.
+        </MudText>
+        <MudPaper Elevation="0" Class="d-flex justify-center">
+            <MudPaper Elevation="0" Class="d-flex justify-center" MaxWidth="320px">
+                <MudImage Class="my-6 rounded-lg" Elevation="4" Src="Images/AddServerHelp.png" Fluid=true />
+            </MudPaper>
+        </MudPaper>
+        <MudDivider Class="help-divider" />
+        <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Running server commands</MudText>
+        <MudText>
+            Once you have added your server it will be available in the server list. Here you can simply click on the server you would like to control, and you will the be taken to the specific page for that server.
+            On this page you can see different information about your server and different buttons, which can change map, start knife rounds, nade practice and more...
+        </MudText>
+        <MudPaper Elevation="0" Class="d-flex justify-center">
+            <MudPaper Elevation="0" Class="d-flex justify-center" MaxWidth="700px">
+                <MudImage Class="my-6 rounded-lg" Elevation="4" Src="Images/ServerCommandsHelp.png" Fluid=true />
+            </MudPaper>
+        </MudPaper>
+    </ChildContent>
+</MudExpansionPanel>
+
+@code {
+
+}

@@ -111,20 +111,20 @@ public class SettingsService : ISettingsService
 
     public void SaveGlobalServerSettings(GlobalServerSettings globalServerSettings)
     {
-        Preferences.Set(GlobalServerCommandsConstants.MatchCommand, globalServerSettings.MatchCommand);
-        Preferences.Set(GlobalServerCommandsConstants.OvertimeCommand, globalServerSettings.OvertimeCommand);
-        Preferences.Set(GlobalServerCommandsConstants.KnifeCommand, globalServerSettings.KnifeCommand);
-        Preferences.Set(GlobalServerCommandsConstants.PracticeCommand, globalServerSettings.PracticeCommand);
+        Preferences.Set(GlobalServerCommandsConstants.MatchCommand, !string.IsNullOrEmpty(globalServerSettings.MatchCommand) ? globalServerSettings.MatchCommand : null);
+        Preferences.Set(GlobalServerCommandsConstants.OvertimeCommand, !string.IsNullOrEmpty(globalServerSettings.OvertimeCommand) ? globalServerSettings.OvertimeCommand : null);
+        Preferences.Set(GlobalServerCommandsConstants.KnifeCommand, !string.IsNullOrEmpty(globalServerSettings.KnifeCommand) ? globalServerSettings.KnifeCommand : null);
+        Preferences.Set(GlobalServerCommandsConstants.PracticeCommand, !string.IsNullOrEmpty(globalServerSettings.PracticeCommand) ? globalServerSettings.PracticeCommand : null);
     }
 
     public GlobalServerSettings GetGlobalServerSettings()
     {
         GlobalServerSettings globalServerSettings = new();
 
-        globalServerSettings.MatchCommand = Preferences.Get(GlobalServerCommandsConstants.MatchCommand, null);
-        globalServerSettings.OvertimeCommand = Preferences.Get(GlobalServerCommandsConstants.OvertimeCommand, null);
-        globalServerSettings.KnifeCommand = Preferences.Get(GlobalServerCommandsConstants.KnifeCommand, null);
-        globalServerSettings.PracticeCommand = Preferences.Get(GlobalServerCommandsConstants.PracticeCommand, null);
+        globalServerSettings.MatchCommand = Preferences.Get(GlobalServerCommandsConstants.MatchCommand, CsgoServerConstants.DefaultMatchCommand);
+        globalServerSettings.OvertimeCommand = Preferences.Get(GlobalServerCommandsConstants.OvertimeCommand, CsgoServerConstants.DefaultOvertimeMatchCommand);
+        globalServerSettings.KnifeCommand = Preferences.Get(GlobalServerCommandsConstants.KnifeCommand, CsgoServerConstants.DefaultKnifeCommand);
+        globalServerSettings.PracticeCommand = Preferences.Get(GlobalServerCommandsConstants.PracticeCommand, CsgoServerConstants.DefaultPracticeCommand);
 
         return globalServerSettings;
     }

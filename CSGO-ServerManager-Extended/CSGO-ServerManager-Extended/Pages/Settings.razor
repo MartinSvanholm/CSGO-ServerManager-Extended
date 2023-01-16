@@ -6,11 +6,11 @@
         <MudItem xs="12" sm="6">
             <MudPaper Class="pa-6" Elevation="4">
                 <MudStack>
-                    <MudText Typo="Typo.h6">Gobal server commands</MudText>
-                    <MudTextField @bind-Value="GlobalServerSettings.MatchCommand" Immediate=true T="string" Label="Match command" />
-                    <MudTextField @bind-Value="GlobalServerSettings.OvertimeCommand" Immediate=true T="string" Label="Overtime command" />
-                    <MudTextField @bind-Value="GlobalServerSettings.KnifeCommand" Immediate=true T="string" Label="Knife command" />
-                    <MudTextField @bind-Value="GlobalServerSettings.PracticeCommand" Immediate=true T="string" Label="Practice command" />
+                    <MudText Typo="Typo.h6">Default server commands</MudText>
+                    <MudTextField @bind-Value="GlobalServerSettings.MatchCommand" Immediate=true T="string" Clearable=true Label="Match command" />
+                    <MudTextField @bind-Value="GlobalServerSettings.OvertimeCommand" Immediate=true T="string" Clearable=true Label="Overtime command" />
+                    <MudTextField @bind-Value="GlobalServerSettings.KnifeCommand" Immediate=true T="string" Clearable=true Label="Knife command" />
+                    <MudTextField @bind-Value="GlobalServerSettings.PracticeCommand" Immediate=true T="string" Clearable=true Label="Practice command" />
                     <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="SaveGlobalServerSettings">Save</MudButton>
                 </MudStack>
             </MudPaper>

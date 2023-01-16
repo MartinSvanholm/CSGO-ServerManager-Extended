@@ -5,7 +5,7 @@
     <ChildContent>
         <MudText>
             Assuming you have your own config files in your cfg folder on your server, you will be able to use them when interacting with a server. 
-            You can either set them as default per server og globally.
+            You can either set them per server or change the default cfg that is executed.
         </MudText>
         <MudDivider Class="help-divider" />
         <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Server command settings</MudText>
@@ -15,7 +15,7 @@
             This command will then be executed when pressing the "start nade practice" button in the server view.
         </MudText>
         <MudPaper Elevation="0" Class="d-flex justify-center">
-            <MudPaper Elevation="0" Class="d-flex justify-center" MaxWidth="700px">
+            <MudPaper Elevation="0" Class="d-flex justify-center" MaxWidth="600px">
                 <MudImage Class="my-6 rounded-lg" Elevation="4" Src="Images/SM-ServerSettingsHelp.png" Fluid=true />
             </MudPaper>
         </MudPaper>
@@ -25,15 +25,13 @@
             The config will then be executed next time you press the "start practice command" button, and you will only need to make sure the config file is in the cfg folder on your server.
         </MudText>
         <MudDivider Class="help-divider" />
-        <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Global server command settings</MudText>
+        <MudText Class="t-bold" Style="font-size: 16px;" GutterBottom=true>Default server command settings</MudText>
         <MudText>
-            If you have a lot of servers that all uses the same config files, you can set a global server command on the button of choice.
+            If you have a lot of servers that all uses the same config files, you can set a default server command on the button of choice.
             This is done the same way as when setting commands on idividual servers, but instead you have to use the box in the settings view.
         </MudText>
-        <MudPaper Elevation="0" Class="d-flex justify-center">
-            <MudPaper Elevation="0" Class="d-flex justify-center" MaxWidth="700px">
-                <MudImage Class="my-6 rounded-lg" Elevation="4" Src="Images/SM-GlobalServerSettings.png" Fluid=true />
-            </MudPaper>
+        <MudPaper Elevation="0" Class="d-flex justify-center flex-row">
+            <MudImage Class="my-6 rounded-lg" Elevation="4" Src="Images/SM-GlobalServerSettings.png" Width="300" Fluid=true />
         </MudPaper>
     </ChildContent>
 </MudExpansionPanel>
