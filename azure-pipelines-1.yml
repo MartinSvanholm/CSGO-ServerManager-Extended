@@ -1,0 +1,48 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- prod
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  outputDirectory: '$(Build.BinariesDirectory)/$(buildConfiguration)'
+
+steps:
+- task: CmdLine@2
+  inputs:
+    script: 'dotnet workload install maui'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'CSGO-ServerManager-Extended/CSGO-ServerManager-Extended/CSGO-ServerManager-Extended.csproj'
+    arguments: '-c $(buildConfiguration) -f:net6.0-windows10.0.19041.0'
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'CSGO-ServerManager-Extended_TemporaryKey.pfx'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Agent.BuildDirectory)'
+    Contents: '**/CSGO-ServerManager-Extended*.msix'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    flattenFolders: true
+
+- script: '"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\SignTool" sign /fd SHA256 /f $(Agent.TempDirectory)/CSGO-ServerManager-Extended_TemporaryKey.pfx /p Mart373er! $(Build.ArtifactStagingDirectory)\CSGO-ServerManager-Extended_1.0.5.4_x64.msix'
+  displayName: 'Sign MSIX Package'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
