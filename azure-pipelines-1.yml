@@ -29,7 +29,7 @@ steps:
 
 - task: DownloadSecureFile@1
   inputs:
-    secureFile: 'mymauiwindowscert.pfx'
+    secureFile: 'CSGO-ServerManager-Extended_TemporaryKey.pfx'
 
 - task: CopyFiles@2
   inputs:
