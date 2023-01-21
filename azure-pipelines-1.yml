@@ -1,0 +1,48 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- prod
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  outputDirectory: '$(Build.BinariesDirectory)/$(buildConfiguration)'
+
+steps:
+- task: CmdLine@2
+  inputs:
+    script: 'dotnet workload install maui'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'MyMAUIProject.sln'
+    arguments: '-c $(buildConfiguration) -f:net6.0-windows10.0.19041.0'
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'mymauiwindowscert.pfx'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Agent.BuildDirectory)'
+    Contents: '**/MyMAUIProject*.msix'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    flattenFolders: true
+
+- script: '"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\SignTool" sign /fd SHA256 /f $(Agent.TempDirectory)/mymauiwindowscert.pfx /p sup3rs3cr3tp4ssw0rd $(Build.ArtifactStagingDirectory)\MyMauiProject_1.0.0.0_x64.msix'
+  displayName: 'Sign MSIX Package'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
