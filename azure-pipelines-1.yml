@@ -38,7 +38,7 @@ steps:
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
     flattenFolders: true
 
-- script: '"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\SignTool" sign /fd SHA256 /f $(Agent.TempDirectory)/CSGO-ServerManager-Extended_TemporaryKey.pfx /p Mart373er! $(Build.ArtifactStagingDirectory)\CSGO-ServerManager-Extended_1.0.5.4_x64.msix'
+- script: '"C:\Program Files (x86)\Windows Kits\10\App Certification Kit\SignTool" sign /fd SHA256 /f $(Agent.TempDirectory)/CSGO-ServerManager-Extended_TemporaryKey.pfx /p Mart373er! $(Build.ArtifactStagingDirectory)\CSGO-ServerManager-Extended_1.0.5.0_x64.msix'
   displayName: 'Sign MSIX Package'
 
 - task: PublishBuildArtifacts@1
