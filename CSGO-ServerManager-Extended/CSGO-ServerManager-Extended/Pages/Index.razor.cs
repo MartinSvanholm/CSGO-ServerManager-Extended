@@ -1,4 +1,5 @@
 ﻿using CSGO_ServerManager_Extended.Models.Constants;
+using CSGO_ServerManager_Extended.Services.AccountService;
 using CSGO_ServerManager_Extended.Services.CsgoServerService;
 using CSGO_ServerManager_Extended.Services.SettingsService;
 using CSGO_ServerManager_Extended.Services.StartupService;
@@ -18,13 +19,26 @@ namespace CSGO_ServerManager_Extended.Pages
         [Inject]
         private IStartupService _startupService { get; set; }
 
+        [Inject]
+        private IAccountService accountService { get; set; }
+
         private List<ICsgoServer> csgoServers = new();
 
         private bool WelcomeDialogIsVisible { get; set; } = false;
+        private bool isLoginDialogVisible { get; set; } = true;
 
         protected override async Task OnInitializedAsync()
         {
-            if(_settingsService.DashboardVisibilitySetting == SettingsConstants.ShowFavouritesOnDashboard)
+            if(!_settingsService.UsePasswordLogin || accountService.IsPasswordValidated)
+            {
+                isLoginDialogVisible = false;
+                await InitPage();
+            }
+        }
+
+        private async Task InitPage()
+        {
+            if (_settingsService.DashboardVisibilitySetting == SettingsConstants.ShowFavouritesOnDashboard)
                 await GetFavouriteServers();
 
             await _startupService.InitData();
@@ -52,6 +66,12 @@ namespace CSGO_ServerManager_Extended.Pages
         private void GetWelcomeMessageVisibility()
         {
             WelcomeDialogIsVisible = _settingsService.GetWelcomeMessageVisibility();
+        }
+
+        private async Task OnLoginDialogVisibilityChanged()
+        {
+            isLoginDialogVisible = !isLoginDialogVisible;
+            await InitPage();
         }
     }
 }

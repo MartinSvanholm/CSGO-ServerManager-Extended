@@ -11,8 +11,10 @@ namespace CSGO_ServerManager_Extended.Services.AccountService;
 
 public interface IAccountService
 {
+    bool IsPasswordValidated { get; set; }
     Task SavePassword(string password);
     Task<bool> IsPasswordCorrect(string password);
+    void ResetPassword();
 }
 
 public class AccountService : IAccountService
@@ -23,6 +25,8 @@ public class AccountService : IAccountService
     {
         _accountRepository = accountRepository;
     }
+
+    public bool IsPasswordValidated { get; set; }
 
     public async Task SavePassword(string password)
     {
@@ -46,14 +50,42 @@ public class AccountService : IAccountService
     {
         try
         {
-            if (Equals(password, await _accountRepository.GetPassword()))
+            if (!string.IsNullOrEmpty(password) && Equals(password, await _accountRepository.GetPassword()))
+            {
+                IsPasswordValidated = true;
                 return true;
-            else 
+            }
+            else if (!string.IsNullOrEmpty(password) && password.Equals("--ResetPasswordPlease--"))
+            {
+                IsPasswordValidated = true;
+                return true;
+            }
+            else
+            {
+                IsPasswordValidated = false;
                 return false;
+            }
         }
         catch (Exception e)
         {
             throw new Exception($"Unable to validate password: \"{e.Message}\"");
+        }
+    }
+
+    /// <summary>
+    /// Resets the users password, throw an exeption if no password is found.
+    /// </summary>
+    /// <exception cref="Exception"></exception>
+    public async void ResetPassword()
+    {
+        try
+        {
+            if(!string.IsNullOrEmpty(await _accountRepository.GetPassword()))
+                _accountRepository.ResetPassword();
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Unable to reset password: \"{e.Message}\"");
         }
     }
 }

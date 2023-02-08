@@ -1,9 +1,12 @@
 ﻿using CSGO_ServerManager_Extended.Data.DataAccess;
 using CSGO_ServerManager_Extended.Models;
 using CSGO_ServerManager_Extended.Models.Constants;
+using CSGO_ServerManager_Extended.Repositories.AccountRepository;
 using CSGO_ServerManager_Extended.Repositories.CsgoServerRepository;
 using CSGO_ServerManager_Extended.Repositories.CsgoServerSettingsRepository;
 using CSGO_ServerManager_Extended.Repositories.MapPoolRepository;
+using CSGO_ServerManager_Extended.Repositories.SettingsRepository;
+using CSGO_ServerManager_Extended.Services.AccountService;
 using CSGO_ServerManager_Extended.Services.CsgoServerService;
 using CSGO_ServerManager_Extended.Services.CsgoServerSettingsService;
 using CSGO_ServerManager_Extended.Services.MapPoolService;
@@ -49,15 +52,18 @@ public static class MauiProgram
             config.SnackbarConfiguration.ShowTransitionDuration = 500;
             config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
         });
+        builder.Services.AddSingleton<IAccountRepository, AccountRepository>();
         builder.Services.AddSingleton<IDataAccess, DataAccess>(x => new DataAccess(Path.Combine(FileSystem.AppDataDirectory, "ServerManagerDb.db")));
 		builder.Services.AddSingleton<ICsgoServerService, CsgoServerService>();
-		builder.Services.AddSingleton<ISettingsService>(x => new SettingsService(x.GetRequiredService<HttpClient>(), dathostAccount, DathostAccountIsConnected));
+		builder.Services.AddSingleton<ISettingsRepository, SettingsRepository>();
+		builder.Services.AddSingleton<ISettingsService>(x => new SettingsService(x.GetRequiredService<HttpClient>(), dathostAccount, DathostAccountIsConnected, x.GetRequiredService<ISettingsRepository>(), x.GetRequiredService<IAccountRepository>(), x.GetRequiredService<IAccountService>()));
 		builder.Services.AddSingleton<IServerSettingsRepository, ServerSettingsRepository>();
 		builder.Services.AddSingleton<ICsgoServerRepository, CsgoServerRepository>();
 		builder.Services.AddSingleton<IMapPoolRepository, MapPoolRepository>();
 		builder.Services.AddSingleton<IServerSettingsService, ServerSettingsService>();
 		builder.Services.AddSingleton<IStartupService, StartupService>();
 		builder.Services.AddSingleton<IMapPoolService, MapPoolService>();
+		builder.Services.AddSingleton<IAccountService, AccountService>();
 
 		var sp = builder.Services.BuildServiceProvider();
 

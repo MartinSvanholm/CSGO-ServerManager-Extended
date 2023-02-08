@@ -61,9 +61,28 @@
 
         <MudItem xs="12" sm="6">
             <MudPaper Class="pa-6 d-flex align-content-center" Elevation="4">
-                <MudStack>
+                <MudStack Style="width: 100%">
+
                     <MudText Typo="Typo.h6">General settings</MudText>
                     <MudSwitch T="bool" Color="@Color.Primary" Checked="@settingsService.UseDarkMode" CheckedChanged="DarkModeChanged">Use dark mode</MudSwitch>
+
+                    <MudSwitch T="bool" Color="@Color.Primary" Checked="@UsePasswordLogin" CheckedChanged="UsePasswordLoginChanged">Use password login</MudSwitch>
+                    <MudPaper Elevation="4" Class="@($"pa-6 {(UsePasswordLogin ? "" : "d-none")}")">
+                        <MudStack>
+                            <MudText>Set Password</MudText>
+                            <MudForm>
+                                <MudStack Row="true" Justify="@Justify.SpaceBetween">
+                                    <MudPaper Elevation="0">
+                                        <MudTextField T="string" @bind-Value="Password" InputType="@InputType.Password" Required="true" Label="Password" Clearable=true Immediate=true />
+                                    </MudPaper>
+                                    <MudPaper Class="d-flex align-end" Elevation="0">
+                                        <MudButton Color="Color.Success" Variant="Variant.Filled" Size="Size.Medium" OnClick="SavePassword">Save</MudButton>
+                                    </MudPaper>
+                                </MudStack>
+                            </MudForm>
+                        </MudStack>
+                    </MudPaper>
+
                 </MudStack>
             </MudPaper>
         </MudItem>

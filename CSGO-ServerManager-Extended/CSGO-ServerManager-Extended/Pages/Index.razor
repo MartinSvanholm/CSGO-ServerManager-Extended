@@ -28,6 +28,10 @@
         </MudPaper>
     }
 
+    <LoginDialog isVisible="@isLoginDialogVisible" ChangeVisibility="(async () => await OnLoginDialogVisibilityChanged())">
+
+    </LoginDialog>
+
     <MudDialog IsVisible="@WelcomeDialogIsVisible">
         <TitleContent>
             <MudText Typo="Typo.h5">Welcome</MudText>

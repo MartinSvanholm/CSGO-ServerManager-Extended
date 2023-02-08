@@ -12,5 +12,6 @@ namespace CSGO_ServerManager_Extended.Models.Constants
         public static string ShowAllServersOnDashboard { get => "ShowAllServersOnDashboard"; }
         public static string UseDarkMode { get => "UseDarkMode"; }
         public static string WelcomeMessageVisibility { get => "WelcomeMessageVisibility"; }
+        public static string UsePasswordLoginKey => "UsePasswordLoginKey";
     }
 }

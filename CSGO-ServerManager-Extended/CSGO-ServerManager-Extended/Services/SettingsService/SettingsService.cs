@@ -1,5 +1,8 @@
 ﻿using CSGO_ServerManager_Extended.Models;
 using CSGO_ServerManager_Extended.Models.Constants;
+using CSGO_ServerManager_Extended.Repositories.AccountRepository;
+using CSGO_ServerManager_Extended.Repositories.SettingsRepository;
+using CSGO_ServerManager_Extended.Services.AccountService;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -24,15 +27,24 @@ public interface ISettingsService
     void RemoveDathostAccount();
     void SaveGlobalServerSettings(GlobalServerSettings globalServerSettings);
     void SetWelcomeMessageVisibility(bool welcomeMessageVisibility);
+    void SaveUsePasswordLoginSetting(bool usePasswordLoginSetting);
+    bool UsePasswordLogin { get; set; }
 }
 
 public class SettingsService : ISettingsService
 {
-    public SettingsService(HttpClient httpClient, DathostAccount dathostAccount, bool dathostAccountIsConnected)
+    private ISettingsRepository _settingsRepository { get; set; }
+    private readonly IAccountRepository _accountRepository;
+    private readonly IAccountService _accountService;
+
+    public SettingsService(HttpClient httpClient, DathostAccount dathostAccount, bool dathostAccountIsConnected, ISettingsRepository settingsRepository, IAccountRepository accountRepository, IAccountService accountService)
     {
         _httpClient = httpClient;
         DathostAccountIsConnected = dathostAccountIsConnected;
         DathostAccount = dathostAccount;
+        _settingsRepository = settingsRepository;
+        _accountRepository = accountRepository;
+        _accountService = accountService;
 
         Task init = Task.Run(() => Init());
         init.Wait();
@@ -43,6 +55,8 @@ public class SettingsService : ISettingsService
     public DathostAccount DathostAccount { get; set; }
     public string DashboardVisibilitySetting { get; set; }
     public bool UseDarkMode { get; set; }
+    public bool UsePasswordLogin { get => GetUsePassordloginSetting(); set { SaveUsePasswordLoginSetting(value); } }
+
     public event EventHandler UseDarkModeChanged;
 
     private async Task Init()
@@ -148,5 +162,32 @@ public class SettingsService : ISettingsService
     public bool GetWelcomeMessageVisibility()
     {
         return Preferences.Get(SettingsConstants.WelcomeMessageVisibility, true);
+    }
+
+    private bool GetUsePassordloginSetting()
+    {
+        try
+        {
+            return _settingsRepository.GetUsePassordloginSetting();
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Unable to get login setting: {e.Message}");
+        }
+    }
+
+    public void SaveUsePasswordLoginSetting(bool usePasswordLoginSetting)
+    {
+        try
+        {
+            _settingsRepository.SaveUsePassordloginSetting(usePasswordLoginSetting);
+
+            if (!usePasswordLoginSetting)
+                _accountService.ResetPassword();
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Unable to save login setting: {e.Message}");
+        }
     }
 }

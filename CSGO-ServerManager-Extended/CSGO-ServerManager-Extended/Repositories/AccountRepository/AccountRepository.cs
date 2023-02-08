@@ -11,6 +11,7 @@ public interface IAccountRepository
 {
     Task<string> GetPassword();
     Task SavePassword(string password);
+    bool ResetPassword();
 }
 
 public class AccountRepository : IAccountRepository
@@ -23,5 +24,10 @@ public class AccountRepository : IAccountRepository
     public async Task<string> GetPassword()
     {
         return await SecureStorage.GetAsync(AccountConstants.AccountPasswordKey);
+    }
+
+    public bool ResetPassword()
+    {
+        return SecureStorage.Remove(AccountConstants.AccountPasswordKey);
     }
 }

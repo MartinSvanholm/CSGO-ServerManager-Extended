@@ -1,0 +1,49 @@
+﻿@inject IAccountService _accountService
+
+<MudDialog Options="@dialogOptions" IsVisible="@isVisible">
+    <TitleContent>
+        <MudText>Login</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudForm @bind-IsValid="@isValid">
+            <MudTextField Required="true" T="string" InputType="@InputType.Password" Immediate="true" Validation="@(new Func<string, Task<string>>(ValidatePassword))"/>
+        </MudForm>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Disabled="!isValid" Color="@Color.Primary" Variant="@Variant.Filled" OnClick="(async () => await ChangeVisibility.InvokeAsync(false))">Login</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [Parameter, EditorRequired]
+    public bool isVisible { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<bool> ChangeVisibility { get; set; }
+
+    private bool isValid { get; set; }
+
+    private DialogOptions dialogOptions = new DialogOptions()
+    {
+            CloseButton = false,
+            DisableBackdropClick = true,
+            CloseOnEscapeKey = false
+    };
+
+    private async Task<string> ValidatePassword(string password)
+    {
+        try
+        {
+            if (await _accountService.IsPasswordCorrect(password))
+                return null;
+            else
+                return "Wrong password";
+        }
+        catch (Exception)
+        {
+            return "Could not validate password";
+        }
+    }
+}
